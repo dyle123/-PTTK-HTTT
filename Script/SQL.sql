@@ -89,6 +89,13 @@ CREATE TABLE LichThi
 )
 
 
+CREATE TABLE Users
+(
+    Username VARCHAR(30),
+    Password VARCHAR(50),
+    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'chamthi', 'nhaplieu')) -- Vai trò
+)
+
 
 // Khóa ngoại ở đây
 ALTER TABLE PhieuThanhToan 
