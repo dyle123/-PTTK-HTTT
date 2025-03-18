@@ -91,9 +91,10 @@ CREATE TABLE LichThi
 
 CREATE TABLE Users
 (
-    Username VARCHAR(30),
-    Password VARCHAR(50),
-    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'chamthi', 'nhaplieu')) -- Vai trò
+    UserNName VARCHAR(30),
+    PassWord VARCHAR(50),
+    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'chamthi', 'nhaplieu')), -- Vai trò
+    MaNhanVien INT
 )
 
 
@@ -102,7 +103,10 @@ ALTER TABLE PhieuThanhToan
 ADD CONSTRAINT FK_PhieuThanhToan_PhieuDangKy FOREIGN KEY (MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy);
 
 ALTER TABLE HoaDonThanhToan
-ADD CONSTRAINT FK_HoaDonThanhToan_PhieuThanhToan FOREIGN KEY (MaPhieuThanhToan) REFERENCES PhieuThanhToan(MaPhieuThanhToan)
+ADD CONSTRAINT FK_HoaDonThanhToan_PhieuThanhToan FOREIGN KEY (MaPhieuThanhToan) REFERENCES PhieuThanhToan(MaPhieuThanhToan);
+
+ALTER TABLE Users
+ADD CONSTRAINT FK_Users_NhanVien FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien);
 
 ALTER TABLE KetQuaThi 
 ADD CONSTRAINT FK_KetQuaThi_BaiThi FOREIGN KEY (MaBaiThi) REFERENCES BaiThi(MaBaiThi),
