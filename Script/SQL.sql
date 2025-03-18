@@ -61,6 +61,33 @@ CREATE TABLE ChamThi (
     MaNhanVien INT
 );
 
+CREATE TABLE ThiSinh
+(
+	CCCD CHAR(12),
+	HoVaTen NVARCHAR(50),
+	NgaySinh DATE,
+	Email CHAR(60),
+	SoDienThoai CHAR(10),
+	DiaChi NVARCHAR(255),
+	MaKhachHang INT
+   
+)
+
+CREATE TABLE GacThi
+(
+	MaLichThi INT,
+	MaNhanVienGac INT
+)
+
+CREATE TABLE LichThi
+(
+	MaLichThi INT,
+	NgayThi DATE,
+	GioThi TIME,
+	SoLuongDangKy INT,
+	MaPhongThi INT
+)
+
 
 
 // Khóa ngoại ở đây
@@ -81,6 +108,15 @@ ALTER TABLE ChamThi
 ADD CONSTRAINT FK_ChamThi_BaiThi FOREIGN KEY (MaBaiThi) REFERENCES BaiThi(MaBaiThi),
 ADD CONSTRAINT FK_ChamThi_NhanVien FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien);
 
+ALTER TABLE ThiSinh ADD CONSTRAINT PK_ThiSinh PRIMARY KEY(CCCD)
+ALTER TABLE ThiSinh ADD CONSTRAINT FK_ThiSinh_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
+
+ALTER TABLE GacThi ADD CONSTRAINT PK_GacThi PRIMARY KEY (MaLichThi, MaNhanVienGac)
+ALTER TABLE GacThi ADD CONSTRAINT FK_GacThi_LichThi FOREIGN KEY (MaLichThi) REFERENCES LichThi(MaLichThi)
+ALTER TABLE GacThi ADD CONSTRAINT FK_GacThi_NhanVien FOREIGN KEY (MaNhanVienGac) REFERENCES NhanVien(MaNhanVien)
+
+ALTER TABLE LichThi ADD CONSTRAINT PK_LichThi PRIMARY KEY (MaLichThi)
+ALTER TABLE LichThi ADD CONSTRAINT FK_LichThi_PhongThi FOREIGN KEY(MaPhongThi) REFERENCES PhongThi(MaPhongThi)
 
 
 
