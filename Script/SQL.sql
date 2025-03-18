@@ -1,10 +1,16 @@
+USE MASTER
+GO
+ALTER DATABASE PTTK SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+IF DB_ID('PTTK') IS NOT NULL
+	DROP DATABASE PTTK
+
 CREATE DATABASE PTTK
 GO
 USE PTTK
  GO
 
 CREATE TABLE NhanVien(
-	MaNhanVien int (Primary Key),
+	MaNhanVien int Primary Key,
 	HoTen nvarchar(50),
 	SoDienThoai char(10),
 	Luong varchar(15),
@@ -12,7 +18,7 @@ CREATE TABLE NhanVien(
 );
 
 CREATE TABLE PhieuThanhToan (
-	MaPhieuThanhToan int (Primary Key),
+	MaPhieuThanhToan int Primary Key,
 	SoTien int,
 	PhanTramGiamGia int,
 	TrangThaiThanhToan nvarchar(20),
@@ -21,13 +27,11 @@ CREATE TABLE PhieuThanhToan (
 );
 
 	CREATE TABLE HoaDonThanhToan(
-	MaHoaDon int (Primary Key),
+	MaHoaDon int Primary Key,
 	TongTien int,
 	NgayThanhToan datetime,
 	MaPhieuThanhToan int
 );
-
-//My Y
 
 CREATE TABLE KetQuaThi (
     MaKetQua INT PRIMARY KEY,
@@ -97,8 +101,11 @@ CREATE TABLE Users
     MaNhanVien INT
 )
 
+insert into Users(UserNName, PassWord, Role)
+values ('yenvy123', '1928374650Vy','ketoan');
 
-// Khóa ngoại ở đây
+
+-- Khóa ngoại ở đây
 ALTER TABLE PhieuThanhToan 
 ADD CONSTRAINT FK_PhieuThanhToan_PhieuDangKy FOREIGN KEY (MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy);
 
@@ -110,14 +117,14 @@ ADD CONSTRAINT FK_Users_NhanVien FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(Ma
 
 ALTER TABLE KetQuaThi 
 ADD CONSTRAINT FK_KetQuaThi_BaiThi FOREIGN KEY (MaBaiThi) REFERENCES BaiThi(MaBaiThi),
-ADD CONSTRAINT FK_KetQuaThi_ChungChi FOREIGN KEY (MaChungChi) REFERENCES ChungChi(MaChungChi);
+	CONSTRAINT FK_KetQuaThi_ChungChi FOREIGN KEY (MaChungChi) REFERENCES ChungChi(MaChungChi);
 
 ALTER TABLE BaiThi 
 ADD CONSTRAINT FK_BaiThi_ThiSinh FOREIGN KEY (SoBaoDanh) REFERENCES ThiSinh(SoBaoDanh);
 
 ALTER TABLE ChamThi 
 ADD CONSTRAINT FK_ChamThi_BaiThi FOREIGN KEY (MaBaiThi) REFERENCES BaiThi(MaBaiThi),
-ADD CONSTRAINT FK_ChamThi_NhanVien FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien);
+	CONSTRAINT FK_ChamThi_NhanVien FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien);
 
 ALTER TABLE ThiSinh ADD CONSTRAINT PK_ThiSinh PRIMARY KEY(CCCD)
 ALTER TABLE ThiSinh ADD CONSTRAINT FK_ThiSinh_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
