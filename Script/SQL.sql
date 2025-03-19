@@ -1,4 +1,4 @@
-USE MASTER
+﻿USE MASTER
 GO
 ALTER DATABASE PTTK SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 IF DB_ID('PTTK') IS NOT NULL
@@ -10,16 +10,16 @@ USE PTTK
  GO
 
 CREATE TABLE KhachHang(
-	MaKhachHang int Primary Key,
+	MaKhachHang int IDENTITY(1,1) Primary Key,
 	TenKhachHang nvarchar(50),
     Email CHAR(60),
 	SoDienThoai char(10),
 	DiaChi NVARCHAR(255),
-	LoaiKhachHang nvarchar(20)
+	LoaiKhachHang nvarchar(20) CHECK(LoaiKhachHang IN (N'tự do', N'đơn vị'))
 );
 
 CREATE TABLE NhanVien(
-	MaNhanVien int Primary Key,
+	MaNhanVien int IDENTITY(1,1) Primary Key,
 	HoTen nvarchar(50),
 	NgaySinh date,
 	SoDienThoai char(10),
@@ -28,24 +28,26 @@ CREATE TABLE NhanVien(
 );
 
 CREATE TABLE PhieuThanhToan (
-	MaPhieuThanhToan int Primary Key,
-	SoTien int,
-	PhanTramGiamGia int,
-	TrangThaiThanhToan nvarchar(20),
-	HinhThucThanhToan nvarchar(20),
+	MaPhieuThanhToan int IDENTITY(1,1) Primary Key,
+	TamTinh int,
+	PhanTramGiamGia INT,
+	ThanhTien INT,
+	TrangThaiThanhToan BIT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1)) , --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN
 	MaPhieuDangKy int,--f
 	NhanVienThucHien int,--f
 );
 
 	CREATE TABLE HoaDonThanhToan(
-	MaHoaDon int Primary Key,
+	MaHoaDon int IDENTITY(1,1) Primary Key,
 	TongTien int,
+	HinhThucThanhToan nvarchar(20) DEFAULT N'tiền mặt' CHECK (HinhThucThanhToan IN ( N'tiền mặt',N'chuyển khoản')),
 	NgayThanhToan datetime,
-	MaPhieuThanhToan int--f
+	MaPhieuThanhToan int,--f
+	MaGiaoDich INT
 );
 
 CREATE TABLE KetQuaThi (
-    MaKetQua INT PRIMARY KEY,
+    MaKetQua INT IDENTITY(1,1) PRIMARY KEY,
     MaBaiThi INT,--f
     DiemTong INT,
     NgayCongBo DATE,
@@ -53,13 +55,13 @@ CREATE TABLE KetQuaThi (
 );
 
 CREATE TABLE PhongThi (
-    MaPhongThi INT PRIMARY KEY,
+    MaPhongThi INT IDENTITY(1,1) PRIMARY KEY,
     SucChuaToiDa INT NOT NULL,
     SoLuongHienTai INT NOT NULL
 );
 
 CREATE TABLE BaiThi (
-    MaBaiThi INT PRIMARY KEY,
+    MaBaiThi INT IDENTITY(1,1) PRIMARY KEY,
     SoBaoDanh CHAR(10),
     LichThi DATE,
     DangBaiThi VARCHAR(255),
@@ -67,7 +69,7 @@ CREATE TABLE BaiThi (
 );
 
 CREATE TABLE ChamThi (
-    MaChamThi INT PRIMARY KEY,
+    MaChamThi INT IDENTITY(1,1) PRIMARY KEY,
     MaBaiThi INT,--f
     SoCau INT,
     DapAnNop TEXT,
@@ -87,14 +89,15 @@ CREATE TABLE ThiSinh
 )
 
 Create table PhieuDangKy(
-    MaPhieuDangKy int Primary Key,
-    LoaiChungChi nvarchar(50),
+    MaPhieuDangKy int IDENTITY(1,1) Primary Key,
+    LoaiChungChi int ,
     NgayDangKy date,
     TrangThaiThanhToan nvarchar(20),
     ThoiGianMongMuonThi DATE,
     MaKhachHang int,
     CCCD char(12)
 );
+
 
 create table ChiTietPhieuDangKy(
     MaPhieuDangKy int ,--f
@@ -104,13 +107,14 @@ create table ChiTietPhieuDangKy(
 );
 
 create table ChungChi(
-    MaChungChi int Primary Key,
+    MaChungChi int IDENTITY(1,1)  Primary Key,
     NgayCap date,
     NgayHetHan date,
-    LoaiChungChi nvarchar(50),
+    LoaiChungChi int,
     TrangThai nvarchar(20),
     CCCD char(12)--f
 );
+
 
 
 CREATE TABLE GacThi
@@ -122,7 +126,7 @@ CREATE TABLE GacThi
 
 CREATE TABLE LichThi
 (
-	MaLichThi INT Primary Key,
+	MaLichThi INT IDENTITY(1,1)  Primary Key,
 	NgayThi DATE,
 	GioThi TIME,
 	SoLuongDangKy INT,
@@ -139,13 +143,19 @@ CREATE TABLE Users
 )
 
 CREATE TABLE PhieuDuThi(
-	SoBaoDanh char(10) Primary Key,
+	SoBaoDanh char(10)  Primary Key,
 	CCCD char(12),--f
 	TrangThai nvarchar(50),
 	LichThi int --f
 
 )
 
+CREATE TABLE BangGiaThi
+(
+	MaLoaiChungChi int Primary Key,
+	TenChungChi nvarchar(50),
+	LePhiThi int
+)
 --insert into Users(UserNName, PassWord, Role)
 --values ('yenvy123', '1928374650Vy','ketoan');
 
@@ -181,14 +191,16 @@ ADD CONSTRAINT FK_LichThi_PhongThi FOREIGN KEY(MaPhongThi) REFERENCES PhongThi(M
 
 ALTER TABLE PhieuDangKy 
 ADD CONSTRAINT FK_PhieuDangKy_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang),
-	CONSTRAINT FK_PhieuDangKy_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD);
+	CONSTRAINT FK_PhieuDangKy_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD),
+	CONSTRAINT FK_PhieuDangKy_BangGiaThi FOREIGN KEY(LoaiChungChi) REFERENCES BangGiaThi(MaLoaiChungChi);
 
 ALTER TABLE ChiTietPhieuDangKy 
 ADD CONSTRAINT FK_ChiTietPhieuDangKy_PhieuDangKy FOREIGN KEY (MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy),
 	CONSTRAINT FK_ChiTietPhieuDangKy_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD);
 
 ALTER TABLE ChungChi 
-ADD CONSTRAINT FK_ChungChi_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD);
+ADD CONSTRAINT FK_ChungChi_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD),
+	CONSTRAINT FK_ChungChi_BangGiaThi FOREIGN KEY(LoaiChungChi) REFERENCES BangGiaThi(MaLoaiChungChi);
 
 ALTER TABLE PhieuDuThi
 ADD CONSTRAINT FK_PhieuDuThi_ThiSinh FOREIGN KEY(CCCD) REFERENCES ThiSinh(CCCD),
