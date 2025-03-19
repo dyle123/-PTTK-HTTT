@@ -58,7 +58,7 @@ CREATE TABLE PhongThi (
 
 CREATE TABLE BaiThi (
     MaBaiThi INT PRIMARY KEY,
-    SoBaoDanh INT,
+    CCCD CHAR(12),
     LichThi DATE,
     DangBaiThi VARCHAR(255),
     ThoiGianNopBai TIME
