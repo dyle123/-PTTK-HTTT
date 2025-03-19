@@ -9,6 +9,15 @@ GO
 USE PTTK
  GO
 
+CREATE TABLE KhachHang(
+	MaKhachHang int Primary Key,
+	TenKhachHang nvarchar(50),
+    Email CHAR(60),
+	SoDienThoai char(10),
+	DiaChi NVARCHAR(255),
+	LoaiKhachHang nvarchar(20)
+);
+
 CREATE TABLE NhanVien(
 	MaNhanVien int Primary Key,
 	HoTen nvarchar(50),
@@ -77,6 +86,32 @@ CREATE TABLE ThiSinh
    
 )
 
+Create table PhieuDangKy(
+    MaPhieuDangKy int Primary Key,
+    LoaiChungChi nvarchar(50),
+    NgayDangKy date,
+    TrangThaiThanhToan nvarchar(20),
+    ThoiGianMongMuonThi DATE,
+    MaKhachHang int,
+    CCCD char(12)
+);
+
+create table ChiTietPhieuDangKy(
+    MaPhieuDangKy int Primary Key,
+    CCCD char(12),
+    SoLanGiaHan int
+);
+
+create table ChungChi(
+    MaChungChi int Primary Key,
+    NgayCap date,
+    NgayHetHan date,
+    LoaiChungChi nvarchar(50),
+    TrangThai nvarchar(20),
+    CCCD char(12)
+);
+
+
 CREATE TABLE GacThi
 (
 	MaLichThi INT,
@@ -135,6 +170,15 @@ ALTER TABLE GacThi ADD CONSTRAINT FK_GacThi_NhanVien FOREIGN KEY (MaNhanVienGac)
 
 ALTER TABLE LichThi ADD CONSTRAINT PK_LichThi PRIMARY KEY (MaLichThi)
 ALTER TABLE LichThi ADD CONSTRAINT FK_LichThi_PhongThi FOREIGN KEY(MaPhongThi) REFERENCES PhongThi(MaPhongThi)
+
+ALTER TABLE PhieuDangKy ADD CONSTRAINT FK_PhieuDangKy_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang);
+ALTER TABLE PhieuDangKy ADD CONSTRAINT FK_PhieuDangKy_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD);
+
+ALTER TABLE ChiTietPhieuDangKy ADD CONSTRAINT FK_ChiTietPhieuDangKy_PhieuDangKy FOREIGN KEY (MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy);
+ALTER TABLE ChiTietPhieuDangKy ADD CONSTRAINT FK_ChiTietPhieuDangKy_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD);
+
+ALTER TABLE ChungChi ADD CONSTRAINT FK_ChungChi_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD);
+
 
 
 
