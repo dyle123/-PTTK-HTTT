@@ -11,20 +11,20 @@ USE PTTK
 
 CREATE TABLE KhachHang(
 	MaKhachHang int IDENTITY(1,1) Primary Key,
-	TenKhachHang nvarchar(50),
-    Email CHAR(60),
-	SoDienThoai char(10),
-	DiaChi NVARCHAR(255),
-	LoaiKhachHang nvarchar(20) CHECK(LoaiKhachHang IN (N'tự do', N'đơn vị'))
+	TenKhachHang nvarchar(50) NOT NULL,
+    Email CHAR(60) ,
+	SoDienThoai char(10) ,
+	DiaChi NVARCHAR(255) NOT NULL,
+	LoaiKhachHang nvarchar(20) CHECK(LoaiKhachHang IN (N'tự do', N'đơn vị')) NOT NULL
 );
 
 CREATE TABLE NhanVien(
 	MaNhanVien int IDENTITY(1,1) Primary Key,
-	HoTen nvarchar(50),
-	NgaySinh date,
-	SoDienThoai char(10),
+	HoTen nvarchar(50) NOT NULL,
+	NgaySinh date NOT NULL,
+	SoDienThoai char(10) UNIQUE,
 	Luong varchar(15),
-	BoPhan nvarchar(20)
+	BoPhan nvarchar(20) NOT NULL
 );
 
 CREATE TABLE PhieuThanhToan (
@@ -33,8 +33,8 @@ CREATE TABLE PhieuThanhToan (
 	PhanTramGiamGia INT,
 	ThanhTien INT,
 	TrangThaiThanhToan BIT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1)) , --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN
-	MaPhieuDangKy int,--f
-	NhanVienThucHien int,--f
+	MaPhieuDangKy int NOT NULL,--f
+	NhanVienThucHien int NOT NULL,--f
 );
 
 	CREATE TABLE HoaDonThanhToan(
