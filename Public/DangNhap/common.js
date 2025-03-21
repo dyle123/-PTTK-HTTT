@@ -8,7 +8,6 @@ async function initializeButtons() {
             // Nếu đã đăng nhập
             document.getElementById('logout').style.display = 'block';
             document.getElementById('login').style.display = 'none';
-            document.getElementById('customerInfo').style.display = 'block';
             // Lựa chọn tất cả phần tử có id="registerButton"
             const registerButtons = document.querySelectorAll('#registerButton');
             
@@ -23,7 +22,6 @@ async function initializeButtons() {
             // Nếu chưa đăng nhập
             document.getElementById('login').style.display = 'block';
             document.getElementById('logout').style.display = 'none';
-            document.getElementById('customerInfo').style.display = 'none';
             document.getElementById('registerButton').style.display = 'block'; // Hiển thị nút Đăng Ký Thành Viên
         }
     } catch (err) {
@@ -44,7 +42,7 @@ async function handleLogout(event) {
 
         if (response.ok) {
             alert('Bạn đã đăng xuất thành công!');
-            window.location.href = 'Login.html'; // Chuyển hướng về trang đăng nhập
+            window.location.href = '/DangNhap/Home.html'; // Chuyển hướng về trang đăng nhập
         } else {
             const error = await response.json();
             alert(error.error || 'Đăng xuất thất bại!');

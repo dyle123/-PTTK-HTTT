@@ -19,7 +19,6 @@
       <input type="text" id="username" name="username" placeholder="Tên đăng nhập" required>
       <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
       <button type="submit">Đăng nhập</button>
-      <li><a href="/KhachHang/TaiKhoan/addCustomer.html">Bạn chưa có tài khoản ?</a></li>
     </form>
   </div>
   <script>
@@ -51,16 +50,8 @@
           alert("Đăng nhập thành công!");
 
           // Chuyển hướng dựa trên vai trò
-          if (data.role === 'quanlychinhanh') {
-              window.location.href = '/ChiNhanh/DashboardCN.html'; // Trang quản trị chi nhánh
-          } else if (data.role === 'khachhang') {
-              localStorage.setItem('username', username);
-              localStorage.setItem('role', data.role);
-              window.location.href = '/home.html'; // Trang người dùng
-          } else if (data.role === 'nhanvien') {
-              window.location.href = '/NhanVien/Dashboard.html'; // Trang nhân viên
-          }  else if (data.role === 'quanlycongty') {
-            window.location.href = '/CongTy/DashboardCT.html'; // Trang quản trị công ty
+          if (data.role === 'ketoan') {
+              window.location.href = '/'; // Trang quản trị chi nhánh
           } else {
               alert("Vai trò không xác định, vui lòng liên hệ quản trị viên!");
           }
