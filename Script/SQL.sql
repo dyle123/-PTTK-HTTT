@@ -6,6 +6,7 @@ IF DB_ID('PTTK') IS NOT NULL
 
 CREATE DATABASE PTTK
 GO
+
 USE PTTK
  GO
 
@@ -19,7 +20,7 @@ CREATE TABLE KhachHang(
 );
 
 CREATE TABLE NhanVien(
-	MaNhanVien int IDENTITY(1,1) Primary Key,
+	MaNhanVien char(8) Primary Key,
 	HoTen nvarchar(50) NOT NULL,
 	NgaySinh date NOT NULL,
 	SoDienThoai char(10) UNIQUE,
@@ -34,7 +35,7 @@ CREATE TABLE PhieuThanhToan (
 	ThanhTien INT,
 	TrangThaiThanhToan BIT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1)) , --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN
 	MaPhieuDangKy int NOT NULL,--f
-	NhanVienThucHien int NOT NULL,--f
+	NhanVienThucHien char(8) NOT NULL,--f
 );
 
 	CREATE TABLE HoaDonThanhToan(
@@ -65,7 +66,7 @@ CREATE TABLE BaiThi (
     SoBaoDanh CHAR(10),
     LichThi DATE,
     DangBaiThi VARCHAR(255),
-    ThoiGianNopBai TIME
+    ThoiGianNopBai DATETIME
 );
 
 
@@ -110,7 +111,7 @@ create table ChungChi(
 CREATE TABLE GacThi
 (
 	MaLichThi INT ,--f
-	MaNhanVienGac INT--f,
+	MaNhanVienGac char(8)--f,
 	CONSTRAINT PK_GacThi PRIMARY KEY(MaLichThi,MaNhanVienGac)
 )
 
@@ -120,16 +121,16 @@ CREATE TABLE LichThi
 	NgayThi DATE,
 	GioThi TIME,
 	SoLuongDangKy INT,
-	MaPhongThi INT--f
+	MaPhongThi INT,--f
+	LoaiChungChi INT--f
 )
 
 
 CREATE TABLE Users
 (
-    UserNName VARCHAR(30)Primary Key,
+    MaNhanVien char(8) Primary Key,
     PassWord VARCHAR(50),
-    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'nhaplieu')), -- Vai trò
-    MaNhanVien INT
+    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'nhaplieu'))-- Vai trò
 )
 
 CREATE TABLE PhieuDuThi(
@@ -174,7 +175,8 @@ ADD CONSTRAINT FK_GacThi_LichThi FOREIGN KEY (MaLichThi) REFERENCES LichThi(MaLi
 	CONSTRAINT FK_GacThi_NhanVien FOREIGN KEY (MaNhanVienGac) REFERENCES NhanVien(MaNhanVien)
 
 ALTER TABLE LichThi 
-ADD CONSTRAINT FK_LichThi_PhongThi FOREIGN KEY(MaPhongThi) REFERENCES PhongThi(MaPhongThi)
+ADD CONSTRAINT FK_LichThi_PhongThi FOREIGN KEY(MaPhongThi) REFERENCES PhongThi(MaPhongThi),
+	CONSTRAINT FK_LichThi_BangGiaThi FOREIGN KEY(LoaiChungChi) REFERENCES BangGiaThi(MaLoaiChungChi);
 
 ALTER TABLE PhieuDangKy 
 ADD CONSTRAINT FK_PhieuDangKy_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang),
