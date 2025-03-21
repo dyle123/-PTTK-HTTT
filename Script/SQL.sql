@@ -68,15 +68,6 @@ CREATE TABLE BaiThi (
     ThoiGianNopBai TIME
 );
 
-CREATE TABLE ChamThi (
-    MaChamThi INT IDENTITY(1,1) PRIMARY KEY,
-    MaBaiThi INT,--f
-    SoCau INT,
-    DapAnNop TEXT,
-    DapAnDung TEXT,
-    DiemPhanManh FLOAT,
-    MaNhanVien INT--f
-);
 
 CREATE TABLE ThiSinh
 (
@@ -94,8 +85,7 @@ Create table PhieuDangKy(
     NgayDangKy date,
     TrangThaiThanhToan nvarchar(20),
     ThoiGianMongMuonThi DATE,
-    MaKhachHang int,
-    CCCD char(12)
+    MaKhachHang int
 );
 
 
@@ -138,7 +128,7 @@ CREATE TABLE Users
 (
     UserNName VARCHAR(30)Primary Key,
     PassWord VARCHAR(50),
-    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'chamthi', 'nhaplieu')), -- Vai trò
+    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'nhaplieu')), -- Vai trò
     MaNhanVien INT
 )
 
@@ -178,9 +168,6 @@ ADD CONSTRAINT FK_KetQuaThi_BaiThi FOREIGN KEY (MaBaiThi) REFERENCES BaiThi(MaBa
 ALTER TABLE BaiThi 
 ADD CONSTRAINT FK_BaiThi_ThiSinh FOREIGN KEY (SoBaoDanh) REFERENCES PhieuDuThi(SoBaoDanh);
 
-ALTER TABLE ChamThi 
-ADD CONSTRAINT FK_ChamThi_BaiThi FOREIGN KEY (MaBaiThi) REFERENCES BaiThi(MaBaiThi),
-	CONSTRAINT FK_ChamThi_NhanVien FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien);
 
 ALTER TABLE GacThi 
 ADD CONSTRAINT FK_GacThi_LichThi FOREIGN KEY (MaLichThi) REFERENCES LichThi(MaLichThi),
@@ -191,7 +178,6 @@ ADD CONSTRAINT FK_LichThi_PhongThi FOREIGN KEY(MaPhongThi) REFERENCES PhongThi(M
 
 ALTER TABLE PhieuDangKy 
 ADD CONSTRAINT FK_PhieuDangKy_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang),
-	CONSTRAINT FK_PhieuDangKy_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD),
 	CONSTRAINT FK_PhieuDangKy_BangGiaThi FOREIGN KEY(LoaiChungChi) REFERENCES BangGiaThi(MaLoaiChungChi);
 
 ALTER TABLE ChiTietPhieuDangKy 

@@ -15,6 +15,7 @@ BEGIN
         RETURN;
     END;
 
+
 		DECLARE @SOLUONG INT
 		DECLARE @GIAMGIA INT
 		DECLARE @TAMTINH INT
@@ -54,12 +55,24 @@ GO
 
 
 CREATE OR ALTER PROC TaoHoaDon
-	@MaPhieuThanhToan int,
-	@TongTien INT,
+	@MaPhieuDangKy int,
 	@HinhThucThanhToan nvarchar(20),
 	@MaGiaoDich int = null
 AS
 BEGIN
+	DECLARE @NgayDangKy DATE
+	SET @NgayDangKy = (SELECT NgayDangKy FROM PhieuDangKy WHERE MaPhieuDangKy = @MaPhieuDangKy)
+	IF GETDATE() > DATEADD(DAY, 3, @NgayDangKy)
+	BEGIN 
+		RAISERROR (N'Quá hạn thanh toán cho phiếu đăng ký này', 16, 1);
+        RETURN;
+	END
+
+	DECLARE @MaPhieuThanhToan INT 
+	DECLARE @TongTien INT
+	SET @MaPhieuThanhToan = (SELECT MaPhieuThanhToan FROM PhieuThanhToan WHERE MaPhieuDangKy = @MaPhieuDangKy)
+	SET @TongTien = (SELECT ThanhTien FROM PhieuThanhToan WHERE MaPhieuDangKy = @MaPhieuDangKy)
+
 	IF NOT EXISTS (
 		SELECT 1 FROM PhieuThanhToan 
 		WHERE MaPhieuThanhToan = @MaPhieuThanhToan
