@@ -84,7 +84,7 @@ Create table PhieuDangKy(
     MaPhieuDangKy int IDENTITY(1,1) Primary Key,
     LoaiChungChi int ,
     NgayDangKy date,
-    TrangThaiThanhToan nvarchar(20),
+    TrangThaiThanhToan nvarchar(20) CHECK (TrangThaiThanhToan IN ('Đã thanh toán', 'Chưa thanh toán', 'Quá hạn')),
     ThoiGianMongMuonThi DATE,
     MaKhachHang int
 );
