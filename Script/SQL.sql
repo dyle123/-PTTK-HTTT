@@ -31,7 +31,7 @@ CREATE TABLE NhanVien(
 CREATE TABLE PhieuThanhToan (
 	MaPhieuThanhToan int IDENTITY(1,1) Primary Key,
 	TamTinh int,
-	PhanTramGiamGia INT,
+	PhanTramGiamGia INT CHECK (PhanTramGiamGia IN (0, 15, 20)),
 	ThanhTien INT,
 	TrangThaiThanhToan BIT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1)) , --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN
 	MaPhieuDangKy int NOT NULL,--f
@@ -93,7 +93,7 @@ Create table PhieuDangKy(
 create table ChiTietPhieuDangKy(
     MaPhieuDangKy int ,--f
     CCCD char(12) ,--f
-    SoLanGiaHan int,
+    SoLanGiaHan int CHECK (SoLanGiaHan <= 2),
 	CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
 );
 
