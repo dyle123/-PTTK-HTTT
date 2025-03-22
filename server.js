@@ -107,18 +107,18 @@ app.post('/login', async (req, res) => {
         }
         console.log("Vai trò từ database:", user.Role);
         // Lưu trạng thái người dùng vào session
-        req.session.user = { id: user.Username, role: user.Role };
+        req.session.user = { id: user.MaNhanVien, role: user.Role };
         // Chỉ lưu thông tin truy cập nếu role là 'khachhang'
-        // if (user.Role === 'ketoan') {
-        //     await pool.request()
-        //         .input('Username', sql.Char(10), user.Username)
-        //         .query(`
-        //             INSERT INTO ThongTinTruyCap (MaKhachHang, ThoiDiemTruyCap)
-        //             SELECT MaKhachHang, GETDATE()
-        //             FROM KhachHang
-        //             WHERE SoDienThoai = @Username
-        //         `);
-        // }
+        if (user.Role === 'ketoan') {
+            await pool.request()
+                .input('Username', sql.Char(10), user.MaNhanVien)
+                .query(`
+                    INSERT INTO ThongTinTruyCap (MaNhanVien, ThoiDiemTruyCap)
+                    SELECT MaNhanVien, GETDATE()
+                    FROM NhanVien
+                    WHERE MaNhanVien = @Username
+                `);
+        }
         res.json({ message: 'Đăng nhập thành công!', role: user.Role });
     } catch (err) {
         console.error('Loi:', err.message);
@@ -144,57 +144,46 @@ function authorizeRole(allowedRoles) {
     };
 }
 
-// API đăng xuất
-// app.post('/logout', async (req, res) => {
-//     if (!req.session.user) {
-//         return res.status(401).json({ error: 'Bạn chưa đăng nhập' });
-//     }
+//API đăng xuất
+app.post('/logout', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'Bạn chưa đăng nhập' });
+    }
 
-//     try {
-//              // Chỉ thực hiện nếu vai trò là 'khachhang'
-//         if (req.session.user.role === 'ketoan') {
-//             const pool = await sql.connect(config);
-//             const username = req.session.user.id; // Lấy số điện thoại từ session
-//             console.log("Username được sử dụng:", username);
-//             // Cập nhật LogoutTime và ThoiGianTruyCap
-//             // const result = await pool.request()
-//             //     .input('username', sql.VarChar, username)
-//             //     .query(`
-//             //         UPDATE ThongTinTruyCap
-//             //         SET ThoiGianTruyCap = DATEDIFF(SECOND, ThoiDiemTruyCap, GETDATE())
-//             //         WHERE MaKhachHang = (
-//             //             SELECT MaKhachHang
-//             //             FROM KhachHang
-//             //             WHERE SoDienThoai = @username
-//             //         ) AND ThoiGianTruyCap = 0
-//             //     `);
+    try {
+        // Đúng tên biến: 'id' thay vì 'Username'
+        const username = req.session.user.id;  
+        console.log("Username được sử dụng:", username);
 
-//             // if (result.rowsAffected[0] === 0) {
-//             //     return res.status(404).json({ error: 'Không tìm thấy phiên đăng nhập để cập nhật!' });
-//             // }   
-//         }
+        if (req.session.user.role === 'ketoan') {
+            const pool = await sql.connect(config);
+            const result = await pool.request()
+                .input('username', sql.VarChar, username)
+                .query(`
+                    UPDATE ThongTinTruyCap
+                    SET ThoiGianTruyCap = DATEDIFF(SECOND, ThoiDiemTruyCap, GETDATE())
+                    WHERE MaNhanVien = @username AND ThoiGianTruyCap = 0
+                `);
 
-//         // Xóa session
-//         req.session.destroy(err => {
-//             if (err) {
-//                 return res.status(500).json({ error: 'Đăng xuất thất bại' });
-//             }
-//             res.json({ message: 'Đăng xuất thành công!' });
-//         });
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).json({ error: 'Lỗi server' });
-//     }
-// });
-// API đăng xuất
-app.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ error: 'Đăng xuất thất bại' });
+            if (result.rowsAffected[0] === 0) {
+                return res.status(404).json({ error: 'Không tìm thấy phiên đăng nhập để cập nhật!' });
+            }   
         }
-        res.json({ message: 'Đăng xuất thành công' });
-    });
+
+        // Xóa session
+        req.session.destroy(err => {
+            if (err) {
+                return res.status(500).json({ error: 'Đăng xuất thất bại' });
+            }
+            res.json({ message: 'Đăng xuất thành công!' });
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
 });
+
+
 
 app.get('/api/getCurrentUser', (req, res) => {
     if (!req.session.user) {

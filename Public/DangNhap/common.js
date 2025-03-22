@@ -22,7 +22,6 @@ async function initializeButtons() {
             // Nếu chưa đăng nhập
             document.getElementById('login').style.display = 'block';
             document.getElementById('logout').style.display = 'none';
-            document.getElementById('registerButton').style.display = 'block'; // Hiển thị nút Đăng Ký Thành Viên
         }
     } catch (err) {
         console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', err);
@@ -56,7 +55,7 @@ async function handleLogout(event) {
 // Khởi tạo các sự kiện
 function initializeEvents() {
     // Gắn sự kiện cho nút Logout
-    const logoutLink = document.getElementById('logoutLink');
+    const logoutLink = document.getElementById('logout');
     if (logoutLink) {
         logoutLink.addEventListener('click', handleLogout);
     }
@@ -64,83 +63,6 @@ function initializeEvents() {
     // Kiểm tra trạng thái đăng nhập và hiển thị nút phù hợp
     initializeButtons();
 }
-
-
-function openModal() {
-    document.getElementById('membershipModal').style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('membershipModal').style.display = 'none';
-}
-
-// Đóng modal khi người dùng nhấn ngoài modal
-window.onclick = function (event) {
-    const modal = document.getElementById('membershipModal');
-    if (event.target === modal) {
-        closeModal();
-    }
-};
-
-function fetchAndShowCustomerInfo() {
-    const customerId = localStorage.getItem('username');
-    if (!customerId) {
-        alert('Bạn chưa đăng nhập. Vui lòng đăng nhập!');
-        window.location.href = 'Login.html';
-        return;
-    }
-
-    fetch(`/api/customer-info?customerId=${customerId}`)
-        .then(response => response.json())
-        .then(customer => {
-            if (customer.error) {
-                alert(`Lỗi: ${customer.error}`);
-                return;
-            }
-            // Cập nhật nội dung modal
-            document.getElementById('modalCustomerName').textContent = customer.HoTen || 'Không xác định';
-            document.getElementById('modalCustomerEmail').textContent = customer.Email || 'Không xác định';
-            document.getElementById('modalCustomerPhone').textContent = customer.SoDienThoai || 'Không xác định';
-            document.getElementById('modalCustomerPoints').textContent = customer.TongDiem || 0;
-
-            // Hiển thị modal
-            document.getElementById('customerInfoModal').style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Lỗi khi lấy thông tin khách hàng:', error);
-            alert('Không thể tải thông tin khách hàng. Vui lòng thử lại sau.');
-        });
-}
-
-function closeCustomerInfoModal() {
-    document.getElementById('customerInfoModal').style.display = 'none';
-}
-
-
-function openLoginModal() {
-    document.getElementById('loginModal').style.display = 'block';
-}
-
-// Đóng Modal yêu cầu đăng nhập
-function closeLoginModal() {
-    document.getElementById('loginModal').style.display = 'none'; 
-}
-
-// Lắng nghe sự kiện click vào "Đặt hàng" và "Đặt trước"
-document.getElementById('orderOnlineButton').addEventListener('click', function (event) {
-    event.preventDefault();
-    checkLoginStatus('orderOnline');
-});
-
-document.getElementById('reservationButton').addEventListener('click', function (event) {
-    event.preventDefault();
-    checkLoginStatus('reservation');
-});
-
-document.getElementById('listOrder').addEventListener('click', function (event) {
-    event.preventDefault();
-    checkLoginStatus('listOrder');
-});
 
 // Kiểm tra trạng thái đăng nhập và mở modal nếu chưa đăng nhập
 async function checkLoginStatus(action) {
@@ -158,7 +80,7 @@ async function checkLoginStatus(action) {
                 window.location.href = '/KhachHang/Order/DonHang.html';
         } else {
             // Nếu chưa đăng nhập, mở modal yêu cầu đăng nhập
-            openLoginModal();
+            alert('May chua dang nhap')
         }
     } catch (err) {
         console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', err);

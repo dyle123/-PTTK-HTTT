@@ -8,7 +8,14 @@ CREATE DATABASE PTTK
 GO
 
 USE PTTK
- GO
+GO
+insert into NhanVien(MaNhanVien,HoTen,NgaySinh,SoDienThoai,Luong,BoPhan)
+values ('NV000012', N'Le Vy', '2004-12-23', '0973488548', '2000000', 'ketoan')
+ insert into Users(MaNhanVien, PassWord, Role)
+values ('NV000012', '123','ketoan');
+
+
+
 
 CREATE TABLE KhachHang(
 	MaKhachHang int IDENTITY(1,1) Primary Key,
@@ -31,7 +38,7 @@ CREATE TABLE NhanVien(
 CREATE TABLE PhieuThanhToan (
 	MaPhieuThanhToan int IDENTITY(1,1) Primary Key,
 	TamTinh int,
-	PhanTramGiamGia INT CHECK (PhanTramGiamGia IN (0, 15, 20)),
+	PhanTramGiamGia INT,
 	ThanhTien INT,
 	TrangThaiThanhToan BIT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1)) , --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN
 	MaPhieuDangKy int NOT NULL,--f
@@ -84,7 +91,7 @@ Create table PhieuDangKy(
     MaPhieuDangKy int IDENTITY(1,1) Primary Key,
     LoaiChungChi int ,
     NgayDangKy date,
-    TrangThaiThanhToan nvarchar(20) CHECK (TrangThaiThanhToan IN ('Đã thanh toán', 'Chưa thanh toán', 'Quá hạn')),
+    TrangThaiThanhToan nvarchar(20),
     ThoiGianMongMuonThi DATE,
     MaKhachHang int
 );
@@ -93,7 +100,7 @@ Create table PhieuDangKy(
 create table ChiTietPhieuDangKy(
     MaPhieuDangKy int ,--f
     CCCD char(12) ,--f
-    SoLanGiaHan int CHECK (SoLanGiaHan <= 2),
+    SoLanGiaHan int,
 	CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
 );
 
@@ -147,8 +154,13 @@ CREATE TABLE BangGiaThi
 	TenChungChi nvarchar(50),
 	LePhiThi int
 )
---insert into Users(UserNName, PassWord, Role)
---values ('yenvy123', '1928374650Vy','ketoan');
+
+CREATE TABLE ThongTinTruyCap (
+	MaNhanVien char(8) NOT NULL, --Khóa ngoại liên kết đến 'KhachHang'
+	SessionID INT PRIMARY KEY IDENTITY(1,1),-- Phiên đăng nhập của khách hàng
+	ThoiGianTruyCap INT DEFAULT 0, -- Thời lượng khách hàng thao tác với website
+	ThoiDiemTruyCap DATETIME DEFAULT GETDATE() NOT NULL, -- Thời điểm khách hàng truy cập vào website
+);
 
 
 -- Khóa ngoại ở đây
@@ -193,6 +205,9 @@ ADD CONSTRAINT FK_ChungChi_ThiSinh FOREIGN KEY (CCCD) REFERENCES ThiSinh(CCCD),
 ALTER TABLE PhieuDuThi
 ADD CONSTRAINT FK_PhieuDuThi_ThiSinh FOREIGN KEY(CCCD) REFERENCES ThiSinh(CCCD),
 	CONSTRAINT FK_PhieuDuThi_LichThi FOREIGN KEY(LichThi) REFERENCES LichThi(MaLichThi);
+
+ALTER TABLE ThongTinTruyCap
+ADD CONSTRAINT FK_ThongTinTruyCap_KhachHang FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien);
 
 
 

@@ -37,37 +37,71 @@
         <img src="/Image/image3.jpg" alt="Hình ảnh 3">
     </div>
     <script>
-        function loadNavbar() {
-            fetch("/DangNhap/Navbar.html")
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("navbar-container").innerHTML = data;
+        // document.addEventListener('DOMContentLoaded', () => {
+        //         initializeEvents(); // Gọi hàm để gắn sự kiện
+        //     });
+        // function loadNavbar() {
+        //     fetch("/DangNhap/Navbar.html")
+        //         .then(response => response.text())
+        //         .then(data => {
+        //             document.getElementById("navbar-container").innerHTML = data;
 
-                    // Chạy lại script kiểm tra trạng thái đăng nhập
-                    checkLoginStatus();
-                })
-                .catch(error => console.error("Lỗi khi tải Navbar:", error));
-        }
+        //             // Chạy lại script kiểm tra trạng thái đăng nhập
+        //             checkLoginStatus();
+        //         })
+        //         .catch(error => console.error("Lỗi khi tải Navbar:", error));
+        // }
 
-        document.addEventListener("DOMContentLoaded", loadNavbar);
+        // document.addEventListener("DOMContentLoaded", loadNavbar);
 
-        async function checkLoginStatus() {
-            try {
-                const response = await fetch('/check-login', { method: 'GET' });
-                const data = await response.json();
-                    if (response.ok && data.loggedIn) {
-                        document.getElementById('login').style.display = 'none';
-                        document.getElementById('logout').style.display = 'block';
-                        console.log('Da dang nhap');
-                    } else {
-                        document.getElementById('login').style.display = 'block';
-                        document.getElementById('logout').style.display = 'none';
-                        console.log('Chua dang nhap');
-                    }
-            } catch (error) {                      
-                  console.error('Lỗi kiểm tra đăng nhập:', error);
-                    }
-         }
+        // async function checkLoginStatus() {
+        //     try {
+        //         const response = await fetch('/check-login', { method: 'GET' });
+        //         const data = await response.json();
+        //             if (response.ok && data.loggedIn) {
+        //                 document.getElementById('login').style.display = 'none';
+        //                 document.getElementById('logout').style.display = 'block';
+        //                 console.log('Da dang nhap');
+        //             } else {
+        //                 document.getElementById('login').style.display = 'block';
+        //                 document.getElementById('logout').style.display = 'none';
+        //                 console.log('Chua dang nhap');
+        //             }
+        //     } catch (error) {                      
+        //           console.error('Lỗi kiểm tra đăng nhập:', error);
+        //             }
+        //  }
+
+        //  function setupLogoutEvent() {
+        //     const logoutBtn = document.getElementById("logout");
+        //     if (logoutBtn) {
+        //         logoutBtn.addEventListener("click", async function () {
+        //             try {
+        //                 const response = await fetch('/logout', { method: 'POST' });
+
+        //                 if (response.ok) {
+        //                     alert('Bạn đã đăng xuất thành công!');
+                            
+        //                     // Reset giao diện
+        //                     document.getElementById('login').style.display = 'block';
+        //                     document.getElementById('logout').style.display = 'none';
+
+        //                     // Chuyển hướng về trang đăng nhập
+        //                     window.location.href = '/DangNhap/DangNhap.html';
+        //                 } else {
+        //                     console.error("Lỗi khi đăng xuất");
+        //                 }
+        //             } catch (error) {
+        //                 console.error('Lỗi đăng xuất:', error);
+        //             }
+        //         });
+        //     } else {
+        //         console.error("Không tìm thấy phần tử có id='logout'");
+        //     }
+        // } 
+        
     </script>
+    <script src="/DangNhap/common.js"></script>
+    <script src="/DangNhap/Navbar.js"></script>
 </body>
 </html>
