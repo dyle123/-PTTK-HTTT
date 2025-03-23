@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách phiếu đăng ký</title>
+    <link rel="stylesheet" href="/CSS/ThanhToan.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <h1>Danh sách phiếu đăng ký</h1>
+
+    <!-- Bộ lọc -->
+    <div class="filter-container">
+        <label><input type="radio" name="filter" id="filter-all" checked> Tất cả</label>
+        <label><input type="radio" name="filter" value="chuathanhtoan" id="filter-chua-thanh-toan"> Chưa thanh toán</label>
+        <label><input type="radio" name="filter" value="dathanhtoan" id="filter-da-thanh-toan"> Đã thanh toán</label>
+        <input type="text" id="search-box" placeholder="Tìm theo mã phiếu">
+        <button id="search-btn">🔍</button>
+    </div>
+
+    <!-- Bảng danh sách phiếu đăng ký -->
+    <table>
+        <thead>
+            <tr>
+                <th>Mã phiếu</th>
+                <th>Loại chứng chỉ</th>
+                <th>Ngày đăng ký</th>
+                <th>Thời gian thi đăng ký</th>
+                <th>Mã khách hàng</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+        </tbody>
+    </table>
+</body>
+<!-- <script src="/DangNhap/common.js"></script> -->
+<script src="/DangNhap/Navbar.js"></script>
+<script src="/ThanhToan/ThanhToan.js"></script>
+</html>

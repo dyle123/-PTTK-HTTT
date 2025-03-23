@@ -192,3 +192,37 @@ app.get('/api/getCurrentUser', (req, res) => {
     console.log('Thông tin người dùng trong session:', req.session.user);
     res.json({ user: req.session.user });
 });
+
+app.get('/api/getPhieuDangKy', async (req, res) => {
+    const { dieuKien, maPhieu } = req.query; // Lấy từ query string
+    
+    try {
+        const pool = await sql.connect(config);
+        let query = `SELECT * FROM PhieuDangKy `;
+        let conditions = [];
+        console.log('DieuKien', dieuKien);
+        if (dieuKien === "chuathanhtoan" ) {
+            conditions.push(`TrangThaiThanhToan = 'ChuaThanhToan'`);
+        } else if (dieuKien === "dathanhtoan") {
+            conditions.push(`TrangThaiThanhToan = 'DaThanhToan'`);
+        }
+
+        if (maPhieu) {
+            conditions.push(`MaPhieuDangKy = @MaPhieu`);
+        }
+
+        if (conditions.length > 0) {
+            query += ` WHERE ` + conditions.join(" AND ");
+        }
+
+        const result = await pool.request()
+            .input('MaPhieu', sql.Int, maPhieu)
+            .query(query);
+        
+        res.json(result.recordset);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Lỗi khi lấy phiếu đăng ký' });
+    }
+});
+
