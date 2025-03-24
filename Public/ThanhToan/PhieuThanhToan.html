@@ -21,6 +21,7 @@
                 <th>Phần trăm giảm</th>
                 <th>Thành tiền</th>
                 <th>Trạng thái</th>
+                <th>Nhân viên thực hiện</th>
                 <th>Thao tác</th>
             </tr>
         </thead>
@@ -28,6 +29,25 @@
             <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
         </tbody>
     </table>
+    <div id="modal-thanh-toan" class="modal">
+        <div class="modal-content">
+            <h3>✔ Xác nhận đã thanh toán</h3>
+            <p>Nhân viên kế toán thực hiện chịu trách nhiệm cho thao tác xác nhận thanh toán.</p>
+    
+            <label>Hình thức thanh toán:</label>
+            <div>
+                <input type="radio" id="radio-tien-mat" name="hinh-thuc-thanh-toan" value="TienMat">
+                <label for="radio-tien-mat">Tiền mặt</label>
+    
+                <input type="radio" id="radio-chuyen-khoan" name="hinh-thuc-thanh-toan" value="ChuyenKhoan">
+                <label for="radio-chuyen-khoan">Chuyển khoản</label>
+                <input type="text" id="ma-giao-dich" placeholder="Mã giao dịch" disabled>
+            </div>
+    
+            <button id="xac-nhan-thanh-toan">Xác nhận</button>
+            <button id="huy-modal">Hủy</button>
+        </div>
+    </div>
 </body>
 <!-- <script src="/DangNhap/common.js"></script> -->
 <script src="/DangNhap/Navbar.js"></script>

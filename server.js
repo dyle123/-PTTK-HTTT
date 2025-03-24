@@ -276,3 +276,53 @@ app.post('/api/postPhieuThanhToan', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+
+app.post('/api/postThanhToan', async (req,res)=>{
+    const{MaPhieuThanhToan,HinhThucThanhToan, MaGiaoDich} = req.body;
+    try{
+        console.log('Ma phieu nhan vao: ', MaPhieuThanhToan);
+        const pool = await sql.connect(config);
+        await pool.request()
+            .input('MaPhieuThanhToan', sql.Int,MaPhieuThanhToan)
+            .input('HinhThucThanhToan', sql.Nvarchar, HinhThucThanhToan )
+            .input('MaGiaoDich', sql.Int, MaGiaoDich)
+            .execute('TaoHoaDon');
+
+        res.json({ message: 'Tạo hóa đơn thành công' });
+    
+    }catch (err) {
+        console.error('Lỗi server:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/getLoaiKhachHang', async (req, res) => {
+    try {
+        const { maPhieu } = req.query; // Sử dụng query thay vì body
+
+        if (!maPhieu) {
+            return res.status(400).json({ error: "Thiếu mã phiếu thanh toán" });
+        }
+
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuThanhToan', sql.VarChar, maPhieu)
+            .query(`
+                SELECT LoaiKhachHang 
+                FROM KhachHang K 
+                JOIN PhieuDangKy P ON K.MaKhachHang = P.MaKhachHang
+                JOIN PhieuThanhToan T ON T.MaPhieuDangKy = P.MaPhieuDangKy
+                WHERE T.MaPhieuThanhToan = @MaPhieuThanhToan
+            `);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy loại khách hàng" });
+        }
+
+        res.json({ loaiKhachHang: result.recordset[0].LoaiKhachHang });
+    } catch (err) {
+        console.error('Không lấy được loại khách hàng:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
