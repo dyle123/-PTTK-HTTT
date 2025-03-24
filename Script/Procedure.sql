@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER PROC TaoPhieuThanhToan
 	@MaPhieuDangKy int,
-	@NhanVienThucHien int
+	@NhanVienThucHien char(8)
 AS
 BEGIN 
 	IF NOT EXISTS (

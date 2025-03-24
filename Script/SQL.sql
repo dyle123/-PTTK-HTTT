@@ -14,6 +14,15 @@ values ('NV000012', N'Le Vy', '2004-12-23', '0973488548', '2000000', 'ketoan')
  insert into Users(MaNhanVien, PassWord, Role)
 values ('NV000012', '123','ketoan');
 
+insert into PhieuDangKy(NgayDangKy,TrangThaiThanhToan)
+values ('2025-03-22', 'ChuaThanhToan'),
+ ('2025-03-22', 'DaThanhToan')
+
+ select* from PhieuDangKy where MaPhieuDangKy = 2
+
+
+
+
 
 
 
@@ -71,7 +80,6 @@ CREATE TABLE PhongThi (
 CREATE TABLE BaiThi (
     MaBaiThi INT IDENTITY(1,1) PRIMARY KEY,
     SoBaoDanh CHAR(10),
-    LichThi DATE,
     DangBaiThi VARCHAR(255),
     ThoiGianNopBai DATETIME
 );
@@ -91,10 +99,12 @@ Create table PhieuDangKy(
     MaPhieuDangKy int IDENTITY(1,1) Primary Key,
     LoaiChungChi int ,
     NgayDangKy date,
-    TrangThaiThanhToan nvarchar(20),
+    TrangThaiThanhToan nvarchar(20) DEFAULT 'ChuaThanhToan' CHECK( TrangThaiThanhToan IN ('ChuaThanhToan', 'DaThanhToan')) ,
     ThoiGianMongMuonThi DATE,
     MaKhachHang int
 );
+
+
 
 
 create table ChiTietPhieuDangKy(

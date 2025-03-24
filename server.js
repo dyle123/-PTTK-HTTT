@@ -226,3 +226,53 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
     }
 });
 
+
+app.get('/api/getPhieuThanhToan', async (req, res) => {
+    const { maPhieuDangKy } = req.query;
+    console.log("maPhieuDangKy nhận được:", maPhieuDangKy); // Debugging
+
+    if (!maPhieuDangKy) {
+        return res.status(400).json({ error: "Thiếu mã phiếu đăng ký" });
+    }
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.VarChar, maPhieuDangKy)
+            .query(`SELECT * FROM PhieuThanhToan WHERE MaPhieuDangKy = @MaPhieuDangKy`);
+
+        console.log("Dữ liệu từ SQL Server:", result.recordset);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy phiếu thanh toán" });
+        }
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error('Lỗi server:', err.message);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+app.post('/api/postPhieuThanhToan', async (req, res) => {
+    try {
+        const { maPhieuDangKy, nhanVienThucHien } = req.body;
+
+        console.log("maPhieuDangKy nhận được:", maPhieuDangKy); // Debugging
+
+        if (!maPhieuDangKy || !nhanVienThucHien) {
+            return res.status(400).json({ error: "Thiếu dữ liệu đầu vào" });
+        }
+
+        const pool = await sql.connect(config);
+        await pool.request()
+            .input('MaPhieuDangKy', sql.Int, parseInt(maPhieuDangKy)) // Ép kiểu số nguyên
+            .input('NhanVienThucHien', sql.Char(8), nhanVienThucHien)
+            .execute('TaoPhieuThanhToan');
+
+        res.json({ message: 'Thêm phiếu thanh toán thành công' });
+    } catch (err) {
+        console.error('Lỗi server:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
