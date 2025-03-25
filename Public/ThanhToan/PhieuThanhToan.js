@@ -36,6 +36,33 @@ document.addEventListener("DOMContentLoaded", async function () {
             </html>
         `);
         printWindow.document.close();
+        
+    }
+
+    // Hàm gọi API tạo phiếu thanh toán
+    async function createPaymentReceipt(maPhieuDangKy) {
+        try {
+            const responseSession = await fetch("http://localhost:3000/api/getCurrentUser"); 
+            const sessionData = await responseSession.json();
+            const nvThucHien = sessionData.user.id; // Giả sử backend trả về mã nhân viên
+            console.log('Ma nv nhan ve', nvThucHien);
+
+            const response = await fetch("http://localhost:3000/api/postPhieuThanhToan", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    maPhieuDangKy: maPhieuDangKy,
+                    nhanVienThucHien: nvThucHien
+                })
+            });
+
+            const result = await response.json();
+            console.log("Kết quả tạo phiếu thanh toán:", result);
+            return result;
+        } catch (error) {
+            console.error("Lỗi khi tạo phiếu thanh toán:", error);
+            return null;
+        }
     }
 
     // Hàm fetch dữ liệu phiếu thanh toán
@@ -45,6 +72,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             let params = new URLSearchParams();
             if (maPhieuDangKy) params.append("maPhieuDangKy", maPhieuDangKy);
             url.search = params.toString();
+            console.log("Gửi request đến API:", url.toString());
 
             const response = await fetch(url);
             const data = await response.json();
@@ -102,7 +130,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Lấy mã phiếu từ URL
     const urlParams = new URLSearchParams(window.location.search);
     const maPhieuDangKy = urlParams.get("maPhieuDangKy");
-    fetchData(maPhieuDangKy);
+
+    if (maPhieuDangKy) {
+        console.log("Bắt đầu tạo phiếu thanh toán...");
+
+        // Gọi API post trước, sau đó mới fetch dữ liệu
+        const postResult = await createPaymentReceipt(maPhieuDangKy);
+        if (postResult) {
+            console.log("Tạo phiếu thành công, bắt đầu lấy dữ liệu...");
+            fetchData(maPhieuDangKy);
+        } else {
+            console.error("Tạo phiếu thất bại, không thể lấy dữ liệu.");
+        }
+    }
 
 
     async function moModalThanhToan(maPhieu, loaiKhachHang) {
@@ -118,13 +158,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         maGiaoDich.disabled = true;
     
         // Kiểm tra loại khách hàng
-        if (loaiKhachHang === "KhachHangTuDo") {
+        if (loaiKhachHang === "Đơn vị") {
             radioTienMat.checked = true;
             radioChuyenKhoan.disabled = true;
             maGiaoDich.disabled = true;
         } else {
             radioTienMat.disabled = false;
-            radioChuyenKhoan.disabled = false;
+            radioChuyenKhoan.disabled = true;
+            maGiaoDich.disabled = true;
         }
     
         // Sự kiện bật/tắt mã giao dịch khi chọn chuyển khoản
@@ -151,19 +192,24 @@ document.addEventListener("DOMContentLoaded", async function () {
             return "KhachHangTuDo"; // Mặc định là khách hàng tự do nếu lỗi
         }
     }
+    
+
     document.addEventListener("click", async function (event) {
+        console.log("Sự kiện click xảy ra trên:", event.target);
+    
         if (event.target.classList.contains("thanh-toan")) {
-            const maPhieu = event.target.dataset.maPhieu; // Lấy mã phiếu từ button
+            const maPhieu = event.target.dataset.maPhieu; 
             const loaiKhachHang = await fetchLoaiKhachHang(maPhieu);
             moModalThanhToan(maPhieu, loaiKhachHang);
         }
     });
 
     document.getElementById("xac-nhan-thanh-toan").addEventListener("click", async function () {
+        console.log("Nút xác nhận thanh toán được nhấn!", ); // Kiểm tra xem có chạy không
         const maPhieu = document.querySelector(".thanh-toan").dataset.maPhieu;
         const hinhThuc = document.querySelector('input[name="hinh-thuc-thanh-toan"]:checked').value;
         const maGiaoDich = document.getElementById("ma-giao-dich").value;
-    
+
         if (hinhThuc === "ChuyenKhoan" && maGiaoDich.trim() === "") {
             alert("Vui lòng nhập mã giao dịch!");
             return;

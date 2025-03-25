@@ -1,6 +1,7 @@
 ﻿USE PTTK
 GO
 
+
 CREATE OR ALTER PROC TaoPhieuThanhToan
 	@MaPhieuDangKy int,
 	@NhanVienThucHien char(8)
@@ -24,20 +25,31 @@ BEGIN
 		DECLARE @GIAMGIA INT
 		DECLARE @TAMTINH INT
 		DECLARE @THANHTIEN INT
+		DECLARE @LOAIKHACHHANG NVARCHAR(20)
 
 		SET @SOLUONG = (
 		SELECT COUNT(*) FROM ChiTietPhieuDangKy C
 		JOIN PhieuDangKy P ON P.MaPhieuDangKy = C.MaPhieuDangKy
 		JOIN KhachHang K ON K.MaKhachHang = P.MaKhachHang
-		WHERE K.LoaiKhachHang = N'đơn vị' AND P.MaPhieuDangKy = @MaPhieuDangKy) 
+		WHERE P.MaPhieuDangKy = @MaPhieuDangKy) 
 
-		IF @SOLUONG BETWEEN 1 AND 20
-		BEGIN
-			SET @GIAMGIA = 10;
-		END
-		ELSE IF @SOLUONG >= 20
-		BEGIN
-			SET @GIAMGIA = 15;
+		SET @LOAIKHACHHANG = (
+		SELECT K.LoaiKhachHang FROM KhachHang K
+		JOIN PhieuDangKy P ON K.MaKhachHang = P.MaKhachHang  
+		WHERE P.MaPhieuDangKy = @MaPhieuDangKy
+		)
+
+		
+		IF @LOAIKHACHHANG = N'Đơn vị'
+		BEGIN 
+			IF @SOLUONG BETWEEN 1 AND 20
+			BEGIN
+				SET @GIAMGIA = 10;
+			END
+			ELSE IF @SOLUONG >= 20
+			BEGIN
+				SET @GIAMGIA = 15;
+			END
 		END
 		ELSE 
 		BEGIN
@@ -50,7 +62,7 @@ BEGIN
 			WHERE P.MaPhieuDangKy = @MaPhieuDangKy
 		);
 
-		SET @THANHTIEN = @TAMTINH - ((10*@TAMTINH)*100);
+		SET @THANHTIEN = @TAMTINH - ((@GIAMGIA*@TAMTINH)/100);
 		INSERT INTO PhieuThanhToan(MaPhieuDangKy, TamTinh, PhanTramGiamGia, ThanhTien,TrangThaiThanhToan, NhanVienThucHien )
 		VALUES (@MaPhieuDangKy, @TAMTINH, @GIAMGIA,@THANHTIEN,0,@NhanVienThucHien);
 	END		
@@ -60,8 +72,8 @@ GO
 
 CREATE OR ALTER PROC TaoHoaDon
 	@MaPhieuThanhToan int,
-	@HinhThucThanhToan nvarchar(20),
-	@MaGiaoDich int = null
+	@HinhThucThanhToan nvarchar(20) = null,
+	@MaGiaoDich varchar(30) = null
 AS
 BEGIN
 	DECLARE @MaPhieuDangKy int
@@ -102,4 +114,147 @@ BEGIN
 
 END
 GO
+
+
+
+CREATE OR ALTER PROCEDURE KIEMTRAKHACHHANG
+	@TenKhachHang NVARCHAR(50),
+    @Email NVARCHAR(100),  
+	@SoDienThoai CHAR(10),
+	@DiaChi NVARCHAR(255) ,
+	@LoaiKhachHang NVARCHAR(20),
+	@MaKhachHang INT OUTPUT
+AS
+BEGIN
+    BEGIN TRY
+        -- Kiểm tra xem có khách hàng nào khác tên nhưng dùng cùng số điện thoại hay không
+        IF EXISTS (SELECT 1 FROM KhachHang WHERE SoDienThoai = @SoDienThoai AND TenKhachHang <> @TenKhachHang)
+        BEGIN
+            RAISERROR (N'Số điện thoại đã được đăng ký cho một khách hàng khác tên', 16, 1);
+            RETURN;
+        END
+
+        -- Kiểm tra xem khách hàng đã tồn tại với cùng loại đăng ký chưa
+        IF EXISTS (SELECT 1 FROM KhachHang WHERE SoDienThoai = @SoDienThoai AND TenKhachHang = @TenKhachHang AND LoaiKhachHang = @LoaiKhachHang)
+        BEGIN
+            -- Nếu tồn tại, lấy mã khách hàng hiện có
+            SELECT @MaKhachHang = MaKhachHang FROM KhachHang 
+            WHERE SoDienThoai = @SoDienThoai AND TenKhachHang = @TenKhachHang AND LoaiKhachHang = @LoaiKhachHang;
+        END
+        ELSE
+        BEGIN
+            -- Nếu chưa tồn tại, thêm mới khách hàng
+            BEGIN TRANSACTION;
+
+            INSERT INTO KhachHang (TenKhachHang, SoDienThoai, Email, DiaChi, LoaiKhachHang)
+            VALUES (@TenKhachHang, @SoDienThoai, @Email, @DiaChi, @LoaiKhachHang);
+
+            SET @MaKhachHang = SCOPE_IDENTITY();
+
+            COMMIT TRANSACTION;
+        END
+    END TRY
+    BEGIN CATCH
+        -- Nếu có lỗi, rollback transaction để tránh dữ liệu bị lỗi
+        IF @@TRANCOUNT > 0 
+            ROLLBACK TRANSACTION;
+
+        -- Hiển thị lỗi cụ thể
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+GO
+CREATE OR ALTER PROCEDURE KIEMTRATHISINH 
+    @TenTS NVARCHAR(50),
+    @CCCDTS CHAR(12),
+    @NgaySinh DATE, 
+    @EmailTS NVARCHAR(100),  
+    @SoDienThoaiTS CHAR(10),
+    @DiaChiTS NVARCHAR(255) 
+AS
+BEGIN
+    DECLARE @HoVaTen NVARCHAR(50), @NgaySinhDB DATE;
+
+    SELECT @HoVaTen = HoVaTen, @NgaySinhDB = NgaySinh
+    FROM ThiSinh
+    WHERE CCCD = @CCCDTS;
+
+    IF @HoVaTen IS NOT NULL 
+    BEGIN 
+        IF @HoVaTen <> @TenTS OR @NgaySinhDB <> @NgaySinh
+        BEGIN 
+            RAISERROR (N'Thí sinh đã đăng ký thi trước đó nhưng thông tin tiên quyết không khớp', 16, 1);
+            RETURN;
+        END
+
+        -- Cập nhật thông tin liên hệ nếu khác nhau
+        UPDATE ThiSinh
+        SET Email = @EmailTS, SoDienThoai = @SoDienThoaiTS, DiaChi = @DiaChiTS
+        WHERE CCCD = @CCCDTS 
+        AND (ISNULL(Email, '') <> ISNULL(@EmailTS, '') 
+        OR ISNULL(SoDienThoai, '') <> ISNULL(@SoDienThoaiTS, '') 
+        OR ISNULL(DiaChi, '') <> ISNULL(@DiaChiTS, ''));
+    END
+    ELSE
+    BEGIN
+        INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+        VALUES (@CCCDTS, @TenTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS);
+    END
+END;
+GO
+
+
+CREATE OR ALTER PROCEDURE DANGKYTUDO
+    @TenKH NVARCHAR(50),
+    @EmailKH NVARCHAR(100),  
+    @SoDienThoaiKH CHAR(10),
+    @DiaChiKH NVARCHAR(255),
+    @LoaiKhachHang NVARCHAR(20),
+    @LoaiChungChi INT,
+    @ThoiGianThi DATE,
+    @TenTS NVARCHAR(50),
+    @CCCDTS CHAR(12),
+    @NgaySinh DATE, 
+    @EmailTS NVARCHAR(100),  
+    @SoDienThoaiTS CHAR(10),
+    @DiaChiTS NVARCHAR(255) 
+AS
+BEGIN
+    DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
+
+    -- Kiểm tra hoặc tạo khách hàng
+    EXEC KIEMTRAKHACHHANG @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, @MaKhachHang OUTPUT;
+
+    -- Kiểm tra nếu không có khách hàng thì báo lỗi
+    IF @MaKhachHang IS NULL 
+    BEGIN 
+        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo khách hàng!', 16, 1);
+        RETURN;
+    END;
+
+    -- Tạo phiếu đăng ký
+    INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+    VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
+
+    -- Lấy ID mới của phiếu đăng ký
+    SET @MaPhieuDangKy = SCOPE_IDENTITY();
+
+    -- Kiểm tra hoặc tạo thí sinh
+    EXEC KIEMTRATHISINH @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
+
+    -- Kiểm tra nếu có lỗi từ `KIEMTRATHISINH`
+    IF @@ERROR <> 0 
+    BEGIN 
+        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
+        RETURN;
+    END;
+
+    -- Thêm vào bảng ChiTietPhieuDangKy
+    INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
+    VALUES (@MaPhieuDangKy, @CCCDTS);
+END;
+GO
+
+
 

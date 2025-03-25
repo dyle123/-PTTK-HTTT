@@ -109,7 +109,7 @@ app.post('/login', async (req, res) => {
         // Lưu trạng thái người dùng vào session
         req.session.user = { id: user.MaNhanVien, role: user.Role };
         // Chỉ lưu thông tin truy cập nếu role là 'khachhang'
-        if (user.Role === 'ketoan') {
+        if (user.Role === 'ketoan'|| user.Role === 'tiepnhan') {
             await pool.request()
                 .input('Username', sql.Char(10), user.MaNhanVien)
                 .query(`
@@ -155,7 +155,7 @@ app.post('/logout', async (req, res) => {
         const username = req.session.user.id;  
         console.log("Username được sử dụng:", username);
 
-        if (req.session.user.role === 'ketoan') {
+        if (req.session.user.role === 'ketoan' || req.session.user.role === 'tiepnhan' ) {
             const pool = await sql.connect(config);
             const result = await pool.request()
                 .input('username', sql.VarChar, username)
@@ -200,13 +200,17 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
         const pool = await sql.connect(config);
         let query = `SELECT * FROM PhieuDangKy `;
         let conditions = [];
-        console.log('DieuKien', dieuKien);
-        if (dieuKien === "chuathanhtoan" ) {
-            conditions.push(`TrangThaiThanhToan = 'ChuaThanhToan'`);
+
+        console.log('DieuKien:', dieuKien);
+
+        // Điều kiện lọc theo trạng thái thanh toán
+        if (dieuKien === "chuathanhtoan") {
+            conditions.push(`TrangThaiThanhToan = 0`);
         } else if (dieuKien === "dathanhtoan") {
-            conditions.push(`TrangThaiThanhToan = 'DaThanhToan'`);
+            conditions.push(`TrangThaiThanhToan = 1`);
         }
 
+        // Điều kiện lọc theo mã phiếu đăng ký
         if (maPhieu) {
             conditions.push(`MaPhieuDangKy = @MaPhieu`);
         }
@@ -219,12 +223,26 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
             .input('MaPhieu', sql.Int, maPhieu)
             .query(query);
         
-        res.json(result.recordset);
+        // ✅ Format lại ngày
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            return new Date(dateString).toISOString().split('T')[0]; // YYYY-MM-DD
+        };
+
+        const formattedData = result.recordset.map(row => ({
+            ...row,
+            NgayDangKy: formatDate(row.NgayDangKy),
+            ThoiGianMongMuonThi: formatDate(row.ThoiGianMongMuonThi)
+        }));
+
+        res.json(formattedData);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Lỗi khi lấy phiếu đăng ký' });
     }
 });
+
+
 
 
 app.get('/api/getPhieuThanhToan', async (req, res) => {
@@ -247,12 +265,25 @@ app.get('/api/getPhieuThanhToan', async (req, res) => {
             return res.status(404).json({ error: "Không tìm thấy phiếu thanh toán" });
         }
 
-        res.json(result.recordset);
+        // ✅ Format lại ngày trước khi trả về
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            return new Date(dateString).toISOString().split('T')[0]; // Chuyển về YYYY-MM-DD
+        };
+
+        const formattedData = result.recordset.map(row => ({
+            ...row,
+            NgayDangKy: formatDate(row.NgayDangKy),
+            NgayThanhToan: formatDate(row.NgayThanhToan)
+        }));
+
+        res.json(formattedData);
     } catch (err) {
         console.error('Lỗi server:', err.message);
         res.status(500).json({ error: 'Lỗi server' });
     }
 });
+
 
 app.post('/api/postPhieuThanhToan', async (req, res) => {
     try {
@@ -278,24 +309,38 @@ app.post('/api/postPhieuThanhToan', async (req, res) => {
 });
 
 
-app.post('/api/postThanhToan', async (req,res)=>{
-    const{MaPhieuThanhToan,HinhThucThanhToan, MaGiaoDich} = req.body;
-    try{
-        console.log('Ma phieu nhan vao: ', MaPhieuThanhToan);
+app.post('/api/postThanhToan', async (req, res) => {
+    let { MaPhieuThanhToan, HinhThucThanhToan, MaGiaoDich } = req.body;
+
+    try {
+        // Kiểm tra giá trị đầu vào
+        if (!MaPhieuThanhToan) {
+            return res.status(400).json({ error: "MaPhieuThanhToan là bắt buộc" });
+        }
+
+        // Chuyển đổi kiểu dữ liệu hợp lệ
+        MaPhieuThanhToan = parseInt(MaPhieuThanhToan, 10);
+        MaGiaoDich = MaGiaoDich ? String(MaGiaoDich) : null; // Chuyển thành chuỗi nếu có
+        HinhThucThanhToan = HinhThucThanhToan || null; // Nếu rỗng thì gán null
+
+        console.log('Ma phieu nhan vao:', MaPhieuThanhToan, HinhThucThanhToan, MaGiaoDich);
+
         const pool = await sql.connect(config);
         await pool.request()
-            .input('MaPhieuThanhToan', sql.Int,MaPhieuThanhToan)
-            .input('HinhThucThanhToan', sql.Nvarchar, HinhThucThanhToan )
-            .input('MaGiaoDich', sql.Int, MaGiaoDich)
+            .input('MaPhieuThanhToan', sql.Int, MaPhieuThanhToan)
+            .input('HinhThucThanhToan', sql.NVarChar(20), HinhThucThanhToan ? HinhThucThanhToan : null)
+            .input('MaGiaoDich', sql.NVarChar(30), MaGiaoDich ? MaGiaoDich : null) // Dùng NVarChar thay vì VarChar nếu có Unicode
+
             .execute('TaoHoaDon');
 
         res.json({ message: 'Tạo hóa đơn thành công' });
-    
-    }catch (err) {
-        console.error('Lỗi server:', err.message);
+
+    } catch (err) {
+        console.error('Lỗi server thanh toán:', err);
         res.status(500).json({ error: err.message });
     }
 });
+
 
 app.get('/api/getLoaiKhachHang', async (req, res) => {
     try {

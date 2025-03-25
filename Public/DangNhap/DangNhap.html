@@ -50,7 +50,7 @@
           alert("Đăng nhập thành công!");
 
           // Chuyển hướng dựa trên vai trò
-          if (data.role === 'ketoan') {
+          if (data.role === 'ketoan' || data.role === 'tiepnhan') {
               window.location.href = '/'; // Trang quản trị chi nhánh
           } else {
               alert("Vai trò không xác định, vui lòng liên hệ quản trị viên!");

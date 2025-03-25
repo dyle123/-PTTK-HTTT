@@ -9,19 +9,25 @@ GO
 
 USE PTTK
 GO
+insert into BangGiaThi(MaLoaiChungChi,TenChungChi,LePhiThi)
+values (1,'Toeic', 2000000),(2, 'Ielst',5000000)
 insert into NhanVien(MaNhanVien,HoTen,NgaySinh,SoDienThoai,Luong,BoPhan)
-values ('NV000012', N'Le Vy', '2004-12-23', '0973488548', '2000000', 'ketoan')
+values ('NV000013', N'Tram Dao', '2004-12-23', '0965422252', '2000000', 'tiepnhan')
+
  insert into Users(MaNhanVien, PassWord, Role)
-values ('NV000012', '123','ketoan');
+values ('NV000013', '123','tiepnhan');
 
 insert into PhieuDangKy(NgayDangKy,TrangThaiThanhToan)
 values ('2025-03-22', 'ChuaThanhToan'),
  ('2025-03-22', 'DaThanhToan')
 
- select* from PhieuDangKy where MaPhieuDangKy = 2
-
-
-
+ select* from PhieuDangKy where MaPhieuDangKy = 3
+ select* from ChiTietPhieuDangKy where MaPhieuDangKy = 5
+ select* from KhachHang
+ select* from  PhieuThanhToan
+ update  PhieuThanhToan
+ set TrangThaiThanhToan = 0 where MaPhieuThanhToan = 1
+ select* from NhanVien
 
 
 
@@ -29,7 +35,7 @@ values ('2025-03-22', 'ChuaThanhToan'),
 CREATE TABLE KhachHang(
 	MaKhachHang int IDENTITY(1,1) Primary Key,
 	TenKhachHang nvarchar(50) NOT NULL,
-    Email CHAR(60) ,
+    Email VARCHAR(60) ,
 	SoDienThoai char(10) ,
 	DiaChi NVARCHAR(255) NOT NULL,
 	LoaiKhachHang nvarchar(20) CHECK(LoaiKhachHang IN (N'tự do', N'đơn vị')) NOT NULL
@@ -60,7 +66,7 @@ CREATE TABLE PhieuThanhToan (
 	HinhThucThanhToan nvarchar(20) DEFAULT N'tiền mặt' CHECK (HinhThucThanhToan IN ( N'tiền mặt',N'chuyển khoản')),
 	NgayThanhToan datetime,
 	MaPhieuThanhToan int,--f
-	MaGiaoDich INT
+	MaGiaoDich varchar(30)
 );
 
 CREATE TABLE KetQuaThi (
@@ -99,7 +105,7 @@ Create table PhieuDangKy(
     MaPhieuDangKy int IDENTITY(1,1) Primary Key,
     LoaiChungChi int ,
     NgayDangKy date,
-    TrangThaiThanhToan nvarchar(20) DEFAULT 'ChuaThanhToan' CHECK( TrangThaiThanhToan IN ('ChuaThanhToan', 'DaThanhToan')) ,
+    TrangThaiThanhToan bit DEFAULT 0 CHECK( TrangThaiThanhToan IN (0,1)) ,
     ThoiGianMongMuonThi DATE,
     MaKhachHang int
 );
@@ -110,7 +116,7 @@ Create table PhieuDangKy(
 create table ChiTietPhieuDangKy(
     MaPhieuDangKy int ,--f
     CCCD char(12) ,--f
-    SoLanGiaHan int,
+    SoLanGiaHan int default 0,
 	CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
 );
 
@@ -164,6 +170,9 @@ CREATE TABLE BangGiaThi
 	TenChungChi nvarchar(50),
 	LePhiThi int
 )
+
+
+
 
 CREATE TABLE ThongTinTruyCap (
 	MaNhanVien char(8) NOT NULL, --Khóa ngoại liên kết đến 'KhachHang'

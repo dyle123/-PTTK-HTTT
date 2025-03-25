@@ -40,13 +40,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             data.forEach(phieu => {
                 const tr = document.createElement("tr");
+                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán" : "Chưa thanh toán";
+                const trangThaiClass = phieu.TrangThaiThanhToan ? "da-thanh-toan" : "chua-thanh-toan";
                 tr.innerHTML = `
                     <td>${phieu.MaPhieuDangKy}</td>
                     <td>${phieu.LoaiChungChi}</td>
                     <td>${phieu.NgayDangKy}</td>
                     <td>${phieu.ThoiGianMongMuonThi}</td>
                     <td>${phieu.MaKhachHang}</td>
-                    <td>${phieu.TrangThaiThanhToan}</td>
+                    <td class="${trangThaiClass}">${trangThaiHienThi}</td>
                     <td>
                         <button class="btn-xem" data-maphieu="${phieu.MaPhieuDangKy}">Xem Phiếu Thanh Toán</button>
                     </td>
