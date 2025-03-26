@@ -47,6 +47,10 @@
         });
         const data = await response.json();
         if (response.ok) {
+          await fetch('/api/capNhatPhieuQuaHan', { method: 'GET' })
+            .then(res => res.json())
+            .then(data => console.log("Cập nhật phiếu quá hạn:", data))
+            .catch(err => console.error("Lỗi cập nhật phiếu quá hạn:", err));
           alert("Đăng nhập thành công!");
 
           // Chuyển hướng dựa trên vai trò

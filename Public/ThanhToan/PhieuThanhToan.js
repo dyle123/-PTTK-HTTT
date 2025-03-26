@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     <tr><th>Trạng thái</th><td>${phieu.TrangThaiThanhToan ? "Đã thanh toán" : "Chưa thanh toán"}</td></tr>
                     <tr><th>Nhân viên thực hiện</th><td>${phieu.NhanVienThucHien}</td></tr>
                 </table>
+                <p class="footer">Quý khách vui lòng thanh toán trong vòng 3 ngày kể từ khi đăng ký!</p>
                 <p class="footer">Cảm ơn quý khách đã sử dụng dịch vụ!</p>
                 <script>
                     window.onload = function() { window.print(); }

@@ -40,8 +40,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             data.forEach(phieu => {
                 const tr = document.createElement("tr");
-                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán" : "Chưa thanh toán";
-                const trangThaiClass = phieu.TrangThaiThanhToan ? "da-thanh-toan" : "chua-thanh-toan";
+                let trangThaiHienThi = "";
+                let trangThaiClass = "";
+                
+                if (phieu.TrangThaiThanhToan == 1) {
+                    trangThaiHienThi = "Đã thanh toán";
+                    trangThaiClass = "da-thanh-toan";
+                } else if (phieu.TrangThaiThanhToan == 2) {
+                    trangThaiHienThi = "Quá hạn";
+                    trangThaiClass = "qua-han";
+                } else {
+                    trangThaiHienThi = "Chưa thanh toán";
+                    trangThaiClass = "chua-thanh-toan";
+                }
                 tr.innerHTML = `
                     <td>${phieu.MaPhieuDangKy}</td>
                     <td>${phieu.LoaiChungChi}</td>

@@ -371,3 +371,38 @@ app.get('/api/getLoaiKhachHang', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+app.get('/api/capNhatPhieuQuaHan', async (req, res) => {
+    try {
+        const pool = await sql.connect(config);
+        await pool.request().execute('CapNhatPhieuDangKyQuaHan');
+        res.json({ message: 'Cập nhật trạng thái quá hạn thành công' });
+    } catch (err) {
+        console.error('Lỗi cập nhật trạng thái quá hạn:', err.message);
+        res.status(500).json({ error: 'Lỗi cập nhật trạng thái quá hạn' });
+    }
+});
+
+app.get('/api/getHoaDon', async (req,res)=>{
+    const{maPhieuThanhToan} = req.query;
+    try{
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuThanhToan', sql.Int,  maPhieuThanhToan)
+            .query(`
+                SELECT* FROM HoaDonThanhToan where MaPhieuThanhToan = @MaPhieuThanhToan
+                `)
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy hóa đơn" });
+        }
+        
+         if (result.recordset.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy loại khách hàng" });
+        }
+
+        res.json(result.recordset[0]);
+    }catch(err){
+        console.error('Không lấy được hóa đơn:', err);
+        res.status(500).json({ error: err.message });
+    }
+});

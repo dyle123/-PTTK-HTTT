@@ -66,6 +66,10 @@ button.thanh-toan {
     font-weight: bold;
 }
 
+.qua-han {
+    color: purple;
+    font-weight: bold;
+}
 
 .modal {
     display: none;
