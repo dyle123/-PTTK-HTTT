@@ -25,9 +25,12 @@ values ('2025-03-22', 'ChuaThanhToan'),
  select* from ChiTietPhieuDangKy where MaPhieuDangKy = 5
  select* from KhachHang
  select* from  PhieuThanhToan
- update  PhieuThanhToan
- set TrangThaiThanhToan = 0 where MaPhieuThanhToan = 1
+ update  PhieuDangKy
+ set TrangThaiThanhToan = 0 where MaPhieuDangKy = 1
  select* from NhanVien
+ select* from HoaDonThanhToan
+ update PhieuDangKy
+ set NgayDangKy = '2025-03-26' where MaPhieuDangKy = 1
 
 
 
@@ -55,7 +58,7 @@ CREATE TABLE PhieuThanhToan (
 	TamTinh int,
 	PhanTramGiamGia INT,
 	ThanhTien INT,
-	TrangThaiThanhToan BIT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1)) , --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN
+	TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)), --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN, 2: Quá hạn
 	MaPhieuDangKy int NOT NULL,--f
 	NhanVienThucHien char(8) NOT NULL,--f
 );
@@ -105,7 +108,7 @@ Create table PhieuDangKy(
     MaPhieuDangKy int IDENTITY(1,1) Primary Key,
     LoaiChungChi int ,
     NgayDangKy date,
-    TrangThaiThanhToan bit DEFAULT 0 CHECK( TrangThaiThanhToan IN (0,1)) ,
+    TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)), 
     ThoiGianMongMuonThi DATE,
     MaKhachHang int
 );
@@ -161,7 +164,6 @@ CREATE TABLE PhieuDuThi(
 	CCCD char(12),--f
 	TrangThai nvarchar(50),
 	LichThi int --f
-
 )
 
 CREATE TABLE BangGiaThi

@@ -1,6 +1,15 @@
 ﻿USE PTTK
 GO
-
+CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
+AS
+BEGIN
+    UPDATE PhieuDangKy
+    SET TrangThaiThanhToan = 2
+	select * from PhieuDangKy
+    WHERE TrangThaiThanhToan = 0
+    AND DATEDIFF(DAY, GETDATE(), NgayDangKy) > 3;
+END;
+GO
 
 CREATE OR ALTER PROC TaoPhieuThanhToan
 	@MaPhieuDangKy int,
@@ -205,7 +214,7 @@ END;
 GO
 
 
-CREATE OR ALTER PROCEDURE DANGKYTUDO
+CREATE OR ALTER PROCEDURE Back
     @TenKH NVARCHAR(50),
     @EmailKH NVARCHAR(100),  
     @SoDienThoaiKH CHAR(10),
@@ -255,6 +264,7 @@ BEGIN
     VALUES (@MaPhieuDangKy, @CCCDTS);
 END;
 GO
+
 
 
 

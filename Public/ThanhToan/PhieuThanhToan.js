@@ -86,12 +86,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             data.forEach(phieu => {
                 const row = document.createElement("tr");
-                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán" : "Chưa thanh toán";
-                const trangThaiClass = phieu.TrangThaiThanhToan ? "da-thanh-toan" : "chua-thanh-toan";
+                let trangThaiHienThi = "";
+                let trangThaiClass = "";
+                
+                if (phieu.TrangThaiThanhToan == 1) {
+                    trangThaiHienThi = "Đã thanh toán";
+                    trangThaiClass = "da-thanh-toan";
+                } else if (phieu.TrangThaiThanhToan == 2) {
+                    trangThaiHienThi = "Quá hạn";
+                    trangThaiClass = "qua-han";
+                } else {
+                    trangThaiHienThi = "Chưa thanh toán";
+                    trangThaiClass = "chua-thanh-toan";
+                }
             
                 // Xây dựng nội dung cột thao tác
                 let thaoTacHTML = "";
-                if (phieu.TrangThaiThanhToan) {
+                if (phieu.TrangThaiThanhToan == 1) {
                     // Đã thanh toán -> Chỉ có nút "Xem hóa đơn"
                     thaoTacHTML = `<button class="xem-hoa-don">Xem hóa đơn</button>`;
                 } else {

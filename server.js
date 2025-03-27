@@ -69,7 +69,8 @@ app.get('/check-login', (req, res) => {
     }
     res.json({
         loggedIn: true, // Người dùng đã đăng nhập
-        user: req.session.user // Thông tin người dùng (tuỳ chọn)
+        user: req.session.user, // Thông tin người dùng (tuỳ chọn)
+        role: req.session.user.role
     });
 });
 
@@ -183,7 +184,13 @@ app.post('/logout', async (req, res) => {
     }
 });
 
-
+app.get("/api/getUserRole", (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Bạn chưa đăng nhập" });
+    }
+    
+    res.json({ role: req.session.user.role });
+});
 
 app.get('/api/getCurrentUser', (req, res) => {
     if (!req.session.user) {

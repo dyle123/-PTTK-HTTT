@@ -4,17 +4,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-function loadNavbar() {
-            fetch("/DangNhap/Navbar.html")
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("navbar-container").innerHTML = data;
-                    checkLoginStatus();
-                    setupLogoutEvent(); // Gán sự kiện click cho nút Đăng xuất
-                })
-                .catch(error => console.error("Lỗi khi tải Navbar:", error));
-        }
+    function loadNavbar() {
+        fetch("/DangNhap/Navbar.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("navbar-container").innerHTML = data;
+                checkLoginStatus(); // Gọi sau khi Navbar đã được thêm vào DOM
+                setupLogoutEvent();
+            })
+            .catch(error => console.error("Lỗi khi tải Navbar:", error));
+    }
 
+    
+            
 document.addEventListener("DOMContentLoaded", loadNavbar);
 
         async function checkLoginStatus() {
@@ -24,7 +26,15 @@ document.addEventListener("DOMContentLoaded", loadNavbar);
                 if (response.ok && data.loggedIn) {
                     document.getElementById('login').style.display = 'none';
                     document.getElementById("logout").style.display = 'block';
-                    console.log('Đã đăng nhập');
+                    
+
+                    // Kiểm tra vai trò người dùng
+                    if (data.role !== "ketoan") {
+                        disableThanhToan();
+                    } else if(data.role !== "ketoan"){
+                        disableDangKy();
+                    }
+
                 } else {
                     document.getElementById('login').style.display = 'block';
                     document.getElementById("logout").style.display = 'none';
@@ -59,5 +69,34 @@ document.addEventListener("DOMContentLoaded", loadNavbar);
                     console.error("Không tìm thấy nút Đăng xuất");
                 }
             }, 500); // Đợi 500ms để đảm bảo navbar đã load
+        }
+        // Hàm vô hiệu hóa nút truy cập ThanhToan.html
+        function disableThanhToan() {
+            setTimeout(() => { // Đợi 500ms để đảm bảo Navbar đã load
+                const thanhToanLink = document.querySelector("a[href='ThanhToan/ThanhToan.html']");
+                if (thanhToanLink) {
+                    thanhToanLink.addEventListener("click", function (event) {
+                        event.preventDefault(); // Ngăn chặn chuyển trang
+                        alert("Bạn không có quyền truy cập vào trang này!");
+                    });
+                    console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa do không phải kế toán.");
+                } else {
+                    console.warn("⚠️ Không tìm thấy nút Thanh Toán.");
+                }
+            }, 500); // Đợi Navbar load xong trước khi tìm thẻ <a>
+        }
+        function disableDangKy() {
+            setTimeout(() => { // Đợi 500ms để đảm bảo Navbar đã load
+                const thanhToanLink = document.querySelector("a[href='DangKy/html']");
+                if (thanhToanLink) {
+                    thanhToanLink.addEventListener("click", function (event) {
+                        event.preventDefault(); // Ngăn chặn chuyển trang
+                        alert("Bạn không có quyền truy cập vào trang này!");
+                    });
+                    console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa do không phải kế toán.");
+                } else {
+                    console.warn("⚠️ Không tìm thấy nút Thanh Toán.");
+                }
+            }, 500); // Đợi Navbar load xong trước khi tìm thẻ <a>
         }
     

@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchBox = document.getElementById("search-box");
     const searchBtn = document.getElementById("search-btn");
 
+    
+
     // Hàm fetch data từ API
     async function fetchData(filter, maPhieu = "") {
         try {
@@ -53,6 +55,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     trangThaiHienThi = "Chưa thanh toán";
                     trangThaiClass = "chua-thanh-toan";
                 }
+
+                let thaoTacHTML = "";
+                if (phieu.TrangThaiThanhToan == 1) {
+                    // Đã thanh toán -> Chỉ có nút "Xem hóa đơn"
+                    thaoTacHTML = `<button class="xem-hoa-don">Xem hóa đơn</button>`;
+                } else if (phieu.TrangThaiThanhToan == 2){
+
+                }else {
+                    // Chưa thanh toán -> Hiển thị "In phiếu" và "Thanh toán"
+                    thaoTacHTML = `
+                        <button class="in-phieu">In phiếu</button>
+                        <button class="thanh-toan" data-ma-phieu="${phieu.MaPhieuThanhToan}">Thanh toán</button>
+                    `;
+                }
+
                 tr.innerHTML = `
                     <td>${phieu.MaPhieuDangKy}</td>
                     <td>${phieu.LoaiChungChi}</td>
@@ -60,9 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${phieu.ThoiGianMongMuonThi}</td>
                     <td>${phieu.MaKhachHang}</td>
                     <td class="${trangThaiClass}">${trangThaiHienThi}</td>
-                    <td>
-                        <button class="btn-xem" data-maphieu="${phieu.MaPhieuDangKy}">Xem Phiếu Thanh Toán</button>
-                    </td>
+                    <td>${thaoTacHTML}</td>
+                    
                 `;
                 tableBody.appendChild(tr);
             });
