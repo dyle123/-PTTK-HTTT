@@ -232,6 +232,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 alert("Thanh toán thành công!");
                 document.getElementById("modal-thanh-toan").style.display = "none";
                 fetchData(); // Cập nhật lại danh sách
+                window.location.reload(); // Tải lại trang để cập nhật thông tin
             } else {
                 alert("Lỗi thanh toán: " + result.error);
             }

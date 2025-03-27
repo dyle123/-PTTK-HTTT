@@ -399,7 +399,6 @@ app.get('/api/getHoaDon', async (req,res)=>{
          if (result.recordset.length === 0) {
             return res.status(404).json({ error: "Không tìm thấy loại khách hàng" });
         }
-
         res.json(result.recordset[0]);
     }catch(err){
         console.error('Không lấy được hóa đơn:', err);
