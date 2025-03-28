@@ -7,7 +7,33 @@
     <link rel="stylesheet" href="/CSS/ThanhToan.css">
 </head>
 <body>
+    <!-- Modal thông báo -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <p id="modalText"></p>
+        </div>
+    </div>
+    <div id="modal-hoa-don" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModalHoaDon()">&times;</span>
+            <h2>Hóa Đơn Thanh Toán</h2>
+            <table>
+                <tr><th>Mã phiếu</th><td id="hoa-don-ma-phieu"></td></tr>
+                <tr><th>Mã phiếu đăng ký</th><td id="hoa-don-ma-dang-ky"></td></tr>
+                <tr><th>Tạm tính</th><td id="hoa-don-tam-tinh"></td></tr>
+                <tr><th>Phần trăm giảm</th><td id="hoa-don-phan-tram"></td></tr>
+                <tr><th>Thành tiền</th><td id="hoa-don-thanh-tien"></td></tr>
+                <tr><th>Trạng thái</th><td id="hoa-don-trang-thai"></td></tr>
+                <tr><th>Nhân viên thực hiện</th><td id="hoa-don-nhan-vien"></td></tr>
+            </table>
+        </div>
+    </div>
     <div id="navbar-container"></div>
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <p id="modalText"></p>
+        </div>
+    </div>
     <h1>Thông tin phiếu thanh toán </h1>
 
 
@@ -46,6 +72,22 @@
     
             <button id="xac-nhan-thanh-toan">Xác nhận</button>
             <button id="huy-modal">Hủy</button>
+        </div>
+    </div>
+    <div id="modal-hoa-don-moi" class="modal-moi">
+        <div class="modal-content-moi">
+            <span class="close-moi">&times;</span>
+            <h2>Hóa đơn thanh toán</h2>
+            <div id="hoa-don-content-moi">
+                <p><strong>Mã phiếu thanh toán:</strong> <span id="ma-phieu-moi"></span></p>
+                <p><strong>Mã hóa đơn:</strong> <span id="ma-hoa-don-moi"></span></p>
+                <p><strong>Ngày thanh toán:</strong> <span id="ngay-thanh-toan-moi"></span></p>
+                <p><strong>Hình thức thanh toán:</strong> <span id="hinh-thuc-thanh-toan-moi"></span></p>
+                <p><strong>Mã giao dịch:</strong> <span id="ma-giao-dich-moi"></span></p>
+                <p><strong>Tổng tiền:</strong> <span id="tong-tien-moi"></span></p>
+            </div>
+            <button id="in-hoa-don-moi">In hóa đơn</button>
+            <span class="print-icon-moi">🖨️</span>
         </div>
     </div>
 </body>

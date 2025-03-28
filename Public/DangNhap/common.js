@@ -40,15 +40,15 @@ async function handleLogout(event) {
         });
 
         if (response.ok) {
-            alert('Bạn đã đăng xuất thành công!');
+            showModal('Bạn đã đăng xuất thành công nè!');
             window.location.href = '/DangNhap/Home.html'; // Chuyển hướng về trang đăng nhập
         } else {
             const error = await response.json();
-            alert(error.error || 'Đăng xuất thất bại!');
+            showModal(error.error || 'Đăng xuất thất bại!');
         }
     } catch (err) {
         console.error('Lỗi khi đăng xuất:', err);
-        alert('Có lỗi xảy ra, vui lòng thử lại!');
+        showModal('Có lỗi xảy ra, vui lòng thử lại!');
     }
 }
 
@@ -62,6 +62,18 @@ function initializeEvents() {
 
     // Kiểm tra trạng thái đăng nhập và hiển thị nút phù hợp
     initializeButtons();
+}
+function showModal(message) {
+    let modal = document.getElementById("customModal");
+    let modalText = document.getElementById("modalText");
+
+    modalText.innerText = message;
+    modal.style.display = "block";
+
+    // Ẩn modal sau 2 giây
+    setTimeout(() => {
+        modal.style.display = "none";
+    }, 2000);
 }
 
 // Kiểm tra trạng thái đăng nhập và mở modal nếu chưa đăng nhập

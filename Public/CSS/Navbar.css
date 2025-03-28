@@ -52,3 +52,25 @@ body {
 .logout:hover {
     color: darkred;
 }
+
+.modal {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 10%;
+    transform: translate(-50%, 0);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 1000;
+    text-align: center;
+    min-width: 250px;
+    font-size: 16px;
+}
+
+.modal-content {
+    background: #222;
+    padding: 10px 20px;
+    border-radius: 5px;
+}

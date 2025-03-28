@@ -86,26 +86,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             data.forEach(phieu => {
                 const row = document.createElement("tr");
-                let trangThaiHienThi = "";
-                let trangThaiClass = "";
-                
-                if (phieu.TrangThaiThanhToan == 1) {
-                    trangThaiHienThi = "Đã thanh toán";
-                    trangThaiClass = "da-thanh-toan";
-                } else if (phieu.TrangThaiThanhToan == 2) {
-                    trangThaiHienThi = "Quá hạn";
-                    trangThaiClass = "qua-han";
-                } else {
-                    trangThaiHienThi = "Chưa thanh toán";
-                    trangThaiClass = "chua-thanh-toan";
-                }
+                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán nha" : "Chưa thanh toán";
+                const trangThaiClass = phieu.TrangThaiThanhToan ? "da-thanh-toan" : "chua-thanh-toan";
             
                 // Xây dựng nội dung cột thao tác
                 let thaoTacHTML = "";
                 if (phieu.TrangThaiThanhToan == 1) {
                     // Đã thanh toán -> Chỉ có nút "Xem hóa đơn"
                     thaoTacHTML = `<button class="xem-hoa-don">Xem hóa đơn</button>`;
-                } else {
+                } else if (phieu.TrangThaiThanhToan == 0) {
                     // Chưa thanh toán -> Hiển thị "In phiếu" và "Thanh toán"
                     thaoTacHTML = `
                         <button class="in-phieu">In phiếu</button>
@@ -125,10 +114,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 `;
             
                 // Gán sự kiện click nếu chưa thanh toán
-                if (!phieu.TrangThaiThanhToan) {
+                if (phieu.TrangThaiThanhToan == 0) {
                     row.querySelector(".in-phieu").addEventListener("click", () => printReceipt(phieu));
                     row.querySelector(".thanh-toan").addEventListener("click", () => thanhToan(phieu.MaPhieuThanhToan));
-                } else {
+                } else if(phieu.TrangThaiThanhToan == 1)  {
                     row.querySelector(".xem-hoa-don").addEventListener("click", () => xemHoaDon(phieu.MaPhieuThanhToan));
                 }
             
@@ -243,7 +232,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 alert("Thanh toán thành công!");
                 document.getElementById("modal-thanh-toan").style.display = "none";
                 fetchData(); // Cập nhật lại danh sách
-                window.location.reload(); // Tải lại trang để cập nhật thông tin
+                window.location.href = `/ThanhToan/PhieuThanhToan.html?maPhieuDangKy=${maPhieu}`;
             } else {
                 alert("Lỗi thanh toán: " + result.error);
             }
@@ -253,3 +242,45 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 });
+
+
+function xemHoaDon(maPhieu) {
+    fetch(`http://localhost:3000/api/getHoaDon?maPhieuThanhToan=${maPhieu}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data) {
+                alert("Không tìm thấy hóa đơn!");
+                return;
+            }
+            console.log('reception o day', data);
+            // Điền dữ liệu vào modal
+            document.getElementById("ma-phieu-moi").textContent = data.MaPhieuThanhToan;
+            document.getElementById("ma-hoa-don-moi").textContent = data.MaHoaDon;
+            document.getElementById("ngay-thanh-toan-moi").textContent = data.NgayThanhToan || "dd/mm/yy";
+            document.getElementById("hinh-thuc-thanh-toan-moi").textContent = data.HinhThucThanhToan || "Chưa xác định";
+            document.getElementById("ma-giao-dich-moi").textContent = data.MaGiaoDich || "N/A";
+            document.getElementById("tong-tien-moi").textContent = data.TongTien.toLocaleString() + " VND";
+
+            // Hiển thị modal
+            document.getElementById("modal-hoa-don-moi").style.display = "block";
+
+            // In hóa đơn
+            document.getElementById("in-hoa-don-moi").onclick = function () {
+                window.print();
+            };
+        })
+        .catch(error => console.error("Lỗi khi lấy hóa đơn:", error));
+}
+
+// Đóng modal khi nhấn dấu "X"
+document.querySelector(".close-moi").addEventListener("click", function () {
+    document.getElementById("modal-hoa-don-moi").style.display = "none";
+});
+
+// Đóng modal khi click ra ngoài
+window.onclick = function (event) {
+    const modalMoi = document.getElementById("modal-hoa-don-moi");
+    if (event.target === modalMoi) {
+        modalMoi.style.display = "none";
+    }
+};

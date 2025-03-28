@@ -1,15 +1,17 @@
 ﻿USE PTTK
 GO
+
+
 CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
 AS
 BEGIN
     UPDATE PhieuDangKy
     SET TrangThaiThanhToan = 2
-	select * from PhieuDangKy
-    WHERE TrangThaiThanhToan = 0
-    AND DATEDIFF(DAY, GETDATE(), NgayDangKy) > 3;
+    WHERE DATEDIFF(DAY, NgayDangKy, GETDATE()) >= 3 AND TrangThaiThanhToan = 0;
 END;
 GO
+
+
 
 CREATE OR ALTER PROC TaoPhieuThanhToan
 	@MaPhieuDangKy int,
@@ -79,6 +81,8 @@ END
 GO
 
 
+
+
 CREATE OR ALTER PROC TaoHoaDon
 	@MaPhieuThanhToan int,
 	@HinhThucThanhToan nvarchar(20) = null,
@@ -123,6 +127,8 @@ BEGIN
 
 END
 GO
+
+
 
 
 
@@ -174,6 +180,8 @@ BEGIN
     END CATCH
 END;
 GO
+
+
 CREATE OR ALTER PROCEDURE KIEMTRATHISINH 
     @TenTS NVARCHAR(50),
     @CCCDTS CHAR(12),
@@ -191,19 +199,15 @@ BEGIN
 
     IF @HoVaTen IS NOT NULL 
     BEGIN 
-        IF @HoVaTen <> @TenTS OR @NgaySinhDB <> @NgaySinh
+        IF @HoVaTen != @TenTS OR @NgaySinhDB != @NgaySinh
         BEGIN 
             RAISERROR (N'Thí sinh đã đăng ký thi trước đó nhưng thông tin tiên quyết không khớp', 16, 1);
             RETURN;
         END
-
         -- Cập nhật thông tin liên hệ nếu khác nhau
         UPDATE ThiSinh
         SET Email = @EmailTS, SoDienThoai = @SoDienThoaiTS, DiaChi = @DiaChiTS
-        WHERE CCCD = @CCCDTS 
-        AND (ISNULL(Email, '') <> ISNULL(@EmailTS, '') 
-        OR ISNULL(SoDienThoai, '') <> ISNULL(@SoDienThoaiTS, '') 
-        OR ISNULL(DiaChi, '') <> ISNULL(@DiaChiTS, ''));
+        WHERE CCCD = @CCCDTS AND (Email <> @EmailTS OR SoDienThoai <> @SoDienThoaiTS OR DiaChi <> @DiaChiTS);
     END
     ELSE
     BEGIN
@@ -212,6 +216,7 @@ BEGIN
     END
 END;
 GO
+
 
 
 CREATE OR ALTER PROCEDURE Back
@@ -232,38 +237,57 @@ AS
 BEGIN
     DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
 
-    -- Kiểm tra hoặc tạo khách hàng
-    EXEC KIEMTRAKHACHHANG @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, @MaKhachHang OUTPUT;
+    -- Bắt đầu giao dịch
+    BEGIN TRANSACTION;
 
-    -- Kiểm tra nếu không có khách hàng thì báo lỗi
-    IF @MaKhachHang IS NULL 
-    BEGIN 
-        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo khách hàng!', 16, 1);
-        RETURN;
-    END;
+    BEGIN TRY
+        -- Kiểm tra hoặc tạo khách hàng
+        EXEC KIEMTRAKHACHHANG @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, @MaKhachHang OUTPUT;
 
-    -- Tạo phiếu đăng ký
-    INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
-    VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
+        -- Nếu không tìm thấy hoặc tạo được khách hàng thì báo lỗi
+        IF @MaKhachHang IS NULL 
+        BEGIN 
+            RAISERROR (N'Lỗi khi kiểm tra hoặc tạo khách hàng!', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
 
-    -- Lấy ID mới của phiếu đăng ký
-    SET @MaPhieuDangKy = SCOPE_IDENTITY();
+        -- Kiểm tra hoặc tạo thí sinh trước khi tạo phiếu đăng ký
+        EXEC KIEMTRATHISINH @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
 
-    -- Kiểm tra hoặc tạo thí sinh
-    EXEC KIEMTRATHISINH @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
+        -- Nếu có lỗi trong KIEMTRATHISINH, dừng lại
+        IF @@ERROR <> 0 
+        BEGIN 
+            RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
 
-    -- Kiểm tra nếu có lỗi từ `KIEMTRATHISINH`
-    IF @@ERROR <> 0 
-    BEGIN 
-        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
-        RETURN;
-    END;
+        -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
+        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+        VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
 
-    -- Thêm vào bảng ChiTietPhieuDangKy
-    INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
-    VALUES (@MaPhieuDangKy, @CCCDTS);
+        -- Lấy ID mới của phiếu đăng ký
+        SET @MaPhieuDangKy = SCOPE_IDENTITY();
+
+        -- Thêm vào bảng ChiTietPhieuDangKy
+        INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
+        VALUES (@MaPhieuDangKy, @CCCDTS);
+
+        -- Nếu không có lỗi, commit transaction
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        -- Nếu có lỗi ở bất kỳ bước nào, rollback lại toàn bộ giao dịch
+        ROLLBACK TRANSACTION;
+        
+        -- Hiển thị lỗi chi tiết
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
 END;
 GO
+
 
 
 
