@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar Hệ thống tổ chức thi chứng chỉ</title>
+    <link rel="stylesheet" href="/CSS/GiaHan.css">
     <link rel="stylesheet" href="/CSS/Navbar.css">
 </head>
 <body>
@@ -16,10 +17,31 @@
             <li id="postpone"><a href="GiaHan/Giahan.html">Gia hạn</a></li>
             <a href="/DangNhap/DangNhap.html" id="login">Đăng nhập</a>
             <a href="#" id="logout" style="display: none;">Đăng xuất</a>
-            <!-- <li id="logout"><a href="#" id="logout" style="display: none;">Đăng xuất</a></li>      -->
+            <!-- <li id="logout"><a href="#" id="logout" style="display: none;">Đăng xuất</a></li>-->
     </nav>
-        
-    <script src="/DangNhap/common.js"></script>
+    <div class="box_TraCuu_text">
+        Tra cứu phiếu gia hạn
+    </div>
+    <input type="text" id="search-box" placeholder="Nhập mã phiếu gia hạn">
+    <button id="search-btn">🔍</button>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>CCCD</th>
+                <th>Phiếu đăng ký</th>
+                <th>Loại gia hạn</th>
+                <th>Phí gia hạn</th>
+                <th>Lí do gia hạn</th>
+                <th>Ngày gia hạn</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+        </tbody>
+    </table>
+
     <script src="/DangNhap/Navbar.js"></script>
+    <script src="/GiaHan/GiaHan.js"></script>
 </body>
 </html>
