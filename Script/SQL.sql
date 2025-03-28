@@ -234,6 +234,3 @@ ADD CONSTRAINT FK_ThongTinTruyCap_KhachHang FOREIGN KEY (MaNhanVien) REFERENCES 
 
 
 
-
-
-

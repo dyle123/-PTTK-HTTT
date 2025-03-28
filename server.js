@@ -25,20 +25,34 @@ app.use(session({
 }));
 
 
+// // Cấu hình kết nối SQL Server
+// const config = {
+//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'sa',
+//     password: '1928374650Vy',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
+
 // Cấu hình kết nối SQL Server
 const config = {
-    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.174.1',
     port: 1433, // Cổng SQL Server
     database: 'PTTK',
-    user: 'sa',
-    password: '1928374650Vy',
+    user: 'BENU',
+    password: 'benu123',
     options: {
         encrypt: false, // Không cần mã hóa
         enableArithAbort: true, // Bật xử lý lỗi số học
         connectTimeout: 30000, // Thời gian chờ 30 giây
     },
 };
-
 
 // Hàm kiểm tra kết nối
 async function testDatabaseConnection() {

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ghi nhận thông tin đăng ký</title>
+    <link rel="stylesheet" href="DangKyTuDo.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">Hệ thống tổ chức thi chứng chỉ</div>
+        <ul class="nav-links">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Đăng ký</a>
+                <ul class="dropdown">
+                    <li><a href="#">Khách hàng tự do</a></li>
+                    <li><a href="#">Khách hàng đơn vị</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Thanh toán</a></li>
+            <li><a href="#">Gia hạn</a></li>
+            <li><a href="#">Đăng xuất</a></li>
+        </ul>
+    </nav>
+
+    <h1 class="main-title">Ghi nhận thông tin đăng ký</h1>
+
+    <div class="form-container">
+        <div class="card">
+            <div class="form-content"></div>
+            <h2>Điền thông tin khách hàng</h2>
+            <div class="input-group">
+                <div class="form-field">
+                    <label for="khach-ho-ten">Họ tên</label>
+                    <input id="khach-ho-ten" type="text" placeholder="Họ tên đầy đủ của khách hàng">
+                </div>
+                <div class="form-field">
+                    <label for="khach-dia-chi">Địa chỉ</label>
+                    <input id="khach-dia-chi" type="text" placeholder="Địa chỉ">
+                </div>
+                <div class="form-field">
+                    <label for="khach-sdt">Số điện thoại</label>
+                    <input id="khach-sdt" type="text" placeholder="Số điện thoại">
+                </div>
+                <div class="form-field">
+                    <label for="khach-email">Email</label>
+                    <input id="khach-email" type="email" placeholder="Email">
+                </div>
+            </div>
+            <div class="submit-wrapper">
+                <button class="submit-btn" onclick="submitKhachHang()">Lưu thông tin khách hàng</button>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>
+        
+
+
+
+        <div class="card">
+            <h2>Điền thông tin thí sinh</h2>
+            <div class="input-group">
+                <div class="form-field">
+                    <label for="thisinh-ho-ten">Họ tên</label>
+                    <input id="thisinh-ho-ten" type="text" placeholder="Họ tên thí sinh">
+                </div>
+                <div class="form-field">
+                    <label for="thisinh-cccd">Số căn cước công dân</label>
+                    <input id="thisinh-cccd" type="text" placeholder="Số căn cước công dân">
+                </div>
+                <div class="form-field">
+                    <label for="thisinh-sdt">Số điện thoại</label>
+                    <input id="thisinh-sdt" type="text" placeholder="Số điện thoại">
+                </div>
+                <div class="form-field">
+                    <label for="thisinh-email">Email</label>
+                    <input id="thisinh-email" type="email" placeholder="Email">
+                </div>
+                <div class="form-field">
+                    <label for="thisinh-diachi">Địa chỉ</label>
+                    <input id="thisinh-diachi" type="text" placeholder="Địa chỉ">
+                </div>
+                <div class="form-field">
+                    <label for="thisinh-ngaysinh">Ngày sinh</label>
+                    <input id="thisinh-ngaysinh" type="date">
+                </div>
+            </div>
+            <div class="submit-wrapper">
+                <button class="submit-btn" onclick="submitThiSinh()">Lưu thông tin thí sinh</button>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="next-wrapper">
+            <button class="next-btn" onclick="chuyenTrang()">Tiếp theo →</button>
+        </div>
+        
+
+</body>
+
+</html>
