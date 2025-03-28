@@ -9,6 +9,12 @@
 </head>
 
 <body>
+  <!-- Modal thông báo -->
+  <div id="customModal" class="modal">
+    <div class="modal-content">
+        <p id="modalText"></p>
+    </div>
+</div>
   <!-- Logo nhà hàng -->
   <div class="header-container">
     <img src="/images/sushiX_logo.png" alt="SuShiX Logo" class="logo">
@@ -29,7 +35,7 @@
       const password = document.getElementById("password").value.trim();
   
       if (!username || !password) {
-        alert("Vui lòng nhập đầy đủ thông tin!");
+        showModal("Vui lòng nhập đầy đủ thông tin!");
         return;
       }
   
@@ -51,23 +57,36 @@
             .then(res => res.json())
             .then(data => console.log("Cập nhật phiếu quá hạn:", data))
             .catch(err => console.error("Lỗi cập nhật phiếu quá hạn:", err));
-          alert("Đăng nhập thành công!");
+          
 
           // Chuyển hướng dựa trên vai trò
           if (data.role === 'ketoan' || data.role === 'tiepnhan') {
               window.location.href = '/'; // Trang quản trị chi nhánh
           } else {
-              alert("Vai trò không xác định, vui lòng liên hệ quản trị viên!");
+              showModal("Vai trò không xác định, vui lòng liên hệ quản trị viên!");
           }
         } else {
-            alert(data.error || 'Đăng nhập thất bại!');
+            showModal(data.error || "Đăng nhập thất bại!");
         }
    
       } catch (err) {
         console.error('Lỗi khi gửi yêu cầu đăng nhập:', err);
-        alert('Lỗi server, vui lòng thử lại sau!');
+        showModal('Lỗi server, vui lòng thử lại sau!');
       }
     });
+
+    function showModal(message) {
+            let modal = document.getElementById("customModal");
+            let modalText = document.getElementById("modalText");
+        
+            modalText.innerText = message;
+            modal.style.display = "block";
+        
+            // Ẩn modal sau 2 giây
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 2000);
+        }
   </script>
 </body>
 

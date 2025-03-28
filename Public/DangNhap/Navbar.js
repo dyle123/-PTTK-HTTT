@@ -30,7 +30,9 @@ document.addEventListener("DOMContentLoaded", loadNavbar);
 
                     // Kiểm tra vai trò người dùng
                     if (data.role !== "ketoan") {
+                        console.log('Role', data.role);
                         disableThanhToan();
+
                     } else if(data.role !== "ketoan"){
                         disableDangKy();
                     }
@@ -54,7 +56,7 @@ document.addEventListener("DOMContentLoaded", loadNavbar);
                             const response = await fetch('/logout', { method: 'POST' });
 
                             if (response.ok) {
-                                alert('Bạn đã đăng xuất thành công!');
+                                showModal('Bạn đã đăng xuất thành công!');
                                 document.getElementById('login').style.display = 'block';
                                 document.getElementById('logout').style.display = 'none';
                                 window.location.href = '/DangNhap/Home.html';
@@ -77,7 +79,7 @@ document.addEventListener("DOMContentLoaded", loadNavbar);
                 if (thanhToanLink) {
                     thanhToanLink.addEventListener("click", function (event) {
                         event.preventDefault(); // Ngăn chặn chuyển trang
-                        alert("Bạn không có quyền truy cập vào trang này!");
+                        showModal("Bạn không có quyền truy cập vào trang này!");
                     });
                     console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa do không phải kế toán.");
                 } else {
@@ -91,7 +93,7 @@ document.addEventListener("DOMContentLoaded", loadNavbar);
                 if (thanhToanLink) {
                     thanhToanLink.addEventListener("click", function (event) {
                         event.preventDefault(); // Ngăn chặn chuyển trang
-                        alert("Bạn không có quyền truy cập vào trang này!");
+                        showModal("Bạn không có quyền truy cập vào trang này!");
                     });
                     console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa do không phải kế toán.");
                 } else {
@@ -100,3 +102,16 @@ document.addEventListener("DOMContentLoaded", loadNavbar);
             }, 500); // Đợi Navbar load xong trước khi tìm thẻ <a>
         }
     
+
+        function showModal(message) {
+            let modal = document.getElementById("customModal");
+            let modalText = document.getElementById("modalText");
+        
+            modalText.innerText = message;
+            modal.style.display = "block";
+        
+            // Ẩn modal sau 2 giây
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 2000);
+        }
