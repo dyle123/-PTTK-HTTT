@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar Hệ thống tổ chức thi chứng chỉ</title>
-    <link rel="stylesheet" href="/CSS/GiaHan.css">
+    <link rel="stylesheet" href="/CSS/TraCuuPhieuGiaHan.css">
     <link rel="stylesheet" href="/CSS/Navbar.css">
 </head>
 <body>
@@ -22,7 +22,10 @@
     <div class="box_TraCuu_text">
         Tra cứu phiếu gia hạn
     </div>
-    <input type="text" id="search-box" placeholder="Nhập mã phiếu gia hạn">
+    <input type="text" id="search-box" placeholder="Nhập mã phiếu đăng ký">
+    <button id="search-btn">🔍</button>
+
+    <input type="text" id="search-box" placeholder="Nhập CCCD">
     <button id="search-btn">🔍</button>
     
     <table>
@@ -34,12 +37,19 @@
                 <th>Phí gia hạn</th>
                 <th>Lí do gia hạn</th>
                 <th>Ngày gia hạn</th>
+                <th></th>
             </tr>
         </thead>
         <tbody id="table-body">
             <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
         </tbody>
     </table>
+    <button class="btn_Tra_cuu_SLGH" onclick="window.location.href='TraCuuSoLanGiaHan.html'">
+        Tra cứu số lần gia hạn
+    </button>
+    <button class="btn_Lap_Phieu_Gia_Han" onclick="window.location.href='LapPhieuGiaHan.html'">
+        Lập phiếu gia hạn
+    </button>
 
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/GiaHan.js"></script>

@@ -16,7 +16,7 @@ body {
     font-weight: bold;
     border-radius: 10px; /* Bo góc */
     border: 2px solid #b3a4ff; /* Viền */
-    font-size: 35px;
+    font-size: 1.82vw;
     margin-top:1vh;
     margin-left:38vw
 }
@@ -28,7 +28,7 @@ input[type="text"] {
 
 button {
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 0.46vh 0.52vw;
     border: none;
     background-color: #6c5ce7;
     color: white;
@@ -51,4 +51,30 @@ th, td {
 
 th {
     background-color: #f0f0ff;
+}
+
+.btn_Tra_cuu_SLGH
+{
+    cursor: pointer;
+    padding: 1vh 1vw;
+    border: none;
+    background-color: #6c5ce7;
+    color: white;
+    border-radius: 5px;
+    margin-top:60vh;
+    position:absolute;
+    margin-left:27vw;
+}
+
+.btn_Lap_Phieu_Gia_Han
+{
+    cursor: pointer;
+    padding: 1vh 1vw;
+    border: none;
+    background-color: #6c5ce7;
+    color: white;
+    border-radius: 5px;
+    margin-top:60vh;
+    margin-left:37vw;
+    position:absolute;
 }

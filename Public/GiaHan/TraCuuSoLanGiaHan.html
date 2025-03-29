@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar Hệ thống tổ chức thi chứng chỉ</title>
+    <link rel="stylesheet" href="/CSS/TraCuuSoLanGiaHan.css">
+    <link rel="stylesheet" href="/CSS/Navbar.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Hệ thống tổ chức thi chứng chỉ</div>
+        <ul class="nav-links">
+            <li id="home"><a href="/">Trang chủ</a></li>
+            <li id="register"><a href="dangky.html">Đăng ký</a></li>
+            <li id="pay"><a href="ThanhToan/ThanhToan.html">Thanh toán</a></li>
+            <li id="postpone"><a href="GiaHan/Giahan.html">Gia hạn</a></li>
+            <a href="/DangNhap/DangNhap.html" id="login">Đăng nhập</a>
+            <a href="#" id="logout" style="display: none;">Đăng xuất</a>
+            <!-- <li id="logout"><a href="#" id="logout" style="display: none;">Đăng xuất</a></li>-->
+    </nav>
+    <div class="box_TraCuu_text">
+        Tra cứu số lần gia hạn
+    </div>
+    <input type="text" id="search-box" placeholder="Nhập mã phiếu đăng ký">
+    <button id="search-btn">🔍</button>
+
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Mã phiếu</th>
+                <th>CCCD</th>
+                <th>Số lần gia hạn</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+        </tbody>
+    </table>
+    <button class="btn_Tra_cuu_PGH" onclick="window.location.href='TraCuuPhieuGiaHan.html'">
+        Tra cứu phiếu gia hạn
+    </button>
+    <button class="btn_Lap_Phieu_Gia_Han" onclick="window.location.href='LapPhieuGiaHan.html'">
+        Lập phiếu gia hạn
+    </button>
+
+    <script src="/DangNhap/Navbar.js"></script>
+    <script src="/GiaHan/GiaHan.js"></script>
+</body>
+</html>

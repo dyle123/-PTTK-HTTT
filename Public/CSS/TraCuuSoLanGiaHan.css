@@ -1,0 +1,80 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+.box_TraCuu_text
+{
+    width: 21vw; /* Chiều rộng */
+    height: 7vh;  /* Chiều cao */
+    background-color: #b3a4ff; /* Màu nền xanh */
+    color: black; /* Màu chữ */
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 10px; /* Bo góc */
+    border: 2px solid #b3a4ff; /* Viền */
+    font-size: 1.82vw;
+    margin-top:1vh;
+    margin-left:38vw
+}
+
+input[type="text"] {
+    padding: 5px;
+    margin-left: 10px;
+}
+
+button {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
+    background-color: #6c5ce7;
+    color: white;
+    border-radius: 5px;
+    margin-top:1vh;
+}
+
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    border: 2px solid #b3a4ff;
+}
+
+th, td {
+    border: 1px solid #b3a4ff;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #f0f0ff;
+}
+
+.btn_Tra_cuu_PGH
+{
+    cursor: pointer;
+    padding: 1vh 1vw;
+    border: none;
+    background-color: #6c5ce7;
+    color: white;
+    border-radius: 5px;
+    margin-top:60vh;
+    position:absolute;
+    margin-left:27vw;
+}
+
+.btn_Lap_Phieu_Gia_Han
+{
+    cursor: pointer;
+    padding: 1vh 1vw;
+    border: none;
+    background-color: #6c5ce7;
+    color: white;
+    border-radius: 5px;
+    margin-top:60vh;
+    margin-left:37vw;
+    position:absolute;
+}
