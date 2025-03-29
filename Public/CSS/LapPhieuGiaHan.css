@@ -21,10 +21,14 @@ body {
     margin-left:38vw
 }
 
-input[type="text"] {
+/* input[type="text"] {
     padding: 5px;
+    width:20vw;
     margin-left: 10px;
-}
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền 
+    position: absolute;
+} */
 
 button {
     cursor: pointer;
@@ -36,21 +40,158 @@ button {
     margin-top:1vh;
 }
 
-table {
-    width: 90%;
-    margin: 20px auto;
-    border-collapse: collapse;
-    border: 2px solid #b3a4ff;
+.form
+{
+    width: 27vw; /* Chiều rộng */
+    height: 50vh;  /* Chiều cao */
+    background-color: #b3a4ff; /* Màu nền xanh */
+    color: black; /* Màu chữ */
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 10px; /* Bo góc */
+    border: 2px solid #b3a4ff; /* Viền */
+    margin-top:3vh;
+    margin-left:35vw;
+    position: relative;
+}
+#Input_HoVaTen
+{
+    padding: 5px;
+    width:20vw;
+    margin-left: 10px;
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền*/   
+    position: absolute;
+    top: 5vh;
 }
 
-th, td {
-    border: 1px solid #b3a4ff;
-    padding: 10px;
-    text-align: center;
+#Input_CCCD
+{
+    padding: 5px;
+    width:20vw;
+    margin-left: 10px;
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền */
+    position: absolute;
+    top: 11vh;
 }
 
-th {
-    background-color: #f0f0ff;
+#Input_MaPhieuDangKy
+{
+    padding: 5px;
+    width:20vw;
+    margin-left: 10px;
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền */
+    position: absolute;
+    top: 17vh;
+}
+
+#Input_LyDoGiaHan
+{
+    padding: 5px;
+    width:20vw;
+    margin-left: 10px;
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền */
+    position: absolute;
+    top: 23vh;
+}
+
+#hop_le
+{
+    margin-top:9vh;
+    margin-left:-15vw;
+    position:absolute
+}
+#hop_le_label
+{
+    display: inline-block; /* Đảm bảo hiển thị */
+    color: black; /* Đổi màu chữ về đen */
+    font-size: 1.5vh; /* Điều chỉnh kích thước chữ */
+    visibility: visible; /* Đảm bảo không bị ẩn */
+    margin-top:9vh;
+    margin-left:-11vw;
+    position:absolute
+}
+
+#khong_hop_le
+{
+    margin-top:9vh;
+    margin-left:5vw;
+    position:absolute
+}
+#khong_hop_le_label
+{
+    display: inline-block; /* Đảm bảo hiển thị */
+    color: black; /* Đổi màu chữ về đen */
+    font-size: 1.5vh; /* Điều chỉnh kích thước chữ */
+    visibility: visible; /* Đảm bảo không bị ẩn */
+    margin-top:9vh;
+    margin-left:12vw;
+}
+
+#Input_NgayDuThiCu
+{
+    padding: 5px;
+    width:6vw;
+    margin-left: 10px;
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền */
+    position: absolute;
+    margin-top: 20vh;
+    margin-left:-13vw;
+}
+
+#NgayDuThiCu_label
+{
+    margin-top: 26vh;
+    margin-left:-13vw;
+    font-size:0.83vw;
+    position:absolute;
+}
+
+#Input_NgayDuThiMoi
+{
+    padding: 5px;
+    width:6vw;
+    margin-left: 10px;
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền */
+    position: absolute;
+    margin-top: 20vh;
+    margin-left:14vw;
+}
+
+#NgayDuThiMoi_label
+{
+    margin-top: 26vh;
+    margin-left:14vw;
+    font-size:0.83vw;
+    position:absolute;
+}
+#btn_XacNhan
+{
+    position: absolute;
+    margin-top:40vh;
+    margin-left:-13vw;
+}
+
+#btn_InPhieu
+{
+    position: absolute;
+    margin-top:40vh;
+    margin-left:0vw;
+}
+
+#btn_GuiPhieuDenKeToan
+{
+    position: absolute;
+    margin-top:40vh;
+    margin-left:14vw;
 }
 
 .btn_Tra_cuu_SLGH
@@ -61,7 +202,7 @@ th {
     background-color: #6c5ce7;
     color: white;
     border-radius: 5px;
-    margin-top:60vh;
+    margin-top:20vh;
     position:absolute;
     margin-left:27vw;
 }
@@ -74,7 +215,7 @@ th {
     background-color: #6c5ce7;
     color: white;
     border-radius: 5px;
-    margin-top:60vh;
+    margin-top:20vh;
     margin-left:37vw;
     position:absolute;
 }

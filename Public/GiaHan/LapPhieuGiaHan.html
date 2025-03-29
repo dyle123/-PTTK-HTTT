@@ -22,6 +22,24 @@
     <div class="box_TraCuu_text">
         Lập phiếu gia hạn
     </div>
+
+    <div class="form">
+        <input type="text" id="Input_HoVaTen" placeholder="Họ và tên">
+        <input type="text" id="Input_CCCD" placeholder="CCCD">
+        <input type="number" id="Input_MaPhieuDangKy" step="1" placeholder="Mã phiếu đăng ký">
+        <input type="text" id="Input_LyDoGiaHan" placeholder="Lý do gia hạn">
+        <input type="checkbox" id="hop_le">
+        <label for="hop_le" id="hop_le_label">Hợp lệ</label>
+        <input type="checkbox" id="khong_hop_le">
+        <label for="khong_hop_le" id="khong_hop_le_label">Không hợp lệ</label>
+        <input type="date" id="Input_NgayDuThiCu">
+        <label for="Input_NgayDuThiCu" id="NgayDuThiCu_label">Ngày dự thi cũ</label>
+        <input type="date" id="Input_NgayDuThiMoi">
+        <label for="Input_NgayDuThiMoi" id="NgayDuThiMoi_label">Ngày dự thi mới</label>
+        <button id="btn_XacNhan">Xác nhận</button>
+        <button id="btn_InPhieu">In phiếu</button>
+        <button id="btn_GuiPhieuDenKeToan">Gửi phiếu đến kế toán</button>
+    </div>
     
     <button class="btn_Tra_cuu_SLGH" onclick="window.location.href='TraCuuSoLanGiaHan.html'">
         Tra cứu số lần gia hạn
