@@ -7,7 +7,7 @@ body {
 {
     width: 21vw; /* Chiều rộng */
     height: 7vh;  /* Chiều cao */
-    background-color: #b3a4ff; /* Màu nền xanh */
+    background-color: #eef3ff; /* Màu nền xanh */
     color: black; /* Màu chữ */
     display: flex;
     align-items: center; /* Căn giữa theo chiều dọc */
@@ -15,7 +15,7 @@ body {
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px; /* Bo góc */
-    border: 2px solid #b3a4ff; /* Viền */
+    border: 2px solid #eef3ff; /* Viền */
     font-size: 1.82vw;
     margin-top:1vh;
     margin-left:38vw
@@ -30,7 +30,7 @@ button {
     cursor: pointer;
     padding: 0.46vh 0.52vw;
     border: none;
-    background-color: #6c5ce7;
+    background-color: #eef3ff;
     color: white;
     border-radius: 5px;
     margin-top:1vh;
