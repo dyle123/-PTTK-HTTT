@@ -7,7 +7,7 @@ body {
 {
     width: 21vw; /* Chiều rộng */
     height: 7vh;  /* Chiều cao */
-    background-color: #b3a4ff; /* Màu nền xanh */
+    background-color: #E5EEFFFF; /* Màu nền xanh */
     color: black; /* Màu chữ */
     display: flex;
     align-items: center; /* Căn giữa theo chiều dọc */
@@ -15,7 +15,7 @@ body {
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px; /* Bo góc */
-    border: 2px solid #b3a4ff; /* Viền */
+    border: 2px solid #E5EEFFFF; /* Viền */
     font-size: 1.82vw;
     margin-top:1vh;
     margin-left:38vw
@@ -34,8 +34,8 @@ button {
     cursor: pointer;
     padding: 0.46vh 0.52vw;
     border: none;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #E5EEFFFF;
+    color: black;
     border-radius: 5px;
     margin-top:1vh;
 }
@@ -44,7 +44,7 @@ button {
 {
     width: 27vw; /* Chiều rộng */
     height: 50vh;  /* Chiều cao */
-    background-color: #b3a4ff; /* Màu nền xanh */
+    background-color: #E5EEFFFF; /* Màu nền xanh */
     color: black; /* Màu chữ */
     display: flex;
     align-items: center; /* Căn giữa theo chiều dọc */
@@ -52,7 +52,7 @@ button {
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px; /* Bo góc */
-    border: 2px solid #b3a4ff; /* Viền */
+    border: 2px solid #E5EEFFFF; /* Viền */
     margin-top:3vh;
     margin-left:35vw;
     position: relative;
@@ -178,6 +178,8 @@ button {
     position: absolute;
     margin-top:40vh;
     margin-left:-13vw;
+    background-color: #6c5ce7;
+    color: white;
 }
 
 #btn_InPhieu
@@ -185,6 +187,8 @@ button {
     position: absolute;
     margin-top:40vh;
     margin-left:0vw;
+    background-color: #6c5ce7;
+    color: white;
 }
 
 #btn_GuiPhieuDenKeToan
@@ -192,6 +196,8 @@ button {
     position: absolute;
     margin-top:40vh;
     margin-left:14vw;
+    background-color: #6c5ce7;
+    color: white;
 }
 
 .btn_Tra_cuu_SLGH
