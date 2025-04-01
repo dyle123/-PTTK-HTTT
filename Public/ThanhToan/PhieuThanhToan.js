@@ -1,52 +1,15 @@
 document.addEventListener("DOMContentLoaded", async function () {
     const tableBody = document.getElementById("table-body");
 
-    // Hàm in phiếu thanh toán
-    function printReceipt(phieu) {
-        const printWindow = window.open("", "_blank");
-        printWindow.document.write(`
-            <html>
-            <head>
-                <title>Phiếu Thanh Toán</title>
-                <style>
-                    body { font-family: Arial, sans-serif; text-align: center; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid black; padding: 10px; text-align: center; }
-                    th { background-color: #f2f2f2; }
-                    .title { font-size: 24px; font-weight: bold; margin-top: 20px; }
-                    .footer { margin-top: 30px; font-size: 16px; }
-                </style>
-            </head>
-            <body>
-                <h2 class="title">Phiếu Thanh Toán</h2>
-                <table>
-                    <tr><th>Mã phiếu</th><td>${phieu.MaPhieuThanhToan}</td></tr>
-                    <tr><th>Mã phiếu đăng ký</th><td>${phieu.MaPhieuDangKy}</td></tr>
-                    <tr><th>Tạm tính</th><td>${phieu.TamTinh}</td></tr>
-                    <tr><th>Phần trăm giảm</th><td>${phieu.PhanTramGiamGia}%</td></tr>
-                    <tr><th>Thành tiền</th><td>${phieu.ThanhTien}</td></tr>
-                    <tr><th>Trạng thái</th><td>${phieu.TrangThaiThanhToan ? "Đã thanh toán" : "Chưa thanh toán"}</td></tr>
-                    <tr><th>Nhân viên thực hiện</th><td>${phieu.NhanVienThucHien}</td></tr>
-                </table>
-                <p class="footer">Quý khách vui lòng thanh toán trong vòng 3 ngày kể từ khi đăng ký!</p>
-                <p class="footer">Cảm ơn quý khách đã sử dụng dịch vụ!</p>
-                <script>
-                    window.onload = function() { window.print(); }
-                </script>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        
-    }
-
+   
     // Hàm gọi API tạo phiếu thanh toán
     async function createPaymentReceipt(maPhieuDangKy) {
         try {
             const responseSession = await fetch("http://localhost:3000/api/getCurrentUser"); 
             const sessionData = await responseSession.json();
-            const nvThucHien = sessionData.user.id; // Giả sử backend trả về mã nhân viên
-            console.log('Ma nv nhan ve', nvThucHien);
+            console.log('Ma nv nhan ve', sessionData.user);
+            const nvThucHien = sessionData.user; // Giả sử backend trả về mã nhân viên
+           
 
             const response = await fetch("http://localhost:3000/api/postPhieuThanhToan", {
                 method: "POST",
@@ -86,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             data.forEach(phieu => {
                 const row = document.createElement("tr");
-                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán nha" : "Chưa thanh toán";
+                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán nha mom" : "Chưa thanh toán";
                 const trangThaiClass = phieu.TrangThaiThanhToan ? "da-thanh-toan" : "chua-thanh-toan";
             
                 // Xây dựng nội dung cột thao tác
@@ -99,6 +62,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     thaoTacHTML = `
                         <button class="in-phieu">In phiếu</button>
                         <button class="thanh-toan" data-ma-phieu="${phieu.MaPhieuThanhToan}">Thanh toán</button>
+                        <button class="chuyen-khoan" data-ma-phieu="${phieu.MaPhieuThanhToan}" data-thanh-tien="${phieu.ThanhTien}">Chuyển khoản</button>
                     `;
                 }
             
@@ -116,7 +80,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 // Gán sự kiện click nếu chưa thanh toán
                 if (phieu.TrangThaiThanhToan == 0) {
                     row.querySelector(".in-phieu").addEventListener("click", () => printReceipt(phieu));
-                    row.querySelector(".thanh-toan").addEventListener("click", () => thanhToan(phieu.MaPhieuThanhToan));
+                    row.querySelector(".thanh-toan").addEventListener("click", () => thanhToan(phieu.MaPhieuDangKy));
+                    row.querySelector(".chuyen-khoan").addEventListener("click", () => chuyenKhoan(phieu.MaPhieuDangKy, phieu.ThanhTien));
                 } else if(phieu.TrangThaiThanhToan == 1)  {
                     row.querySelector(".xem-hoa-don").addEventListener("click", () => xemHoaDon(phieu.MaPhieuThanhToan));
                 }
@@ -144,6 +109,78 @@ document.addEventListener("DOMContentLoaded", async function () {
             console.error("Tạo phiếu thất bại, không thể lấy dữ liệu.");
         }
     }
+
+
+     // Hàm in phiếu thanh toán
+     async function printReceipt(phieu) {
+        try {
+            // 🔹 Gọi API tạo payment link trên PayOS
+            const response = await fetch("http://localhost:3000/create-payment-link", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    Amount: phieu.ThanhTien,
+                    MaPhieuDangKy: phieu.MaPhieuDangKy
+                })
+            });
+    
+            const data = await response.json();
+    
+            // 🔹 Sử dụng `qrCode` thay vì `data.url`
+            if (!data.qrCode) {
+                throw new Error("Không nhận được dữ liệu QR Code từ API.");
+            }
+            
+            // 🔹 Gọi API để tạo hình ảnh QR từ `qrCode`
+            const qrResponse = await fetch(`http://localhost:3000/generate-qr?data=${encodeURIComponent(data.qrCode)}`);
+            const qrData = await qrResponse.json();
+            const qrCode = qrData.qrImage || "";
+    
+            // 🔹 Mở cửa sổ in và hiển thị phiếu thanh toán
+            const printWindow = window.open("", "_blank");
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Phiếu Thanh Toán</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid black; padding: 10px; text-align: center; }
+                        th { background-color: #f2f2f2; }
+                        .title { font-size: 24px; font-weight: bold; margin-top: 20px; }
+                        .footer { margin-top: 30px; font-size: 16px; }
+                        .qr-code { margin-top: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <h2 class="title">Phiếu Thanh Toán</h2>
+                    <table>
+                        <tr><th>Mã phiếu</th><td>${phieu.MaPhieuThanhToan}</td></tr>
+                        <tr><th>Mã phiếu đăng ký</th><td>${phieu.MaPhieuDangKy}</td></tr>
+                        <tr><th>Tạm tính</th><td>${phieu.TamTinh}</td></tr>
+                        <tr><th>Phần trăm giảm</th><td>${phieu.PhanTramGiamGia}%</td></tr>
+                        <tr><th>Thành tiền</th><td>${phieu.ThanhTien}</td></tr>
+                        <tr><th>Trạng thái</th><td>${phieu.TrangThaiThanhToan ? "Đã thanh toán" : "Chưa thanh toán"}</td></tr>
+                        <tr><th>Nhân viên thực hiện</th><td>${phieu.NhanVienThucHien}</td></tr>
+                    </table>
+                    <div class="qr-code">
+                        <h3>Quét mã QR để thanh toán:</h3>
+                        ${qrCode ? `<img src="${qrCode}" alt="QR Code" width="200">` : "<p>Không có mã QR</p>"}
+                    </div>
+                    <p class="footer">Quý khách vui lòng thanh toán trong vòng 3 ngày!</p>
+                    <script>
+                        window.onload = function() { window.print(); }
+                    </script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        } catch (error) {
+            console.error("❌ Lỗi khi lấy ảnh QR:", error);
+            alert("Không thể lấy mã QR thanh toán!");
+        }
+    }
+    
 
 
     async function moModalThanhToan(maPhieu, loaiKhachHang) {
@@ -243,6 +280,40 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 });
 
+// Gán sự kiện cho nút chuyển khoản
+async function chuyenKhoan(maPhieu, thanhTien) {
+    
+    if (!maPhieu || !thanhTien) {
+        console.error("Thiếu thông tin để thực hiện chuyển khoản!");
+        alert("Không tìm thấy thông tin thanh toán.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/create-payment-link`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                Amount: thanhTien,
+                MaPhieuDangKy: maPhieu
+                
+            })
+        });
+
+        const data = await response.json();
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            alert('Lỗi khi tạo link thanh toán!');
+        }
+    } catch (error) {
+        console.error("Lỗi khi tạo link thanh toán:", error);
+        alert("Có lỗi xảy ra khi tạo link thanh toán!");
+    }
+}
+
+// Gán sự kiện click vào document
+// document.addEventListener("click", chuyenKhoan);
 
 function xemHoaDon(maPhieu) {
     fetch(`http://localhost:3000/api/getHoaDon?maPhieuThanhToan=${maPhieu}`)

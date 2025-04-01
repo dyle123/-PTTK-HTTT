@@ -5,6 +5,9 @@ const sql = require('mssql');
 const path = require('path');
 const app = express();
 const PORT = 3000;
+const PayOS = require('@payos/node');
+const payos = new PayOS("a97645fd-bdc9-4392-9cd3-f7a2d62cebcc", "9e6457b7-927d-48ec-bcd0-015417ded0c7", "cbee15763a8c1e84cfaf34b57c911e4ea155c711c5093c1e2d861b2f0e32362a");
+const QRCode = require('qrcode');
 
 // Cấu hình để phục vụ các tệp tĩnh từ thư mục "frontend"
 app.use(express.static(path.join(__dirname, 'public')));
@@ -24,6 +27,21 @@ app.use(session({
     cookie: { secure: false } // Cookie không yêu cầu HTTPS (chỉ cho local)
 }));
 
+
+
+// Cấu hình kết nối SQL Server
+const config = {
+    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'sa',
+    password: '1928374650Vy',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 // // Cấu hình kết nối SQL Server
 // const config = {
@@ -54,20 +72,58 @@ app.use(session({
 //     },
 // };
 
+// async function sqlQuery(query, params = {}) {
+//     try {
+//         const pool = await sql.connect({
+//             user: 'sa',
+//             password: '1928374650Vy',
+//             database: 'PTTK',
+//             server: '192.168.102.1',
+//             options: { encrypt: false, trustServerCertificate: true }
+//         });
+
+//         const request = pool.request();
+//         for (const param in params) {
+//             request.input(param, params[param]);
+//         }
+
+//         const result = await request.query(query);
+//         return result.recordset;
+//     } catch (error) {
+//         console.error("❌ Lỗi SQL:", error);
+//         throw error;
+//     }
+// }
+// // Cấu hình kết nối SQL Server
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.174.1',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'BENU',
+//     password: 'benu123',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
+
 // Cấu hình kết nối SQL Server
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.1.11',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'dungluonghoang',
-    password: 'teuklee1983#',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.1.11',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'dungluonghoang',
+//     password: 'teuklee1983#',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
+
 
 // Hàm kiểm tra kết nối
 async function testDatabaseConnection() {
@@ -84,9 +140,74 @@ async function testDatabaseConnection() {
 testDatabaseConnection();
 
 
-// Khởi chạy server
-app.listen(PORT, () => {
-    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+
+app.post('/create-payment-link', async (req, res) => {
+    const { Amount, MaPhieuDangKy } = req.body;
+    console.log('sao undefine quai z', MaPhieuDangKy);
+    try {
+        // 🔍 Truy vấn CSDL kiểm tra xem đơn thanh toán đã tồn tại chưa
+        const existingOrder = await sqlQuery(`
+            SELECT PaymentLink, QRCode  -- 🔹 Thêm QRCode vào truy vấn
+            FROM Payments 
+            WHERE MaPhieuDangKy = @MaPhieuDangKy
+        `, { MaPhieuDangKy });
+
+        if (existingOrder.length > 0) {
+            console.log("🔄 Đơn thanh toán đã tồn tại, trả về link cũ:", existingOrder[0].PaymentLink, existingOrder[0].QRCode);
+            return res.json({
+                url: existingOrder[0].PaymentLink,
+                qrCode: existingOrder[0].QRCode // 🔹 Trả về mã QR đã lưu
+            });
+        }
+
+        // 🆕 Nếu chưa có đơn thanh toán, tạo mới
+        const orderCode = Math.floor(Math.random() * 100000);
+        const order = {
+            amount: 2000, // Giá trị đơn hàng
+            description: `Thanh toán phiếu`, // Giới hạn 25 ký tự
+            orderCode: orderCode,
+            returnUrl: `http://localhost:${PORT}/ThanhToan/payment-success.html?OrderCode=${MaPhieuDangKy}`,
+            cancelUrl: `http://localhost:${PORT}/ThanhToan/payment-cancel.html?OrderCode=${MaPhieuDangKy}`,
+            expired_at: Math.floor(Date.now() / 1000) + 259200, // Hết hạn sau 3 ngày
+        };
+
+        const paymentLink = await payos.createPaymentLink(order);
+        console.log("📝 API Response:", paymentLink);
+
+        // ✅ Lưu link thanh toán và QRCode vào CSDL
+        await sqlQuery(`
+            INSERT INTO Payments (OrderCode, MaPhieuDangKy, PaymentLink, TrangThai, QRCode) 
+            VALUES (@OrderCode, @MaPhieuDangKy, @PaymentLink, 'pending', @QRCode)
+        `, {orderCode, MaPhieuDangKy, PaymentLink: paymentLink.checkoutUrl, QRCode: paymentLink.qrCode });
+
+        res.json({
+            url: paymentLink.checkoutUrl,
+            qrCode: paymentLink.qrCode // 🔹 Trả về mã QR mới
+        });
+
+    } catch (error) {
+        console.error('❌ Lỗi khi tạo link thanh toán:', error);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+
+app.get('/generate-qr', async (req, res) => {
+    try {
+        const qrCodeData = req.query.data || req.body.data; // Lấy từ query hoặc body
+
+        if (!qrCodeData) {
+            return res.status(400).json({ error: 'Thiếu dữ liệu QR Code' });
+        }
+
+        // Tạo QR dưới dạng Base64
+        const qrImage = await QRCode.toDataURL(qrCodeData);
+
+        res.json({ qrImage }); // Trả về ảnh QR dưới dạng Base64
+    } catch (error) {
+        console.error('❌ Lỗi tạo QR Code:', error);
+        res.status(500).json({ error: 'Lỗi server khi tạo QR Code' });
+    }
 });
 
 
@@ -222,12 +343,14 @@ app.get("/api/getUserRole", (req, res) => {
 });
 
 app.get('/api/getCurrentUser', (req, res) => {
+    console.log("Session hiện tại:", req.session);
     if (!req.session.user) {
         return res.status(401).json({ error: 'Người dùng chưa đăng nhập' });
     }
-    console.log('Thông tin người dùng trong session:', req.session.user);
-    res.json({ user: req.session.user });
+    console.log('Thông tin người dùng trong session:', req.session.user.id);
+    res.json({ user: req.session.user.id, role: req.session.user.role });
 });
+
 
 app.get('/api/getPhieuDangKy', async (req, res) => {
     const { dieuKien, maPhieu } = req.query; // Lấy từ query string
@@ -283,7 +406,7 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
 
 app.get('/api/getPhieuThanhToan', async (req, res) => {
     const { maPhieuDangKy } = req.query;
-    console.log("maPhieuDangKy nhận được:", maPhieuDangKy); // Debugging
+    console.log("maPhieuDangKy nhận được ở api getget:", maPhieuDangKy); // Debugging
 
     if (!maPhieuDangKy) {
         return res.status(400).json({ error: "Thiếu mã phiếu đăng ký" });
@@ -325,7 +448,7 @@ app.post('/api/postPhieuThanhToan', async (req, res) => {
     try {
         const { maPhieuDangKy, nhanVienThucHien } = req.body;
 
-        console.log("maPhieuDangKy nhận được:", maPhieuDangKy); // Debugging
+        console.log("maPhieuDangKy nhận được ở api post:", maPhieuDangKy, nhanVienThucHien); // Debugging
 
         if (!maPhieuDangKy || !nhanVienThucHien) {
             return res.status(400).json({ error: "Thiếu dữ liệu đầu vào" });
@@ -359,7 +482,7 @@ app.post('/api/postThanhToan', async (req, res) => {
         MaGiaoDich = MaGiaoDich ? String(MaGiaoDich) : null; // Chuyển thành chuỗi nếu có
         HinhThucThanhToan = HinhThucThanhToan || null; // Nếu rỗng thì gán null
 
-        console.log('Ma phieu nhan vao:', MaPhieuThanhToan, HinhThucThanhToan, MaGiaoDich);
+        console.log('Ma phieu nhan vao nhe:', MaPhieuThanhToan, HinhThucThanhToan, MaGiaoDich);
 
         const pool = await sql.connect(config);
         await pool.request()
@@ -538,3 +661,32 @@ app.get('/api/getLichThi', async (req, res) => {
         res.status(500).json({ error: 'Lỗi khi lấy lịch thi' });
     }
 });
+
+app.post('/api/xoaPayment', async (req, res) => {
+    const { maPhieuDangKy } = req.body;
+
+    // Kiểm tra đầu vào
+    if (!maPhieuDangKy || isNaN(maPhieuDangKy)) {
+        return res.status(400).json({ error: 'Mã phiếu đăng ký không hợp lệ' });
+    }
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .query(`
+                DELETE FROM Payments WHERE MaPhieuDangKy = @MaPhieuDangKy
+            `);
+
+        // Kiểm tra xem có dòng nào bị xóa không
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy mã phiếu đăng ký' });
+        }
+
+        res.json({ message: 'Xóa payment thành công' });
+    } catch (err) {
+        console.error('❌ Lỗi xóa payment:', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
