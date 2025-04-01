@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/QuanLyLichThi.css">
+    <title>Quản Lý Lịch Thi</title>
+    <script src="/DangNhap/Navbar.js"></script>
+    <script src="/QuanLyLichThi/QuanLyLichThi.js" defer></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <h1>Danh Sách Lịch Thi</h1>
+
+    <!-- Bộ lọc -->
+    <div class="filter-container">
+        <label><input type="radio" name="filter" id="filter-all" checked> Tất cả</label>
+        <label><input type="radio" name="filter" value="ngaythi" id="filter-ngay-thi"> Ngày thi</label>
+        <label><input type="radio" name="filter" value="giothi" id="filter-gio-thi"> Giờ thi</label>
+        <label><input type="radio" name="filter" value="loaichungchi" id="filter-loai-chung-chi"> Loại chứng chỉ</label>
+        <input type="text" id="search-box" placeholder="Tìm theo mã lịch thi">
+        <button id="search-btn">🔍</button>
+    </div>
+
+    <!-- Bảng danh sách lịch thi -->
+    <table>
+        <thead>
+            <tr>
+                <th>Mã lịch thi</th>
+                <th>Ngày thi</th>
+                <th>Giờ thi</th>
+                <th>Số thí sinh đã đăng ký</th>
+                <th>Mã phòng thi</th>
+                <th>Loại chứng chỉ</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+        </tbody>
+    </table>
+
+    <div class="create-container">
+        <button id="create-btn">Tạo lịch thi mới</button>
+    </div>
+
+</body>
+
+</html>

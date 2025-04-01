@@ -73,6 +73,12 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchData(maPhieu); // Tìm kiếm theo mã phiếu
     });
 
+    searchBox.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            searchBtn.click();
+        }
+    });
+
     // Tải dữ liệu ban đầu (mặc định không có mã phiếu)
     fetchData();
 });
