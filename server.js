@@ -426,3 +426,28 @@ app.get('/api/getHoaDon', async (req,res)=>{
         res.status(500).json({ error: err.message });
     }
 });
+
+
+//API TraCuuSoLanGiaHan
+app.get('/api/getChiTietPhieuDangKy', async (req, res) => {
+    const { maPhieuDangKy } = req.query;
+    if (!maPhieuDangKy) {
+        return res.status(400).json({ error: 'Mã phiếu đăng ký là bắt buộc' });
+    }
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .query(`SELECT * FROM ChiTietPhieuDangKy WHERE MaPhieuDangKy = @MaPhieuDangKy`);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy phiếu đăng ký' });
+        }
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error('Lỗi khi lấy dữ liệu:', err);
+        res.status(500).json({ error: err.message });
+    }
+});

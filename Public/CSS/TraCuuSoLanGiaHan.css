@@ -21,7 +21,7 @@ body {
     margin-left:38vw
 }
 
-input[type="text"] {
+input[type="number"] {
     padding: 5px;
     margin-left: 10px;
 }
