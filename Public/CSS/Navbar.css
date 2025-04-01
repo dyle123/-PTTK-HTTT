@@ -14,8 +14,13 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: #eef3ff;
-    padding: 15px 30px;
+    padding: 20px 30px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;  /* Thay position: absolute thành position: fixed */
+    top: 0;
+    left: 0;
+    width: 100%;  /* Đảm bảo navbar chiếm hết chiều rộng */
+    z-index: 1000; /* Đảm bảo navbar luôn nằm trên các phần tử khác */
 }
 
 .logo {
@@ -27,10 +32,14 @@ body {
 .nav-links {
     list-style: none;
     display: flex;
+    align-items: center;
+    gap: 20px; /* Điều chỉnh khoảng cách giữa các mục */
+
 }
 
 .nav-links li {
-    margin: 0 15px;
+    margin: 1 15px;
+    line-height: 30px; /* Đảm bảo dòng này bằng với chiều cao của các mục */
 }
 
 .nav-links a {
@@ -73,4 +82,38 @@ body {
     background: #222;
     padding: 10px 20px;
     border-radius: 5px;
+}
+
+/* Ẩn menu con mặc định */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #eef3ff;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Hiển thị menu con khi rê chuột */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Định dạng các mục trong menu con */
+.dropdown-menu li {
+    padding: 10px;
+}
+
+.dropdown-menu li a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    padding: 8px 12px;
+}
+
+/* Hiệu ứng hover */
+.dropdown-menu li a:hover {
+    background-color: #eef3ff;
 }

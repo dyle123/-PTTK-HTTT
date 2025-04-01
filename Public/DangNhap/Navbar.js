@@ -150,3 +150,19 @@ function showModal(message) {
                 modal.style.display = "none";
             }, 2000);
         }
+
+// Hàm xử lý dropdown menu cho Đăng ký
+function setupDropdown() {
+    const registerItem = document.getElementById("register");
+    if (registerItem) {
+        registerItem.addEventListener("mouseenter", () => {
+            document.querySelector(".dropdown-menu").style.display = "block";
+        });
+
+        registerItem.addEventListener("mouseleave", () => {
+            document.querySelector(".dropdown-menu").style.display = "none";
+        });
+    } else {
+        console.warn("⚠️ Không tìm thấy phần tử Đăng ký.");
+    }
+}

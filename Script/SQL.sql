@@ -92,6 +92,7 @@ Create table PhieuDangKy(
 
 
 
+
 create table ChiTietPhieuDangKy(
     MaPhieuDangKy int ,--f
     CCCD char(12) ,--f
@@ -166,6 +167,17 @@ CREATE TABLE Payments (
 );
 
 
+CREATE TABLE PhieuGiaHan
+(
+	CCCD char(12),
+	MaPhieuDangKy int,
+	LoaiGiaHan nvarchar(12) check (LoaiGiaHan in (N'Hợp lệ', N'Không hợp lệ')),
+	PhiGiaHan int,
+	LiDoGiaHan nvarchar(255),
+	NgayGiaHan Date,
+	CONSTRAINT PK_PhieuGiaHan PRIMARY KEY (CCCD, MaPhieuDangKy)
+)
+
 -- Khóa ngoại ở đây
 ALTER TABLE PhieuThanhToan 
 ADD CONSTRAINT FK_PhieuThanhToan_PhieuDangKy FOREIGN KEY (MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy),
@@ -212,6 +224,9 @@ ADD CONSTRAINT FK_PhieuDuThi_ThiSinh FOREIGN KEY(CCCD) REFERENCES ThiSinh(CCCD),
 ALTER TABLE ThongTinTruyCap
 ADD CONSTRAINT FK_ThongTinTruyCap_KhachHang FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien);
 
+ALTER TABLE PhieuGiaHan
+ADD CONSTRAINT FK_PhieuGiaHan_ThiSinh FOREIGN KEY(CCCD) REFERENCES ThiSinh(CCCD),
+    CONSTRAINT FK_PhieuGiaHan_PhieuDangKy FOREIGN KEY(MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy);
 
 
 

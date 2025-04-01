@@ -32,6 +32,11 @@ app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
 
+// Khởi động server
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+});
+
 
 // Cấu hình kết nối SQL Server
 const config = {
@@ -49,6 +54,20 @@ const config = {
 
 // // Cấu hình kết nối SQL Server
 // const config = {
+//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'sa',
+//     password: '1928374650Vy',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
+
+// // Cấu hình kết nối SQL Server
+// const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
 //     server: '192.168.174.1',
 //     port: 1433, // Cổng SQL Server
@@ -62,6 +81,57 @@ const config = {
 //     },
 // };
 
+async function sqlQuery(query, params = {}) {
+    try {
+        const pool = await sql.connect({
+            user: 'sa',
+            password: '1928374650Vy',
+            database: 'PTTK',
+            server: '192.168.102.1',
+            options: { encrypt: false, trustServerCertificate: true }
+        });
+
+        const request = pool.request();
+        for (const param in params) {
+            request.input(param, params[param]);
+        }
+
+        const result = await request.query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error("❌ Lỗi SQL:", error);
+        throw error;
+    }
+}
+// // Cấu hình kết nối SQL Server
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.174.1',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'BENU',
+//     password: 'benu123',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
+
+// Cấu hình kết nối SQL Server
+const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.1.11',
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'dungluonghoang',
+    password: 'teuklee1983#',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 async function sqlQuery(query, params = {}) {
     try {
         const pool = await sql.connect({
@@ -220,7 +290,7 @@ app.post('/login', async (req, res) => {
         // Lưu trạng thái người dùng vào session
         req.session.user = { id: user.MaNhanVien, role: user.Role };
         // Chỉ lưu thông tin truy cập nếu role là 'khachhang'
-        if (user.Role === 'ketoan'|| user.Role === 'tiepnhan') {
+        if (user.Role === 'ketoan' || user.Role === 'tiepnhan') {
             await pool.request()
                 .input('Username', sql.Char(10), user.MaNhanVien)
                 .query(`
@@ -263,10 +333,10 @@ app.post('/logout', async (req, res) => {
 
     try {
         // Đúng tên biến: 'id' thay vì 'Username'
-        const username = req.session.user.id;  
+        const username = req.session.user.id;
         console.log("Username được sử dụng:", username);
 
-        if (req.session.user.role === 'ketoan' || req.session.user.role === 'tiepnhan' ) {
+        if (req.session.user.role === 'ketoan' || req.session.user.role === 'tiepnhan') {
             const pool = await sql.connect(config);
             const result = await pool.request()
                 .input('username', sql.VarChar, username)
@@ -278,7 +348,7 @@ app.post('/logout', async (req, res) => {
 
             if (result.rowsAffected[0] === 0) {
                 return res.status(404).json({ error: 'Không tìm thấy phiên đăng nhập để cập nhật!' });
-            }   
+            }
         }
 
         // Xóa session
@@ -298,7 +368,7 @@ app.get("/api/getUserRole", (req, res) => {
     if (!req.session.user) {
         return res.status(401).json({ error: "Bạn chưa đăng nhập" });
     }
-    
+
     res.json({ role: req.session.user.role });
 });
 
@@ -314,7 +384,7 @@ app.get('/api/getCurrentUser', (req, res) => {
 
 app.get('/api/getPhieuDangKy', async (req, res) => {
     const { dieuKien, maPhieu } = req.query; // Lấy từ query string
-    
+
     try {
         const pool = await sql.connect(config);
         let query = `SELECT * FROM PhieuDangKy `;
@@ -341,7 +411,7 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
         const result = await pool.request()
             .input('MaPhieu', sql.Int, maPhieu)
             .query(query);
-        
+
         // ✅ Format lại ngày
         const formatDate = (dateString) => {
             if (!dateString) return null;
@@ -502,26 +572,123 @@ app.get('/api/capNhatPhieuQuaHan', async (req, res) => {
     }
 });
 
-app.get('/api/getHoaDon', async (req,res)=>{
-    const{maPhieuThanhToan} = req.query;
-    try{
+app.get('/api/getHoaDon', async (req, res) => {
+    const { maPhieuThanhToan } = req.query;
+    try {
         const pool = await sql.connect(config);
         const result = await pool.request()
-            .input('MaPhieuThanhToan', sql.Int,  maPhieuThanhToan)
+            .input('MaPhieuThanhToan', sql.Int, maPhieuThanhToan)
             .query(`
                 SELECT* FROM HoaDonThanhToan where MaPhieuThanhToan = @MaPhieuThanhToan
                 `)
         if (result.recordset.length === 0) {
             return res.status(404).json({ error: "Không tìm thấy hóa đơn" });
         }
-        
-         if (result.recordset.length === 0) {
+
+        if (result.recordset.length === 0) {
             return res.status(404).json({ error: "Không tìm thấy loại khách hàng" });
         }
         res.json(result.recordset[0]);
-    }catch(err){
+    } catch (err) {
         console.error('Không lấy được hóa đơn:', err);
         res.status(500).json({ error: err.message });
+    }
+});
+
+
+//API TraCuuSoLanGiaHan
+app.get('/api/getChiTietPhieuDangKy', async (req, res) => {
+    const { maPhieuDangKy } = req.query;
+    if (!maPhieuDangKy) {
+        return res.status(400).json({ error: 'Mã phiếu đăng ký là bắt buộc' });
+    }
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .query(`SELECT * FROM ChiTietPhieuDangKy WHERE MaPhieuDangKy = @MaPhieuDangKy`);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy phiếu đăng ký' });
+        }
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error('Lỗi khi lấy dữ liệu:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+
+
+
+
+
+
+
+app.get('/api/getLichThi', async (req, res) => {
+    const { dieuKien, maLichThi, ngayThi, gioThi, loaiChungChi } = req.query; // Lấy từ query string
+
+    try {
+        const pool = await sql.connect(config);
+        let query = `SELECT * FROM LichThi `;
+        let conditions = [];
+
+        console.log('DieuKien:', dieuKien);
+
+        // Điều kiện lọc linh hoạt
+        if (dieuKien === "ngaythi" && ngayThi) {
+            conditions.push(`NgayThi = @NgayThi`);
+        }
+        if (dieuKien === "giothi" && gioThi) {
+            conditions.push(`GioThi = @GioThi`);
+        }
+        if (dieuKien === "loaichungchi" && loaiChungChi) {
+            conditions.push(`LoaiChungChi = @LoaiChungChi`);
+        }
+        if (maLichThi) {
+            conditions.push(`MaLichThi = @MaLichThi`);
+        }
+
+        if (conditions.length > 0) {
+            query += ` WHERE ` + conditions.join(" AND ");
+        }
+
+        const request = pool.request();
+
+        // Gán giá trị cho tham số nếu có
+        if (maLichThi) request.input('MaLichThi', sql.Int, maLichThi);
+        if (ngayThi) request.input('NgayThi', sql.Date, ngayThi);
+        if (gioThi) request.input('GioThi', sql.Time, gioThi);  // Nếu `GioThi` là kiểu TIME
+        if (loaiChungChi) request.input('LoaiChungChi', sql.NVarChar, loaiChungChi);
+
+        const result = await request.query(query);
+
+        // ✅ Format lại ngày
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            return new Date(dateString).toISOString().split('T')[0]; // YYYY-MM-DD
+        };
+
+        const formatTime = (timeValue) => {
+            if (!timeValue) return null;
+            return timeValue.toISOString().split('T')[1].slice(0, 8); // Lấy HH:mm:ss
+        };
+        
+
+
+        const formattedData = result.recordset.map(row => ({
+            ...row,
+            NgayThi: formatDate(row.NgayThi),
+            GioThi: formatTime(row.GioThi)  // Format giờ thi
+        }));
+
+        res.json(formattedData);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Lỗi khi lấy lịch thi' });
     }
 });
 
