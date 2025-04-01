@@ -26,4 +26,4 @@ values ('NV000013', '123','tiepnhan');
  select* from Payments
  update PhieuDangKy
  set NgayDangKy = '2025-03-26' where MaPhieuDangKy = 1
- delete from 
+ delete from Payments where MaPhieuDangKy = 2

@@ -161,10 +161,13 @@ CREATE TABLE ThongTinTruyCap (
 );
 
 CREATE TABLE Payments (
-    MaPhieuDangKy INT PRIMARY KEY,
+    OrderCode INT PRIMARY KEY,
     PaymentLink NVARCHAR(500),
-    TrangThai NVARCHAR(50) DEFAULT 'pending'
+    TrangThai NVARCHAR(50) DEFAULT 'pending',
+	MaPhieuDangKy int,
+	QRCode varchar(500)
 );
+
 
 
 CREATE TABLE PhieuGiaHan

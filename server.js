@@ -27,9 +27,13 @@ app.use(session({
     cookie: { secure: false } // Cookie không yêu cầu HTTPS (chỉ cho local)
 }));
 
+// Khởi động server
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+});
 
 
-// Cấu hình kết nối SQL Server
+//Cấu hình kết nối SQL Server
 const config = {
     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
     port: 1433, // Cổng SQL Server
@@ -123,7 +127,28 @@ const config = {
 //         connectTimeout: 30000, // Thời gian chờ 30 giây
 //     },
 // };
+async function sqlQuery(query, params = {}) {
+    try {
+        const pool = await sql.connect({
+            user: 'sa',
+            password: '1928374650Vy',
+            database: 'PTTK',
+            server: '192.168.102.1',
+            options: { encrypt: false, trustServerCertificate: true }
+        });
 
+        const request = pool.request();
+        for (const param in params) {
+            request.input(param, params[param]);
+        }
+
+        const result = await request.query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error("❌ Lỗi SQL:", error);
+        throw error;
+    }
+}
 
 // Hàm kiểm tra kết nối
 async function testDatabaseConnection() {
