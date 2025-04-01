@@ -117,6 +117,7 @@ Create table PhieuDangKy(
 
 
 
+
 create table ChiTietPhieuDangKy(
     MaPhieuDangKy int ,--f
     CCCD char(12) ,--f
