@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán thất bại</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const OrderCode = urlParams.get("OrderCode");
+
+            if (!OrderCode) {
+                alert("Không tìm thấy mã đơn hàng!");
+                return;
+            }
+
+            // Gửi yêu cầu cập nhật thông tin thanh toán
+            try {
+                const response = await fetch("http://localhost:3000/api/xoaPayment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        maPhieuDangKy: OrderCode
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    window.location.href = `/ThanhToan/PhieuThanhToan.html?maPhieuDangKy=${OrderCode}`;
+                } else {
+                    alert("Lỗi khi cập nhật thanh toán: " + result.error);
+                }
+            } catch (error) {
+                console.error("Lỗi khi gọi API postThanhToan:", error);
+                alert("Có lỗi xảy ra, vui lòng thử lại.");
+            }
+        });
+
+       
+    </script>
+</head>
+<body>
+</body>
+</html>

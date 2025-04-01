@@ -9,32 +9,6 @@ GO
 
 USE PTTK
 GO
-insert into BangGiaThi(MaLoaiChungChi,TenChungChi,LePhiThi)
-values (1,'Toeic', 2000000),(2, 'Ielst',5000000)
-insert into NhanVien(MaNhanVien,HoTen,NgaySinh,SoDienThoai,Luong,BoPhan)
-values ('NV000014', N'Tram Dao', '2004-12-23', '0965422253', '2000000', 'ketoan')
-
- insert into Users(MaNhanVien, PassWord, Role)
-values ('NV000014', '123','ketoan');
-
-insert into PhieuDangKy(NgayDangKy,TrangThaiThanhToan)
-values ('2025-03-22', 'ChuaThanhToan'),
- ('2025-03-22', 'DaThanhToan')
-
-
- select* from ChiTietPhieuDangKy where MaPhieuDangKy = 5
- select* from ThiSinh
-  select* from PhieuDangKy
- select* from  PhieuThanhToan
- update  PhieuDangKy
- set TrangThaiThanhToan = 0 where MaPhieuDangKy = 1
- select* from NhanVien
- select* from HoaDonThanhToan
- update PhieuDangKy
- set NgayDangKy = '2025-03-26' where MaPhieuDangKy = 1
-
-
-
 
 CREATE TABLE KhachHang(
 	MaKhachHang int IDENTITY(1,1) Primary Key,
@@ -64,7 +38,7 @@ CREATE TABLE PhieuThanhToan (
 	NhanVienThucHien char(8) NOT NULL,--f
 );
 
-	CREATE TABLE HoaDonThanhToan(
+CREATE TABLE HoaDonThanhToan(
 	MaHoaDon int IDENTITY(1,1) Primary Key,
 	TongTien int,
 	HinhThucThanhToan nvarchar(20) DEFAULT N'tiền mặt' CHECK (HinhThucThanhToan IN ( N'tiền mặt',N'chuyển khoản')),
@@ -111,7 +85,8 @@ Create table PhieuDangKy(
     NgayDangKy date,
     TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)), 
     ThoiGianMongMuonThi DATE,
-    MaKhachHang int
+    MaKhachHang int,
+	PaymentLink text
 );
 
 
@@ -182,6 +157,12 @@ CREATE TABLE ThongTinTruyCap (
 	SessionID INT PRIMARY KEY IDENTITY(1,1),-- Phiên đăng nhập của khách hàng
 	ThoiGianTruyCap INT DEFAULT 0, -- Thời lượng khách hàng thao tác với website
 	ThoiDiemTruyCap DATETIME DEFAULT GETDATE() NOT NULL, -- Thời điểm khách hàng truy cập vào website
+);
+
+CREATE TABLE Payments (
+    MaPhieuDangKy INT PRIMARY KEY,
+    PaymentLink NVARCHAR(500),
+    TrangThai NVARCHAR(50) DEFAULT 'pending'
 );
 
 
