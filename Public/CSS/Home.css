@@ -50,7 +50,7 @@ nav ul li a:hover, .btn:hover {
 
 /* Hero Section */
 .hero {
-    background-image: url("/images/bg.png"); /*url('https://cdn.sanity.io/images/njo473vo/production/4acabe323fe9e6b9aa3efa3a33b40bc47b95214c-5184x3456.jpg'); /* Replace with your image */
+    background-image: url("/Image/logo.png"); /*url('https://cdn.sanity.io/images/njo473vo/production/4acabe323fe9e6b9aa3efa3a33b40bc47b95214c-5184x3456.jpg'); /* Replace with your image */
     background-size: 700x500;
     background-position: center;
     color: white;
