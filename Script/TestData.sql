@@ -13,6 +13,51 @@ values ('NV000014', '123','ketoan');
 values ('NV000013', '123','tiepnhan');
 
 
+INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+VALUES ('123456789012', N'Nguyễn Văn A', '2002-05-15', 'nguyenvana@example.com', '0987654321', N'Hà Nội')
+
+INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+VALUES ('987654321098', N'Trần Thị B', '2001-09-20', 'tranthib@example.com', '0912345678', N'TP. Hồ Chí Minh')
+
+INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
+VALUES (N'Nguyễn Văn C', 'nguyenvanc@example.com', '0987654321', N'Hà Nội', N'tự do')
+
+INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
+VALUES (N'Trần Thị D', 'tranthid@example.com', '0912345678', N'TP. Hồ Chí Minh', N'đơn vị')
+
+INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
+VALUES (1, N'Chứng chỉ Tiếng Anh B1', 1500000)
+
+INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
+VALUES (2, N'Chứng chỉ Công nghệ thông tin', 1200000)
+
+INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, ThoiGianMongMuonThi, MaKhachHang)
+VALUES (1, '2025-04-02', 1, '2025-05-10', 1)
+
+INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, ThoiGianMongMuonThi, MaKhachHang)
+VALUES (2, '2025-04-02', 0, '2025-06-15', 2)
+
+INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD, SoLanGiaHan)
+VALUES (2, '123456789012', 0)
+
+INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD, SoLanGiaHan)
+VALUES (2, '987654321098', 1)
+
+Select *from ChiTietPhieuDangKy
+
+UPDATE ChiTietPhieuDangKy SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
+
+Select *from PhieuGiaHan
+UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
+
+
+INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayGiaHan)
+VALUES ('123456789012', 2, N'Hợp lệ', 200000, N'Lý do sức khỏe', '2025-04-02')
+
+INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayGiaHan)
+VALUES ('987654321098', 2, N'Không hợp lệ', 0, N'Không đủ điều kiện gia hạn', '2025-04-02')
+
+select *from PhieuDangKy
 
  select* from ChiTietPhieuDangKy where MaPhieuDangKy = 5
  select* from ThiSinh

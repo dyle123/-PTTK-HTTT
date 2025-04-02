@@ -17,7 +17,7 @@ body {
     border-radius: 10px; /* Bo góc */
     border: 2px solid #E5EEFFFF; /* Viền */
     font-size: 1.82vw;
-    margin-top:1vh;
+    margin-top:10vh;
     margin-left:38vw
 }
 
@@ -30,8 +30,8 @@ button {
     cursor: pointer;
     padding: 0.46vh 0.52vw;
     border: none;
-    background-color: #E5EEFFFF;
-    color: black;
+    background-color: #6c5ce7;
+    color: white;
     border-radius: 5px;
     margin-top:1vh;
 }
@@ -58,8 +58,8 @@ th {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    background-color: #E5EEFFFF;
-    color: black;
+    background-color: #6c5ce7;
+    color: white;
     border-radius: 5px;
     margin-top:60vh;
     position:absolute;
@@ -71,8 +71,8 @@ th {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    background-color: #E5EEFFFF;
-    color: black;
+    background-color: #6c5ce7;
+    color: white;
     border-radius: 5px;
     margin-top:60vh;
     margin-left:37vw;

@@ -13,10 +13,10 @@
         Tra cứu phiếu gia hạn
     </div>
     <input type="text" id="search-box" placeholder="Nhập mã phiếu đăng ký">
-    <button id="search-btn">🔍</button>
+    <button id="search-btn" onclick="fetchData()">🔍</button>
 
-    <input type="text" id="search-box" placeholder="Nhập CCCD">
-    <button id="search-btn">🔍</button>
+    <!-- <input type="text" id="search-box" placeholder="Nhập CCCD">
+    <button id="search-btn">🔍</button> -->
     
     <table>
         <thead>
@@ -43,5 +43,45 @@
 
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/GiaHan.js"></script>
+    <script>
+        document.getElementById('search-box').addEventListener('search-btn')
+        this.value=this.value.replace(/[^0-9]/g,"")
+
+        async function fetchData() 
+        {
+            const maPhieu = document.getElementById('search-box').value;
+            if (!maPhieu) {
+                alert('Vui lòng nhập mã phiếu đăng ký!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/getPhieuGiaHan?maPhieuDangKy=${maPhieu}`);
+                const data = await response.json();
+
+                const tableBody = document.getElementById('table-body');
+                tableBody.innerHTML = '';
+
+            if (data.error) {
+                tableBody.innerHTML = '<tr><td colspan="3">Không tìm thấy phiếu gia hạn</td></tr>';
+            } else {
+            data.forEach(item => {
+                const row = `<tr>
+                <td>${item.CCCD}</td>
+                <td>${item.MaPhieuDangKy}</td>
+                <td>${item.LoaiGiaHan}</td>
+                <td>${item.PhiGiaHan}</td>
+                <td>${item.LiDoGiaHan}</td>
+                <td>${item.NgayGiaHan}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu:', error);
+            alert('Có lỗi xảy ra, vui lòng thử lại!');
+        }
+    }
+    </script>
 </body>
 </html>

@@ -93,6 +93,7 @@ Create table PhieuDangKy(
 
 
 
+
 create table ChiTietPhieuDangKy(
     MaPhieuDangKy int ,--f
     CCCD char(12) ,--f
@@ -150,7 +151,7 @@ CREATE TABLE BangGiaThi
 	LePhiThi int
 )
 
-
+select*from ThongTinTruyCap
 
 
 CREATE TABLE ThongTinTruyCap (
@@ -159,6 +160,8 @@ CREATE TABLE ThongTinTruyCap (
 	ThoiGianTruyCap INT DEFAULT 0, -- Thời lượng khách hàng thao tác với website
 	ThoiDiemTruyCap DATETIME DEFAULT GETDATE() NOT NULL, -- Thời điểm khách hàng truy cập vào website
 );
+
+
 
 CREATE TABLE Payments (
     OrderCode INT PRIMARY KEY,
