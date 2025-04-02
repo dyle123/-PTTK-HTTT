@@ -61,7 +61,6 @@ input[type="text"] {
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
     display: flex;
     align-items: center;
-    background-color: #6c5ce7;
     border-radius: 5px;
     padding: 5px 10px;
 }
@@ -75,6 +74,11 @@ input[type="text"] {
     border-radius: 4px;
     cursor: pointer;
 }
+
+#create-btn:hover {
+    background-color: #d1c6ff;
+}
+
 
 
 table {
