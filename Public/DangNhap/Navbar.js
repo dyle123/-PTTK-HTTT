@@ -28,6 +28,10 @@ async function checkLoginStatus() {
             if (data.role !== "ketoan") {
                 disableThanhToan();
             }
+            else if(data.role !== "tiepnhan"){
+                disableDangKy();
+            }
+
         } else {
             // Nếu chưa đăng nhập, chặn tất cả các nút cần bảo vệ
             disableProtectedLinks();
@@ -65,6 +69,35 @@ function disableThanhToan() {
         console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa.");
     }
 }
+
+function disableDangKy() {
+    const inPhieuDangKyLink = document.querySelector("a[href='/InPhieuDangKy/InPhieuDangKy.html']");
+    const quanLyLichThiLink = document.querySelector("a[href='/QuanLyLichThi/QuanLyLichThi.html']");
+    const dangKyLink = document.querySelector("a[href='/dangky.html']");
+    if (dangKyLink && quanLyLichThiLink && inPhieuDangKyLink) {
+        dangKyLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn truy cập
+            showModal("Bạn không có quyền truy cập vào trang này!");
+        });
+        quanLyLichThiLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn truy cập
+            showModal("Bạn không có quyền truy cập vào trang này!");
+        });
+        inPhieuDangKyLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn truy cập
+            showModal("Bạn không có quyền truy cập vào trang này!");
+        });
+
+        dangKyLink.style.cursor = "not-allowed";
+        dangKyLink.style.opacity = "0.6";
+        quanLyLichThiLink.style.cursor = "not-allowed";
+        quanLyLichThiLink.style.opacity = "0.6";
+        inPhieuDangKyLink.style.cursor = "not-allowed";
+        inPhieuDangKyLink.style.opacity = "0.6";
+        console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa.");
+    }
+}
+
 
 // ✅ Hàm hiển thị thông báo
 function showModal(message) {
@@ -108,35 +141,8 @@ function showModal(message) {
             }, 500); // Đợi 500ms để đảm bảo navbar đã load
         }
         // Hàm vô hiệu hóa nút truy cập ThanhToan.html
-        function disableThanhToan() {
-            setTimeout(() => { // Đợi 500ms để đảm bảo Navbar đã load
-                const thanhToanLink = document.querySelector("a[href='/ThanhToan/ThanhToan.html']");
-                if (thanhToanLink) {
-                    thanhToanLink.addEventListener("click", function (event) {
-                        event.preventDefault(); // Ngăn chặn chuyển trang
-                        showModal("Bạn không có quyền truy cập vào trang này!");
-                    });
-                    console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa do không phải kế toán.");
-                } else {
-                    console.warn("⚠️ Không tìm thấy nút Thanh Toán.");
-                }
-            }, 500); // Đợi Navbar load xong trước khi tìm thẻ <a>
-        }
-        function disableDangKy() {
-            setTimeout(() => { // Đợi 500ms để đảm bảo Navbar đã load
-                const thanhToanLink = document.querySelector("a[href='DangKy/html']");
-                if (thanhToanLink) {
-                    thanhToanLink.addEventListener("click", function (event) {
-                        event.preventDefault(); // Ngăn chặn chuyển trang
-                        showModal("Bạn không có quyền truy cập vào trang này!");
-                    });
-                    console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa do không phải kế toán.");
-                } else {
-                    console.warn("⚠️ Không tìm thấy nút Thanh Toán.");
-                }
-            }, 500); // Đợi Navbar load xong trước khi tìm thẻ <a>
-        }
-    
+        
+        
 
         function showModal(message) {
             let modal = document.getElementById("customModal");
