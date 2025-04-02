@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/TaoLichThiMoi.css">
+    <title>Tạo Lịch Thi Mới</title>
+    <script src="/DangNhap/Navbar.js"></script>
+    <script src="/QuanLyLichThi/TaoLichThiMoi.js" defer></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <h1>Tạo Lịch Thi Mới</h1>
+
+    <form id="inputForm">
+        <div class="form-group">
+            <label for="ngayThi">Ngày thi</label>
+            <input type="text" id="ngayThi" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}"
+                onfocus="this.type='date'" onblur="this.type='text'" required>
+        </div>
+
+        <div class="form-group">
+            <label for="gioThi">Giờ thi</label>
+            <input type="text" id="gioThi" placeholder="HH:MM:SS" pattern="\d{2}:\d{2}:\d{2}"
+                onfocus="this.type='time'; this.setAttribute('step', '1'); this.removeAttribute('value')"
+                onblur="this.type='text'">
+        </div>
+
+        <div class="form-group">
+            <label for="soLuong">Số lượng thí sinh</label>
+            <input type="number" id="soLuong" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="loaiChungChi">Loại chứng chỉ</label>
+            <input type="text" id="loaiChungChi" required>
+        </div>
+
+    </form>
+
+    <form id="chooseForm">
+
+        <div class="choose-group">
+            <label for="phongThi" class="special-label">Xếp phòng thi</label>
+            <select id="phongThi">
+                <option value="">Chọn phòng thi</option>
+                <option value="101">Phòng 101</option>
+                <option value="102">Phòng 102</option>
+                <option value="103">Phòng 103</option>
+            </select>
+        </div>
+
+        <div class="choose-group">
+            <label for="nhanVien" class="special-label">Xếp nhân viên gác thi</label>
+            <select id="nhanVien">
+                <option value="">Chọn nhân viên</option>
+                <option value="NV01">Nguyễn Văn A</option>
+                <option value="NV02">Trần Thị B</option>
+                <option value="NV03">Lê Văn C</option>
+            </select>
+        </div>
+    </form>
+
+    <div class="button-container">
+        <button id="submit-btn">Tạo lịch thi</button>
+        <button id="cancel-btn">Hủy</button>
+    </div>
+
+</body>
+
+</html>
