@@ -289,6 +289,82 @@ END;
 GO
 
 
+CREATE OR ALTER PROC PHATHANHPHIEUDUTHI
+    @MaPhieuDangKy INT
+AS
+BEGIN
+    DECLARE @SoThuTu INT = 1;
+    DECLARE @SoBaoDanh CHAR(12);
+    DECLARE @MaLichThi INT;
+    DECLARE @NgayThi DATE;
+    DECLARE @MaChungChi INT;
+    
+    -- Lấy thông tin lịch thi
+    SELECT @MaLichThi = LichThi FROM PhieuDangKy WHERE MaPhieuDangKy = @MaPhieuDangKy;
 
+    IF @MaLichThi IS NULL
+    BEGIN
+        PRINT 'Không tìm thấy lịch thi phù hợp.';
+        RETURN;
+    END;
+
+    -- Lấy ngày thi và mã chứng chỉ
+    SELECT @NgayThi = NgayThi, @MaChungChi = LoaiChungChi FROM LichThi WHERE MaLichThi = @MaLichThi;
+
+    -- Kiểm tra nếu phiếu đăng ký đã quá hạn 14 ngày
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM PhieuDangKy 
+        WHERE MaPhieuDangKy = @MaPhieuDangKy 
+          AND DATEDIFF(DAY, GETDATE(), @NgayThi) <= 14
+    )
+    BEGIN
+        PRINT 'Phiếu đăng ký không hợp lệ hoặc đã quá 14 ngày.';
+        RETURN;
+    END;
+
+    -- Lấy danh sách thí sinh thuộc phiếu đăng ký
+    DECLARE @CCCD CHAR(12);
+    DECLARE cur CURSOR FOR 
+    SELECT CCCD 
+    FROM ChiTietPhieuDangKy 
+    WHERE MaPhieuDangKy = @MaPhieuDangKy
+    ORDER BY CCCD ASC;
+
+    -- Mở con trỏ
+    OPEN cur;
+    FETCH NEXT FROM cur INTO @CCCD;
+
+    -- Xử lý từng thí sinh
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Kiểm tra CCCD hợp lệ
+        IF @CCCD IS NOT NULL
+        BEGIN
+            -- Tạo số báo danh theo format YYMMDDCCNNNN
+            SET @SoBaoDanh = 
+                FORMAT(@NgayThi, 'yyMMdd') +   -- YYMMDD
+                FORMAT(@MaChungChi, '00') +    -- CC
+                FORMAT(@SoThuTu, '0000');      -- NNNN
+
+            -- Chèn vào bảng PhieuDuThi
+            INSERT INTO PhieuDuThi (SoBaoDanh, CCCD, TrangThai, LichThi)
+            VALUES (@SoBaoDanh, @CCCD, N'Chưa thi', @MaLichThi);
+
+            -- Debug: In số báo danh đã cấp
+            PRINT 'Thí sinh có CCCD: ' + @CCCD + ' - Số báo danh: ' + @SoBaoDanh;
+
+            -- Tăng số thứ tự
+            SET @SoThuTu = @SoThuTu + 1;
+        END;
+
+        FETCH NEXT FROM cur INTO @CCCD;
+    END;
+
+    -- Đóng con trỏ
+    CLOSE cur;
+    DEALLOCATE cur;
+END;
+GO
 
 
