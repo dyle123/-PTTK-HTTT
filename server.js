@@ -34,22 +34,21 @@ app.listen(PORT, () => {
 
 
 // //Cấu hình kết nối SQL Server
-const config = {
-    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'sa',
-    password: '1928374650Vy',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'sa',
+//     password: '1928374650Vy',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 
 
 
-//CÁI NÀY T GIỮ NHA TẠI KHÁC CÁI CONFIG
 // async function sqlQuery(query, params = {}) {
 //     try {
 //         const pool = await sql.connect({
@@ -75,13 +74,28 @@ const config = {
 // Cấu hình kết nối SQL Server
 
 
+const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.174.1',
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'BENU',
+    password: 'benu123',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
+
+// Cấu hình kết nối SQL Server
 // const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.174.1',
+//     server: '192.168.1.11',
 //     port: 1433, // Cổng SQL Server
 //     database: 'PTTK',
-//     user: 'BENU',
-//     password: 'benu123',
+//     user: 'dungluonghoang',
+//     password: 'teuklee1983#',
 //     options: {
 //         encrypt: false, // Không cần mã hóa
 //         enableArithAbort: true, // Bật xử lý lỗi số học
@@ -103,6 +117,8 @@ const config = {
 //         connectTimeout: 30000, // Thời gian chờ 30 giây
 //     },
 // };
+
+
 
 
 async function sqlQuery(query, params = {}) {
@@ -620,6 +636,12 @@ app.get('/api/getPhieuGiaHan', async(req, res) =>{
         res.status(500).json({ error: err.message });
     }
 })
+
+
+
+
+
+
 
 
 app.get('/api/getLichThi', async (req, res) => {
