@@ -47,26 +47,9 @@ const config = {
     },
 };
 
-// // Cấu hình kết nối SQL Server
-// const config = {
-//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'sa',
-//     password: '1928374650Vy',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
 
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
-
+//CÁI NÀY T GIỮ NHA TẠI KHÁC CÁI CONFIG
 // async function sqlQuery(query, params = {}) {
 //     try {
 //         const pool = await sql.connect({
@@ -89,74 +72,22 @@ const config = {
 //         throw error;
 //     }
 // }
-<<<<<<< Updated upstream
 // Cấu hình kết nối SQL Server
 
 
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.174.1',
-    server: '192.168.174.1',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'BENU',
-    password: 'benu123',
-    user: 'BENU',
-    password: 'benu123',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
-
-// Cấu hình kết nối SQL Server
 // const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.1.11',
+//     server: '192.168.174.1',
 //     port: 1433, // Cổng SQL Server
 //     database: 'PTTK',
-//     user: 'dungluonghoang',
-//     password: 'teuklee1983#',
+//     user: 'BENU',
+//     password: 'benu123',
 //     options: {
 //         encrypt: false, // Không cần mã hóa
 //         enableArithAbort: true, // Bật xử lý lỗi số học
 //         connectTimeout: 30000, // Thời gian chờ 30 giây
 //     },
 // };
-
-// Cấu hình kết nối SQL Server
-// const config = {
-//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.1.11',
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'dungluonghoang',
-//     password: 'teuklee1983#',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
-=======
-// Cấu hình kết nối SQL Server
-
-
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.174.1',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'BENU',
-    password: 'benu123',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
->>>>>>> Stashed changes
 
 // Cấu hình kết nối SQL Server
 // const config = {
@@ -689,41 +620,6 @@ app.get('/api/getPhieuGiaHan', async(req, res) =>{
         res.status(500).json({ error: err.message });
     }
 })
-
-<<<<<<< Updated upstream
-//API TraCuuPhieuGiaHan
-app.get('/api/getPhieuGiaHan', async(req, res) =>{
-    const MaPhieuDangKy=req.sql
-    if(!MaPhieuDangKy)
-    {
-        return res.status(400).json({error:'Mã phiếu đăng ký là bắt buộc'});
-    }
-    try
-    {
-      const pool=await sql.connect(config);
-      const result=await pool.request()
-      .input('MaPhieuDangKy', sql.Int,MaPhieuDangKy)
-      .query('SELECT * FROM PhieuGiaHan WHERE MaPhieuDangKy=@MaPhieuDangKy');
-      if(result.recordset.length==0)
-      {
-        return res.status(404).json({ error: 'Không tìm thấy phiếu gia hạn' });
-      }
-      res.json(result.recordset)
-    }
-    catch (err)
-    {
-        console.error('Lỗi khi lấy dữ liệu:', err);
-        res.status(500).json({ error: err.message });
-    }
-})
-
-=======
->>>>>>> Stashed changes
-
-
-
-
-
 
 
 app.get('/api/getLichThi', async (req, res) => {
