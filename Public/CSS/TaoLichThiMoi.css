@@ -2,7 +2,6 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     margin: 20px;
-
 }
 
 h1 {
@@ -11,7 +10,7 @@ h1 {
     left: 50%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
     padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background: #b3a4ff; /* background-m */
+    background: #E9BAED; /* background-m */
     border-radius: 10px; /* border-m */
     display: inline-block;
 }
