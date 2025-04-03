@@ -7,7 +7,7 @@ body {
 {
     width: 21vw; /* Chiều rộng */
     height: 7vh;  /* Chiều cao */
-    background-color: #E9BAED; /* Màu nền xanh */
+    background-color: #FCE4EC; /* Màu nền xanh */
     color: black; /* Màu chữ */
     display: flex;
     align-items: center; /* Căn giữa theo chiều dọc */
@@ -15,7 +15,7 @@ body {
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px; /* Bo góc */
-    border: 2px solid #E9BAED; /* Viền */
+    border: 2px solid #FCE4EC; /* Viền */
     font-size: 1.82vw;
     margin-top:10vh;
     margin-left:38vw
