@@ -53,9 +53,9 @@ async function sqlQuery(query, params = {}) {
     try {
         const pool = await sql.connect({
             user: 'sa',
-            password: '1928374650Vy',
+            password: '12345678',
             database: 'PTTK',
-            server: '192.168.102.1',
+            server: 'localhost',
             options: { encrypt: false, trustServerCertificate: true }
         });
 
@@ -71,6 +71,58 @@ async function sqlQuery(query, params = {}) {
         throw error;
     }
 }
+const config = {
+    user: 'sa',
+    password: '12345678',
+    server: 'localhost',
+    port: 1433,
+    database: 'PTTK',
+    options: {
+        encrypt: false,
+        trustServerCertificate: true,
+        enableArithAbort: true,
+        connectTimeout: 30000
+    }
+};
+
+//Cấu hình kết nối SQL Server
+//const config = {
+//    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+//    port: 1433, // Cổng SQL Server
+//    database: 'PTTK',
+//    user: 'sa',
+//    password: '1928374650Vy',
+//    options: {
+//        encrypt: false, // Không cần mã hóa
+//        enableArithAbort: true, // Bật xử lý lỗi số học
+//        connectTimeout: 30000, // Thời gian chờ 30 giây
+//    },
+//};
+
+
+
+//async function sqlQuery(query, params = {}) {
+//    try {
+//        const pool = await sql.connect({
+//            user: 'sa',
+//            password: '1928374650Vy',
+//            database: 'PTTK',
+//            server: '192.168.102.1',
+//            options: { encrypt: false, trustServerCertificate: true }
+//        });
+
+//        const request = pool.request();
+//        for (const param in params) {
+//            request.input(param, params[param]);
+//        }
+
+//      const result = await request.query(query);
+//        return result.recordset;
+//    } catch (error) {
+//        console.error("❌ Lỗi SQL:", error);
+//        throw error;
+//    }
+//}
 // Cấu hình kết nối SQL Server
 
 
@@ -370,6 +422,99 @@ app.get('/api/getCurrentUser', (req, res) => {
     res.json({ user: req.session.user.id, role: req.session.user.role });
 });
 
+app.post('/api/dangky', async (req, res) => {
+  const {
+    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang, LoaiChungChi,
+    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
+  } = req.body;
+
+  try {
+    const pool = await sql.connect(config);
+
+    // 🛠️ Gọi thủ tục Back KHÔNG truyền ThoiGianThi
+    await pool.request()
+      .input('TenKH', sql.NVarChar(50), TenKH)
+      .input('EmailKH', sql.NVarChar(100), EmailKH)
+      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
+      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
+      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
+      .input('LoaiChungChi', sql.Int, LoaiChungChi) 
+      .input('TenTS', sql.NVarChar(50), TenTS)
+      .input('CCCDTS', sql.Char(12), CCCDTS)
+      .input('NgaySinh', sql.Date, NgaySinh)
+      .input('EmailTS', sql.NVarChar(100), EmailTS)
+      .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
+      .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
+      .execute('Back');
+
+    // ✅ Lấy mã phiếu đăng ký vừa tạo
+    const result = await pool.request()
+      .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
+
+    const maPhieuDangKy = result.recordset[0]?.MaPhieuDangKy;
+
+    res.status(200).json({
+      message: 'Đăng ký thành công!',
+      maPhieuDangKy
+    });
+
+  } catch (err) {
+    console.error('❌ Lỗi khi đăng ký:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/xacNhanLichThi', async (req, res) => {
+    const { maPhieuDangKy, maLichThi, loaiChungChi } = req.body;
+
+    const transaction = new sql.Transaction();
+
+    try {
+        await transaction.begin();
+        const request = new sql.Request(transaction);
+
+        await request
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .input('LoaiChungChi', sql.Int, loaiChungChi)
+            .input('MaLichThi', sql.Int, maLichThi) // 👉 KHÔNG gán 2 lần!
+            .query(`
+                UPDATE PhieuDangKy
+                SET LoaiChungChi = @LoaiChungChi,
+                    LichThi = @MaLichThi
+                WHERE MaPhieuDangKy = @MaPhieuDangKy
+            `);
+
+        await request
+            .query(`
+                UPDATE LichThi
+                SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
+                WHERE MaLichThi = @MaLichThi
+            `);
+
+        const phongResult = await request
+            .query(`SELECT MaPhongThi FROM LichThi WHERE MaLichThi = @MaLichThi`);
+
+        const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
+
+        if (maPhongThi) {
+            await request
+                .input('MaPhongThi', sql.Int, maPhongThi)
+                .query(`
+                    UPDATE PhongThi
+                    SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
+                    WHERE MaPhongThi = @MaPhongThi
+                `);
+        }
+
+        await transaction.commit();
+        res.json({ message: "✅ Cập nhật lịch thi và phòng thi thành công!" });
+
+    } catch (err) {
+        await transaction.rollback();
+        console.error("❌ Lỗi khi cập nhật lịch thi:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.get('/api/getPhieuDangKy', async (req, res) => {
     const { dieuKien, maPhieu } = req.query; // Lấy từ query string

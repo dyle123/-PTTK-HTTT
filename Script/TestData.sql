@@ -13,8 +13,6 @@ values ('NV000014', '123','ketoan');
 values ('NV000013', '123','tiepnhan');
 
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
 INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
 VALUES ('123456789012', N'Nguyễn Văn A', '2002-05-15', 'nguyenvana@example.com', '0987654321', N'Hà Nội')
 
@@ -84,8 +82,13 @@ SET IDENTITY_INSERT PhongThi OFF;
 INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
 VALUES
 (1, N'TOEIC', 450000),
-(2, N'Tin học B', 300000),
-(3, N'TOEFL', 500000);
+(2, N'Tin học B', 300000);
+
+INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
+VALUES 
+(1, N'Chứng chỉ Tin học A', 200000),
+(2, N'Chứng chỉ Tiếng Anh B1', 300000),
+(3, N'Chứng chỉ Tin học B', 250000);
 
 INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi)
 VALUES
@@ -93,5 +96,6 @@ VALUES
 ('2025-04-21', '13:30:00', 0, 2, 2),  -- Tin học tại phòng 2
 ('2025-04-22', '09:00:00', 5, 1, 1);  -- TOEIC tại phòng 1
 
+select* from ThiSinh
 
-
+select* from PhongThi
