@@ -63,7 +63,7 @@ CREATE TABLE PhongThi (
 
 CREATE TABLE BaiThi (
     MaBaiThi INT IDENTITY(1,1) PRIMARY KEY,
-    SoBaoDanh CHAR(10),
+    SoBaoDanh CHAR(12),
     DangBaiThi VARCHAR(255),
     ThoiGianNopBai DATETIME
 );
@@ -84,14 +84,10 @@ Create table PhieuDangKy(
     LoaiChungChi int ,
     NgayDangKy date,
     TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)), 
-    ThoiGianMongMuonThi DATE,
+    LichThi int,
     MaKhachHang int,
 	PaymentLink text
 );
-
-
-
-
 
 
 create table ChiTietPhieuDangKy(
@@ -138,7 +134,7 @@ CREATE TABLE Users
 )
 
 CREATE TABLE PhieuDuThi(
-	SoBaoDanh char(10)  Primary Key,
+	SoBaoDanh char(12)  Primary Key,
 	CCCD char(12),--f
 	TrangThai nvarchar(50),
 	LichThi int --f
@@ -151,7 +147,7 @@ CREATE TABLE BangGiaThi
 	LePhiThi int
 )
 
-select*from ThongTinTruyCap
+
 
 
 CREATE TABLE ThongTinTruyCap (
@@ -160,8 +156,6 @@ CREATE TABLE ThongTinTruyCap (
 	ThoiGianTruyCap INT DEFAULT 0, -- Thời lượng khách hàng thao tác với website
 	ThoiDiemTruyCap DATETIME DEFAULT GETDATE() NOT NULL, -- Thời điểm khách hàng truy cập vào website
 );
-
-
 
 CREATE TABLE Payments (
     OrderCode INT PRIMARY KEY,
@@ -215,7 +209,8 @@ ADD CONSTRAINT FK_LichThi_PhongThi FOREIGN KEY(MaPhongThi) REFERENCES PhongThi(M
 
 ALTER TABLE PhieuDangKy 
 ADD CONSTRAINT FK_PhieuDangKy_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang),
-	CONSTRAINT FK_PhieuDangKy_BangGiaThi FOREIGN KEY(LoaiChungChi) REFERENCES BangGiaThi(MaLoaiChungChi);
+	CONSTRAINT FK_PhieuDangKy_BangGiaThi FOREIGN KEY(LoaiChungChi) REFERENCES BangGiaThi(MaLoaiChungChi),
+	CONSTRAINT FK_PhieuDangKy_LichThi FOREIGN KEY(LichThi) REFERENCES LichThi(MaLichThi);
 
 ALTER TABLE ChiTietPhieuDangKy 
 ADD CONSTRAINT FK_ChiTietPhieuDangKy_PhieuDangKy FOREIGN KEY (MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy),

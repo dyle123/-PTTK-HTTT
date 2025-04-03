@@ -13,6 +13,7 @@ values ('NV000014', '123','ketoan');
 values ('NV000013', '123','tiepnhan');
 
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
 VALUES ('123456789012', N'Nguyễn Văn A', '2002-05-15', 'nguyenvana@example.com', '0987654321', N'Hà Nội')
@@ -51,18 +52,6 @@ UPDATE ChiTietPhieuDangKy SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
 Select *from PhieuGiaHan
 UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
 
-
-INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayGiaHan)
-VALUES ('123456789012', 2, N'Hợp lệ', 200000, N'Lý do sức khỏe', '2025-04-02')
-
-INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayGiaHan)
-VALUES ('987654321098', 2, N'Không hợp lệ', 0, N'Không đủ điều kiện gia hạn', '2025-04-02')
-
-select *from PhieuDangKy
-
-=======
- select* from T
->>>>>>> Stashed changes
  select* from ChiTietPhieuDangKy where MaPhieuDangKy = 5
  select* from ThiSinh
   select* from PhieuDangKy
