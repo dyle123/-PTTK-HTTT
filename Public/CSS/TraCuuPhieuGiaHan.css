@@ -30,8 +30,8 @@ button {
     cursor: pointer;
     padding: 0.46vh 0.52vw;
     border: none;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
     border-radius: 5px;
     margin-top:1vh;
 }
@@ -40,17 +40,17 @@ table {
     width: 90%;
     margin: 20px auto;
     border-collapse: collapse;
-    border: 2px solid #E5EEFFFF;
+    border: 2px solid #F8BBD0;
 }
 
 th, td {
-    border: 1px solid #E5EEFFFF;
+    border: 1px solid #F8BBD0;
     padding: 10px;
     text-align: center;
 }
 
 th {
-    background-color: #E5EEFFFF;
+    background-color: #F8BBD0;
 }
 
 .btn_Tra_cuu_SLGH
@@ -58,12 +58,12 @@ th {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
     border-radius: 5px;
     margin-top:60vh;
     position:absolute;
-    margin-left:27vw;
+    margin-left:26vw;
 }
 
 .btn_Lap_Phieu_Gia_Han
@@ -71,8 +71,8 @@ th {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
     border-radius: 5px;
     margin-top:60vh;
     margin-left:37vw;
