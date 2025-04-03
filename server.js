@@ -34,18 +34,18 @@ app.listen(PORT, () => {
 
 
 //Cấu hình kết nối SQL Server
-// const config = {
-//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'sa',
-//     password: '1928374650Vy',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
+const config = {
+    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'sa',
+    password: '1928374650Vy',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 
 
@@ -71,19 +71,19 @@ async function sqlQuery(query, params = {}) {
         throw error;
     }
 }
-const config = {
-    user: 'sa',
-    password: '12345678',
-    server: 'localhost',
-    port: 1433,
-    database: 'PTTK',
-    options: {
-        encrypt: false,
-        trustServerCertificate: true,
-        enableArithAbort: true,
-        connectTimeout: 30000
-    }
-};
+//const config = {
+//    user: 'sa',
+//    password: '12345678',
+//    server: 'localhost',
+//    port: 1433,
+//    database: 'PTTK',
+//    options: {
+//        encrypt: false,
+//        trustServerCertificate: true,
+//        enableArithAbort: true,
+//        connectTimeout: 30000
+//    }
+//};
 
 //Cấu hình kết nối SQL Server
 //const config = {
@@ -812,9 +812,6 @@ app.post('/api/xacNhanLichThi', async (req, res) => {
         res.status(500).json({ error: "Lỗi máy chủ khi cập nhật lịch thi" });
     }
 });
-
-
-
 
 app.get('/api/getPhieuDangKy', async (req, res) => {
     const { dieuKien, maPhieu } = req.query; // Lấy từ query string
