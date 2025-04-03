@@ -10,7 +10,7 @@ h1 {
     left: 50%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
     padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background: #E9BAED; /* background-m */
+    background: #FCE4EC; /* background-m */
     border-radius: 10px; /* border-m */
     display: inline-block;
 }
@@ -91,22 +91,22 @@ input, select {
 #submit-btn {
     
     padding: 8px 12px;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
 #submit-btn:hover {
-    background-color: #d1c6ff;
+    background-color: #ff6b81;
 }
 
 
 #cancel-btn {
     padding: 8px 40px;
-    background-color: #ff4757;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
     border: none;
     border-radius: 4px;
     cursor: pointer;

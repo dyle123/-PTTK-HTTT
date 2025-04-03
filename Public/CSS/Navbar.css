@@ -29,6 +29,17 @@ body {
     color: #333;
 }
 
+.logo-container {
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    gap: 10px; /* Khoảng cách giữa ảnh logo và chữ */
+    height: 30px; /* Điều chỉnh kích thước logo nếu cần */
+}
+
+.imageLogo-container img {
+    width: 50px; /* Điều chỉnh kích thước logo nếu cần */
+}
+
 .nav-links {
     list-style: none;
     display: flex;

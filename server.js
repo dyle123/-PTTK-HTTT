@@ -120,29 +120,28 @@ async function sqlQuery(query, params = {}) {
 
 
 
+// async function sqlQuery(query, params = {}) {
+//     try {
+//         const pool = await sql.connect({
+//             user: 'sa',
+//             password: '1928374650Vy',
+//             database: 'PTTK',
+//             server: '192.168.102.1',
+//             options: { encrypt: false, trustServerCertificate: true }
+//         });
 
-async function sqlQuery(query, params = {}) {
-    try {
-        const pool = await sql.connect({
-            user: 'sa',
-            password: '1928374650Vy',
-            database: 'PTTK',
-            server: '192.168.102.1',
-            options: { encrypt: false, trustServerCertificate: true }
-        });
+//         const request = pool.request();
+//         for (const param in params) {
+//             request.input(param, params[param]);
+//         }
 
-        const request = pool.request();
-        for (const param in params) {
-            request.input(param, params[param]);
-        }
-
-        const result = await request.query(query);
-        return result.recordset;
-    } catch (error) {
-        console.error("❌ Lỗi SQL:", error);
-        throw error;
-    }
-}
+//         const result = await request.query(query);
+//         return result.recordset;
+//     } catch (error) {
+//         console.error("❌ Lỗi SQL:", error);
+//         throw error;
+//     }
+// }
 
 
 // Hàm kiểm tra kết nối
