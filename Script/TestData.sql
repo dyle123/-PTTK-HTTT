@@ -1,4 +1,4 @@
-USE PTTK
+﻿USE PTTK
 GO
 insert into BangGiaThi(MaLoaiChungChi,TenChungChi,LePhiThi)
 values (1,'Toeic', 2000000),(2, 'Ielst',5000000)
@@ -13,6 +13,7 @@ values ('NV000014', '123','ketoan');
 values ('NV000013', '123','tiepnhan');
 
 
+<<<<<<< Updated upstream
 INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
 VALUES ('123456789012', N'Nguyễn Văn A', '2002-05-15', 'nguyenvana@example.com', '0987654321', N'Hà Nội')
 
@@ -59,6 +60,9 @@ VALUES ('987654321098', 2, N'Không hợp lệ', 0, N'Không đủ điều kiệ
 
 select *from PhieuDangKy
 
+=======
+ select* from T
+>>>>>>> Stashed changes
  select* from ChiTietPhieuDangKy where MaPhieuDangKy = 5
  select* from ThiSinh
   select* from PhieuDangKy
@@ -72,3 +76,33 @@ select *from PhieuDangKy
  update PhieuDangKy
  set NgayDangKy = '2025-03-26' where MaPhieuDangKy = 1
  delete from Payments where MaPhieuDangKy = 2
+ -- Giả sử đã có bảng LichThi như sau:
+-- CREATE TABLE LichThi (
+--     MaLichThi INT PRIMARY KEY IDENTITY,
+--     NgayThi DATE,
+--     GioThi TIME,
+--     SoLuongDangKy INT DEFAULT 0,
+--     MaPhongThi NVARCHAR(10),
+--     LoaiChungChi INT
+-- );
+SET IDENTITY_INSERT PhongThi ON;
+INSERT INTO PhongThi (MaPhongThi, SucChuaToiDa, SoLuongHienTai)
+VALUES 
+(1, 30, 10),
+(2, 25, 0),
+(3, 40, 30);
+SET IDENTITY_INSERT PhongThi OFF;
+INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
+VALUES
+(1, N'TOEIC', 450000),
+(2, N'Tin học B', 300000),
+(3, N'TOEFL', 500000);
+
+INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi)
+VALUES
+('2025-04-20', '08:00:00', 10, 1, 1), -- TOEIC tại phòng 1
+('2025-04-21', '13:30:00', 0, 2, 2),  -- Tin học tại phòng 2
+('2025-04-22', '09:00:00', 5, 1, 1);  -- TOEIC tại phòng 1
+
+
+
