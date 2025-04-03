@@ -3,22 +3,39 @@ body {
     text-align: center;
     margin: 20px;
 }
-.box_TraCuu_text
-{
-    width: 21vw; /* Chiều rộng */
-    height: 7vh;  /* Chiều cao */
-    background-color: #FCE4EC; /* Màu nền xanh */
-    color: black; /* Màu chữ */
-    display: flex;
-    align-items: center; /* Căn giữa theo chiều dọc */
-    justify-content: center; /* Căn giữa theo chiều ngang */
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 10px; /* Bo góc */
-    border: 2px solid #FCE4EC; /* Viền */
-    font-size: 1.82vw;
-    margin-top:10vh;
-    margin-left:38vw
+
+h1 {
+    position: absolute;
+    top: 12%; /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
+    left: 50%; /* Căn giữa phần tử theo chiều ngang */
+    transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
+    padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
+    background: #FCE4EC; /* background-m */
+    border-radius: 10px; /* border-m */
+    display: inline-block;
+}
+
+
+#search-box {
+    width: 240px;
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 22vh; /* Đặt vị trí từ trên xuống 10% chiều cao viewport */
+}
+
+#search-btn {
+    padding: 8px 12px;
+    background-color: #F8BBD0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#search-btn:hover {
+    background-color: #ff6b81;
 }
 
 input[type="number"] {
@@ -26,18 +43,11 @@ input[type="number"] {
     margin-left: 10px;
 }
 
-button {
-    cursor: pointer;
-    padding: 5px 10px;
-    border: none;
-    background-color: #6c5ce7;
-    color: white;
-    border-radius: 5px;
-    margin-top:1vh;
-}
-
 table {
+    position: absolute;
     width: 90%;
+    top: 30vh; /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
+    left: 5%; /* Căn giữa phần tử theo chiều ngang */
     margin: 20px auto;
     border-collapse: collapse;
     border: 2px solid #F8BBD0;
@@ -61,20 +71,20 @@ th {
     background-color: #F8BBD0;
     color: black;
     border-radius: 5px;
-    margin-top:60vh;
+    margin-top:85vh;
     position:absolute;
-    margin-left:26vw;
+    margin-left:10vw; 
 }
 
 .btn_Lap_Phieu_Gia_Han
 {
     cursor: pointer;
-    padding: 1vh 1vw;
+    padding: 1vh 2vw;
     border: none;
     background-color: #F8BBD0;
     color: black;
     border-radius: 5px;
-    margin-top:60vh;
-    margin-left:37vw;
+    margin-top:85vh;
+    margin-left:25vw;
     position:absolute;
 }
