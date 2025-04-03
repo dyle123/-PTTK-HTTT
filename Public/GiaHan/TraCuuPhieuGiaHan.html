@@ -12,7 +12,7 @@
     <div class="box_TraCuu_text">
         Tra cứu phiếu gia hạn
     </div>
-    <input type="text" id="search-box" placeholder="Nhập mã phiếu đăng ký">
+    <input type="number" id="search-box" placeholder="Nhập mã phiếu đăng ký" step="1">
     <button id="search-btn" onclick="fetchData()">🔍</button>
 
     <!-- <input type="text" id="search-box" placeholder="Nhập CCCD">
@@ -27,7 +27,6 @@
                 <th>Phí gia hạn</th>
                 <th>Lí do gia hạn</th>
                 <th>Ngày gia hạn</th>
-                <th></th>
             </tr>
         </thead>
         <tbody id="table-body">
@@ -44,8 +43,9 @@
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/GiaHan.js"></script>
     <script>
-        document.getElementById('search-box').addEventListener('search-btn')
-        this.value=this.value.replace(/[^0-9]/g,"")
+        document.getElementById("search-box").addEventListener("input", function(){
+        this.value = this.value.replace(/[^0-9]/g, "");
+        })
 
         async function fetchData() 
         {
@@ -65,17 +65,22 @@
             if (data.error) {
                 tableBody.innerHTML = '<tr><td colspan="3">Không tìm thấy phiếu gia hạn</td></tr>';
             } else {
-            data.forEach(item => {
-                const row = `<tr>
-                <td>${item.CCCD}</td>
-                <td>${item.MaPhieuDangKy}</td>
-                <td>${item.LoaiGiaHan}</td>
-                <td>${item.PhiGiaHan}</td>
-                <td>${item.LiDoGiaHan}</td>
-                <td>${item.NgayGiaHan}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
+                let rows = data.map(item => `
+                <tr>
+                    <td>${item.CCCD}</td>
+                    <td>${item.MaPhieuDangKy}</td>
+                    <td>${item.LoaiGiaHan}</td>
+                    <td>${item.PhiGiaHan}</td>
+                    <td>${item.LiDoGiaHan}</td>
+                    <td>${new Date(item.NgayGiaHan).toLocaleDateString('vi-VN')}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editRow('${item.CCCD}', ${item.MaPhieuDangKy})">Sửa</button>
+                        <button class="delete-btn" onclick="deleteRow('${item.CCCD}', ${item.MaPhieuDangKy})">Xóa</button>
+                    </td>
+                </tr>
+                `).join('');
+
+tableBody.innerHTML = rows;
         }
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu:', error);

@@ -36,6 +36,11 @@ button {
     margin-top:1vh;
 }
 
+button:hover {
+    background-color: #F48FB1; /* Màu hồng đậm hơn */
+    transform: scale(1.05); /* Phóng to nhẹ */
+}
+
 table {
     width: 90%;
     margin: 20px auto;
