@@ -129,6 +129,147 @@ END
 GO
 
 
+CREATE OR ALTER PROCEDURE KIEMTRAKHACHHANG
+    @TenKH NVARCHAR(50),
+    @EmailKH NVARCHAR(100),
+    @SoDienThoaiKH CHAR(10),
+    @DiaChiKH NVARCHAR(255),
+    @LoaiKhachHang NVARCHAR(20),
+    @MaKhachHang INT OUTPUT
+AS
+BEGIN
+    -- Tìm khách hàng trùng SDT và loại khách hàng
+    SELECT @MaKhachHang = MaKhachHang
+    FROM KhachHang
+    WHERE SoDienThoai = @SoDienThoaiKH AND LoaiKhachHang = @LoaiKhachHang;
+
+    -- Nếu đã tồn tại khách hàng, kiểm tra tên có trùng không
+    IF @MaKhachHang IS NOT NULL
+    BEGIN
+        DECLARE @TenCu NVARCHAR(50);
+        SELECT @TenCu = TenKhachHang FROM KhachHang WHERE MaKhachHang = @MaKhachHang;
+
+        IF @TenCu != @TenKH
+        BEGIN
+            RAISERROR(N'Số điện thoại đã được đăng ký cho một khách hàng khác tên', 16, 1);
+            SET @MaKhachHang = NULL;
+            RETURN;
+        END
+    END
+    ELSE
+    BEGIN
+        -- Nếu không tồn tại thì thêm mới khách hàng
+        INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
+        VALUES (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang);
+
+        SET @MaKhachHang = SCOPE_IDENTITY();
+    END
+END;
+GO
+
+
+CREATE OR ALTER PROCEDURE KIEMTRATHISINH 
+    @TenTS NVARCHAR(50),
+    @CCCDTS CHAR(12),
+    @NgaySinh DATE, 
+    @EmailTS NVARCHAR(100),  
+    @SoDienThoaiTS CHAR(10),
+    @DiaChiTS NVARCHAR(255) 
+AS
+BEGIN
+    DECLARE @HoVaTen NVARCHAR(50), @NgaySinhDB DATE;
+
+    SELECT @HoVaTen = HoVaTen, @NgaySinhDB = NgaySinh
+    FROM ThiSinh
+    WHERE CCCD = @CCCDTS;
+
+    IF @HoVaTen IS NOT NULL 
+    BEGIN 
+        IF @HoVaTen != @TenTS OR @NgaySinhDB != @NgaySinh
+        BEGIN 
+            RAISERROR (N'Thí sinh đã đăng ký thi trước đó nhưng thông tin tiên quyết không khớp', 16, 1);
+            RETURN;
+        END
+        -- Cập nhật thông tin liên hệ nếu khác nhau
+        UPDATE ThiSinh
+        SET Email = @EmailTS, SoDienThoai = @SoDienThoaiTS, DiaChi = @DiaChiTS
+        WHERE CCCD = @CCCDTS AND (Email <> @EmailTS OR SoDienThoai <> @SoDienThoaiTS OR DiaChi <> @DiaChiTS);
+    END
+    ELSE
+    BEGIN
+        INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+        VALUES (@CCCDTS, @TenTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS);
+    END
+END;
+GO
+
+
+CREATE OR ALTER PROCEDURE Back
+    @TenKH NVARCHAR(50),
+    @EmailKH NVARCHAR(100),  
+    @SoDienThoaiKH CHAR(10),
+    @DiaChiKH NVARCHAR(255),
+    @LoaiKhachHang NVARCHAR(20),
+    @LoaiChungChi INT,
+    @ThoiGianThi DATE,
+    @TenTS NVARCHAR(50),
+    @CCCDTS CHAR(12),
+    @NgaySinh DATE, 
+    @EmailTS NVARCHAR(100),  
+    @SoDienThoaiTS CHAR(10),
+    @DiaChiTS NVARCHAR(255) 
+AS
+BEGIN
+    DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
+
+    BEGIN TRANSACTION;
+
+    BEGIN TRY
+        -- 1. Kiểm tra hoặc tạo khách hàng
+        EXEC KIEMTRAKHACHHANG 
+            @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, 
+            @MaKhachHang OUTPUT;
+
+        IF @MaKhachHang IS NULL 
+        BEGIN 
+            RAISERROR (N'Lỗi kiểm tra/tạo khách hàng!', 16, 1);
+            IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+            RETURN;
+        END;
+
+        -- 2. Kiểm tra hoặc tạo thí sinh
+        EXEC KIEMTRATHISINH 
+            @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
+
+        -- Nếu có lỗi trong KIEMTRATHISINH, dừng lại
+        IF @@ERROR <> 0 
+        BEGIN 
+            RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
+
+        -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
+        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+        VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
+
+        SET @MaPhieuDangKy = SCOPE_IDENTITY();
+
+        -- 4. Ghi chi tiết phiếu đăng ký
+        INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
+        VALUES (@MaPhieuDangKy, @CCCDTS);
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+
+        DECLARE @Err NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@Err, 16, 1);
+    END CATCH
+END;
+GO
+
 
 
 
@@ -210,4 +351,5 @@ BEGIN
     DEALLOCATE cur;
 END;
 GO
+
 
