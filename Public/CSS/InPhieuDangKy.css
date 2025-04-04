@@ -10,7 +10,7 @@ h1 {
     left: 50%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
     padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background: #b3a4ff; /* background-m */
+    background: #fce4ec; /* background-m */
     border-radius: 10px; /* border-m */
     display: inline-block;
 }
@@ -35,7 +35,7 @@ h1 {
 
 #search-btn {
     padding: 8px 12px;
-    background-color: #6c5ce7;
+    background-color: #F8BBD0;
     color: white;
     border: none;
     border-radius: 4px;
@@ -43,7 +43,7 @@ h1 {
 }
 
 #search-btn:hover {
-    background-color: #d1c6ff;
+    background-color: #ff6b81
 }
 
 button {
@@ -51,7 +51,7 @@ button {
     padding: 5px 10px;
     top: 150px;
     border: none;
-    background-color: #6c5ce7;
+    background-color: #F8BBD0;
     color: white;
     border-radius: 5px;
 }
@@ -63,17 +63,17 @@ table {
     left: 4%; /* Căn giữa phần tử theo chiều ngang */
     margin: 20px;
     border-collapse: collapse;
-    border: 2px solid #b3a4ff;
+    border: 2px solid #F8BBD0;
 }
 
 th, td {
-    border: 1px solid #b3a4ff;
+    border: 1px solid #F8BBD0;
     padding: 10px;
     text-align: center;
 }
 
 th {
-    background-color: #f0f0ff;
+    background-color: #fce4ec
 }
 
 
