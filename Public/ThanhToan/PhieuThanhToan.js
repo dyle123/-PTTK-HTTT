@@ -355,3 +355,26 @@ window.onclick = function (event) {
         modalMoi.style.display = "none";
     }
 };
+
+// Hiệu ứng fade-in khi tải trang
+document.addEventListener("DOMContentLoaded", function () {
+    document.body.classList.add("fade-in");
+
+    // Thêm sự kiện để xử lý fade-out khi điều hướng
+    document.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", function (event) {
+            const href = this.getAttribute("href");
+
+            // Kiểm tra nếu liên kết không phải là anchor (#) hoặc không trống
+            if (href && href !== "#") {
+                event.preventDefault(); // Ngăn chặn hành động mặc định
+                document.body.classList.add("fade-out");
+
+                // Chờ hiệu ứng hoàn tất rồi chuyển trang
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500); // Thời gian khớp với transition trong CSS
+            }
+        });
+    });
+});

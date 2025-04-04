@@ -10,6 +10,18 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        /* Hiệu ứng mờ dần khi tải trang */
+
+
+        body.fade-in {
+            opacity: 1;
+        }
+
+        body.fade-out {
+            opacity: 0;
         }
 
         .image-container {
@@ -47,5 +59,6 @@
     
     <!-- <script src="/DangNhap/common.js"></script> -->
     <script src="/DangNhap/Navbar.js"></script>
+    <script src="/DangNhap/Transaction.js"></script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+
+
 // Kiểm tra trạng thái đăng nhập và hiển thị nút Login/Logout phù hợp
 async function initializeButtons() {
     try {
@@ -98,6 +100,7 @@ async function checkLoginStatus(action) {
         console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', err);
     }
 }
+
 
 
 // Tự động khởi tạo khi tải trang

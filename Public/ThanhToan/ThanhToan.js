@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     trangThaiClass = "chua-thanh-toan";
                 }
                 
-                
+
 
 
                 tr.innerHTML = `
@@ -83,9 +83,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
      // Thêm sự kiện click cho các button "Xem Phiếu Thanh Toán"
      document.querySelectorAll(".btn-xem").forEach(button => {
-        button.addEventListener("click", function () {
+        button.addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định
             const maPhieu = this.getAttribute("data-maphieu");
-            window.location.href = `/ThanhToan/PhieuThanhToan.html?maPhieuDangKy=${maPhieu}`;
+            const targetUrl = `/ThanhToan/PhieuThanhToan.html?maPhieuDangKy=${maPhieu}`;
+
+            // Thêm lớp fade-out vào body
+            document.body.classList.add("fade-out");
+
+            // Chờ hiệu ứng hoàn tất rồi chuyển trang
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 500); // Thời gian khớp với transition trong CSS
         });
     });
 
@@ -105,4 +114,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Tải dữ liệu ban đầu (mặc định là 'all')
     fetchData("all");
+});
+// Hiệu ứng fade-in khi tải trang
+document.addEventListener("DOMContentLoaded", function () {
+    document.body.classList.add("fade-in");
+
+    // Thêm sự kiện để xử lý fade-out khi điều hướng
+    document.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", function (event) {
+            const href = this.getAttribute("href");
+
+            // Kiểm tra nếu liên kết không phải là anchor (#) hoặc không trống
+            if (href && href !== "#") {
+                event.preventDefault(); // Ngăn chặn hành động mặc định
+                document.body.classList.add("fade-out");
+
+                // Chờ hiệu ứng hoàn tất rồi chuyển trang
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500); // Thời gian khớp với transition trong CSS
+            }
+        });
+    });
 });
