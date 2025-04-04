@@ -129,41 +129,55 @@ END
 GO
 
 
+
+
+
 CREATE OR ALTER PROCEDURE KIEMTRAKHACHHANG
-    @TenKH NVARCHAR(50),
-    @EmailKH NVARCHAR(100),
-    @SoDienThoaiKH CHAR(10),
-    @DiaChiKH NVARCHAR(255),
-    @LoaiKhachHang NVARCHAR(20),
-    @MaKhachHang INT OUTPUT
+	@TenKhachHang NVARCHAR(50),
+    @Email NVARCHAR(100),  
+	@SoDienThoai CHAR(10),
+	@DiaChi NVARCHAR(255) ,
+	@LoaiKhachHang NVARCHAR(20),
+	@MaKhachHang INT OUTPUT
 AS
 BEGIN
-    -- Tìm khách hàng trùng SDT và loại khách hàng
-    SELECT @MaKhachHang = MaKhachHang
-    FROM KhachHang
-    WHERE SoDienThoai = @SoDienThoaiKH AND LoaiKhachHang = @LoaiKhachHang;
-
-    -- Nếu đã tồn tại khách hàng, kiểm tra tên có trùng không
-    IF @MaKhachHang IS NOT NULL
-    BEGIN
-        DECLARE @TenCu NVARCHAR(50);
-        SELECT @TenCu = TenKhachHang FROM KhachHang WHERE MaKhachHang = @MaKhachHang;
-
-        IF @TenCu != @TenKH
+    BEGIN TRY
+        -- Kiểm tra xem có khách hàng nào khác tên nhưng dùng cùng số điện thoại hay không
+        IF EXISTS (SELECT 1 FROM KhachHang WHERE SoDienThoai = @SoDienThoai AND TenKhachHang <> @TenKhachHang)
         BEGIN
-            RAISERROR(N'Số điện thoại đã được đăng ký cho một khách hàng khác tên', 16, 1);
-            SET @MaKhachHang = NULL;
+            RAISERROR (N'Số điện thoại đã được đăng ký cho một khách hàng khác tên', 16, 1);
             RETURN;
         END
-    END
-    ELSE
-    BEGIN
-        -- Nếu không tồn tại thì thêm mới khách hàng
-        INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
-        VALUES (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang);
 
-        SET @MaKhachHang = SCOPE_IDENTITY();
-    END
+        -- Kiểm tra xem khách hàng đã tồn tại với cùng loại đăng ký chưa
+        IF EXISTS (SELECT 1 FROM KhachHang WHERE SoDienThoai = @SoDienThoai AND TenKhachHang = @TenKhachHang AND LoaiKhachHang = @LoaiKhachHang)
+        BEGIN
+            -- Nếu tồn tại, lấy mã khách hàng hiện có
+            SELECT @MaKhachHang = MaKhachHang FROM KhachHang 
+            WHERE SoDienThoai = @SoDienThoai AND TenKhachHang = @TenKhachHang AND LoaiKhachHang = @LoaiKhachHang;
+        END
+        ELSE
+        BEGIN
+            -- Nếu chưa tồn tại, thêm mới khách hàng
+            BEGIN TRANSACTION;
+
+            INSERT INTO KhachHang (TenKhachHang, SoDienThoai, Email, DiaChi, LoaiKhachHang)
+            VALUES (@TenKhachHang, @SoDienThoai, @Email, @DiaChi, @LoaiKhachHang);
+
+            SET @MaKhachHang = SCOPE_IDENTITY();
+
+            COMMIT TRANSACTION;
+        END
+    END TRY
+    BEGIN CATCH
+        -- Nếu có lỗi, rollback transaction để tránh dữ liệu bị lỗi
+        IF @@TRANCOUNT > 0 
+            ROLLBACK TRANSACTION;
+
+        -- Hiển thị lỗi cụ thể
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
 END;
 GO
 
@@ -211,7 +225,7 @@ CREATE OR ALTER PROCEDURE Back
     @DiaChiKH NVARCHAR(255),
     @LoaiKhachHang NVARCHAR(20),
     @LoaiChungChi INT,
-    @ThoiGianThi DATE,
+    @ThoiGianThi int,
     @TenTS NVARCHAR(50),
     @CCCDTS CHAR(12),
     @NgaySinh DATE, 
@@ -222,24 +236,23 @@ AS
 BEGIN
     DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
 
+    -- Bắt đầu giao dịch
     BEGIN TRANSACTION;
 
     BEGIN TRY
-        -- 1. Kiểm tra hoặc tạo khách hàng
-        EXEC KIEMTRAKHACHHANG 
-            @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, 
-            @MaKhachHang OUTPUT;
+        -- Kiểm tra hoặc tạo khách hàng
+        EXEC KIEMTRAKHACHHANG @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, @MaKhachHang OUTPUT;
 
+        -- Nếu không tìm thấy hoặc tạo được khách hàng thì báo lỗi
         IF @MaKhachHang IS NULL 
         BEGIN 
-            RAISERROR (N'Lỗi kiểm tra/tạo khách hàng!', 16, 1);
-            IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+            RAISERROR (N'Lỗi khi kiểm tra hoặc tạo khách hàng!', 16, 1);
+            ROLLBACK TRANSACTION;
             RETURN;
         END;
 
-        -- 2. Kiểm tra hoặc tạo thí sinh
-        EXEC KIEMTRATHISINH 
-            @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
+        -- Kiểm tra hoặc tạo thí sinh trước khi tạo phiếu đăng ký
+        EXEC KIEMTRATHISINH @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
 
         -- Nếu có lỗi trong KIEMTRATHISINH, dừng lại
         IF @@ERROR <> 0 
@@ -250,26 +263,29 @@ BEGIN
         END;
 
         -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
-        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, LichThi, MaKhachHang)
         VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
 
+        -- Lấy ID mới của phiếu đăng ký
         SET @MaPhieuDangKy = SCOPE_IDENTITY();
 
-        -- 4. Ghi chi tiết phiếu đăng ký
+        -- Thêm vào bảng ChiTietPhieuDangKy
         INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
         VALUES (@MaPhieuDangKy, @CCCDTS);
 
+        -- Nếu không có lỗi, commit transaction
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
-        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
-
-        DECLARE @Err NVARCHAR(4000) = ERROR_MESSAGE();
-        RAISERROR(@Err, 16, 1);
+        -- Nếu có lỗi ở bất kỳ bước nào, rollback lại toàn bộ giao dịch
+        ROLLBACK TRANSACTION;
+        
+        -- Hiển thị lỗi chi tiết
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
     END CATCH
 END;
 GO
-
 
 
 CREATE OR ALTER PROC PHATHANHPHIEUDUTHI
@@ -349,5 +365,4 @@ BEGIN
     DEALLOCATE cur;
 END;
 GO
-
 
