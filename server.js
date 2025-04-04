@@ -34,18 +34,18 @@ app.listen(PORT, () => {
 
 
 //Cấu hình kết nối SQL Server
-// const config = {
-//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'sa',
-//     password: '1928374650Vy',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
+const config = {
+    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'sa',
+    password: '1928374650Vy',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 
 
@@ -727,4 +727,21 @@ app.post('/api/xoaPayment', async (req, res) => {
         res.status(500).json({ error: 'Lỗi server' });
     }
 });
+
+app.get('/api/getNgayThi', async (req,res)=>{
+    const {maLichThi} = req.query;
+    console.log('Lich thi nhan vao: ', maLichThi);
+    try{
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaLichThi', sql.Int, maLichThi)
+            .query(`
+            select NgayThi from LichThi where MaLichThi = @MaLichThi
+            `)
+        res.json(result);
+    }catch{
+        console.error('❌ Lỗi lay ngay thi', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+})
 

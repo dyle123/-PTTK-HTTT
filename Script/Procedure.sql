@@ -218,7 +218,6 @@ END;
 GO
 
 
-
 CREATE OR ALTER PROCEDURE Back
     @TenKH NVARCHAR(50),
     @EmailKH NVARCHAR(100),  
@@ -226,7 +225,7 @@ CREATE OR ALTER PROCEDURE Back
     @DiaChiKH NVARCHAR(255),
     @LoaiKhachHang NVARCHAR(20),
     @LoaiChungChi INT,
-    @ThoiGianThi DATE,
+    @ThoiGianThi int,
     @TenTS NVARCHAR(50),
     @CCCDTS CHAR(12),
     @NgaySinh DATE, 
@@ -264,7 +263,7 @@ BEGIN
         END;
 
         -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
-        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, LichThi, MaKhachHang)
         VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
 
         -- Lấy ID mới của phiếu đăng ký
@@ -366,5 +365,4 @@ BEGIN
     DEALLOCATE cur;
 END;
 GO
-
 

@@ -54,7 +54,7 @@ UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
 
  select* from ChiTietPhieuDangKy where MaPhieuDangKy = 5
  select* from ThiSinh
-  select* from PhieuDangKy
+ select* from PhieuDangKy
  select* from  PhieuThanhToan
  update  PhieuDangKy
  set TrangThaiThanhToan = 0 where MaPhieuDangKy = 1

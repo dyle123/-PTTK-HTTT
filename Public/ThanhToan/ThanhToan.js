@@ -53,11 +53,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     trangThaiHienThi = "Chưa thanh toán";
                     trangThaiClass = "chua-thanh-toan";
                 }
+                
+                
+
+
                 tr.innerHTML = `
                     <td>${phieu.MaPhieuDangKy}</td>
                     <td>${phieu.LoaiChungChi}</td>
                     <td>${phieu.NgayDangKy}</td>
-                    <td>${phieu.ThoiGianMongMuonThi}</td>
+                    <td>${phieu.LichThi}</td>
                     <td>${phieu.MaKhachHang}</td>
                     <td class="${trangThaiClass}">${trangThaiHienThi}</td>
                     <td>
