@@ -222,6 +222,75 @@ AS
 BEGIN
     DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
 
+    -- Bắt đầu giao dịch
+    BEGIN TRANSACTION;
+
+    BEGIN TRY
+        -- Kiểm tra hoặc tạo khách hàng
+        EXEC KIEMTRAKHACHHANG @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, @MaKhachHang OUTPUT;
+
+        -- Nếu không tìm thấy hoặc tạo được khách hàng thì báo lỗi
+        IF @MaKhachHang IS NULL 
+        BEGIN 
+            RAISERROR (N'Lỗi khi kiểm tra hoặc tạo khách hàng!', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
+
+        -- Kiểm tra hoặc tạo thí sinh trước khi tạo phiếu đăng ký
+        EXEC KIEMTRATHISINH @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
+
+        -- Nếu có lỗi trong KIEMTRATHISINH, dừng lại
+        IF @@ERROR <> 0 
+        BEGIN 
+            RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
+
+        -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
+        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+        VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
+
+        -- Lấy ID mới của phiếu đăng ký
+        SET @MaPhieuDangKy = SCOPE_IDENTITY();
+
+        -- Thêm vào bảng ChiTietPhieuDangKy
+        INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
+        VALUES (@MaPhieuDangKy, @CCCDTS);
+
+        -- Nếu không có lỗi, commit transaction
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        -- Nếu có lỗi ở bất kỳ bước nào, rollback lại toàn bộ giao dịch
+        ROLLBACK TRANSACTION;
+        
+        -- Hiển thị lỗi chi tiết
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+GO
+
+CREATE OR ALTER PROCEDURE TaoPhieuDangKy
+    @TenKH NVARCHAR(50),
+    @EmailKH NVARCHAR(100),  
+    @SoDienThoaiKH CHAR(10),
+    @DiaChiKH NVARCHAR(255),
+    @LoaiKhachHang NVARCHAR(20),
+    @LoaiChungChi INT,
+    @ThoiGianThi DATE,
+    @TenTS NVARCHAR(50),
+    @CCCDTS CHAR(12),
+    @NgaySinh DATE, 
+    @EmailTS NVARCHAR(100),  
+    @SoDienThoaiTS CHAR(10),
+    @DiaChiTS NVARCHAR(255) 
+AS
+BEGIN
+    DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
+
     BEGIN TRANSACTION;
 
     BEGIN TRY
@@ -241,15 +310,15 @@ BEGIN
         EXEC KIEMTRATHISINH 
             @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
 
-        -- Nếu có lỗi trong KIEMTRATHISINH, dừng lại
+        -- Nếu có lỗi trong KIEMTRATHISINH
         IF @@ERROR <> 0 
         BEGIN 
             RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
-            ROLLBACK TRANSACTION;
+            IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
             RETURN;
         END;
 
-        -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
+        -- Tạo phiếu đăng ký
         INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
         VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
 
