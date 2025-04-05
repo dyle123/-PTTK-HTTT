@@ -1044,11 +1044,12 @@ app.delete('/api/deletePhieuGiaHan', async (req, res) => {
     }
 
     try {
-        // Truy vấn SQL để xóa phiếu gia hạn
         const result = await pool.query(
             'DELETE FROM PhieuGiaHan WHERE CCCD = $1 AND MaPhieuDangKy = $2',
             [cccd, maPhieuDangKy]
         );
+
+        console.log(result);  // Kiểm tra kết quả từ SQL
 
         if (result.rowCount > 0) {
             res.json({ success: true });
