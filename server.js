@@ -34,18 +34,18 @@ app.listen(PORT, () => {
 
 
 //Cấu hình kết nối SQL Server
-const config = {
-    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'sa',
-    password: '1928374650Vy',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'sa',
+//     password: '1928374650Vy',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 async function sqlQuery(query, params = {}) {
     try {
         const pool = await sql.connect({
@@ -109,19 +109,19 @@ async function sqlQuery(query, params = {}) {
 
 
 
-// const config = {
-//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.174.1',
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'BENU',
-//     password: 'benu123',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
+const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.174.1',
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'BENU',
+    password: 'benu123',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 // Cấu hình kết nối SQL Server
 // const config = {
@@ -1033,6 +1033,31 @@ app.get('/api/getPhieuGiaHan', async (req, res) => {
     } catch (err) {
         console.error('Lỗi khi lấy dữ liệu:', err);
         res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/deletePhieuGiaHan', async (req, res) => {
+    const { cccd, maPhieuDangKy } = req.query;
+
+    if (!cccd || !maPhieuDangKy) {
+        return res.status(400).json({ success: false, message: 'Thiếu thông tin cần thiết' });
+    }
+
+    try {
+        // Truy vấn SQL để xóa phiếu gia hạn
+        const result = await pool.query(
+            'DELETE FROM PhieuGiaHan WHERE CCCD = $1 AND MaPhieuDangKy = $2',
+            [cccd, maPhieuDangKy]
+        );
+
+        if (result.rowCount > 0) {
+            res.json({ success: true });
+        } else {
+            res.json({ success: false, message: 'Không tìm thấy phiếu gia hạn' });
+        }
+    } catch (error) {
+        console.error('Lỗi khi xóa dữ liệu:', error);
+        res.status(500).json({ success: false, message: 'Có lỗi xảy ra khi xóa dữ liệu' });
     }
 });
 

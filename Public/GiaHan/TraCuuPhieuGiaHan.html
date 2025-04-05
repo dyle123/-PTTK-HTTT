@@ -9,9 +9,7 @@
 </head>
 <body>
     <div id="navbar-container"></div>
-    <div class="box_TraCuu_text">
-        Tra cứu phiếu gia hạn
-    </div>
+    <h1>Tra Cứu Số Phiếu Gia Hạn</h1>
     <input type="number" id="search-box" placeholder="Nhập mã phiếu đăng ký" step="1">
     <button id="search-btn" onclick="fetchData()">🔍</button>
 
@@ -81,13 +79,36 @@
                 </tr>
                 `).join('');
 
-tableBody.innerHTML = rows;
+    tableBody.innerHTML = rows;
         }
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu:', error);
             alert('Có lỗi xảy ra, vui lòng thử lại!');
         }
     }
+    async function deleteRow(cccd, maPhieuDangKy) {
+        console.log('Xóa dữ liệu với CCCD:', cccd, 'và Mã Phiếu Đăng Ký:', maPhieuDangKy); // Kiểm tra giá trị
+        const confirmDelete = confirm("Bạn có chắc chắn muốn xóa phiếu gia hạn này?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/deletePhieuGiaHan?cccd=${cccd}&maPhieuDangKy=${maPhieuDangKy}`, {
+                method: 'DELETE',
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('Đã xóa phiếu gia hạn thành công!');
+                fetchData(); // Tải lại dữ liệu
+            } else {
+                alert('Không thể xóa phiếu gia hạn!');
+            }
+        } catch (error) {
+            console.error('Lỗi khi xóa:', error);
+            alert('Có lỗi xảy ra khi xóa dữ liệu!');
+            }
+        }
     </script>
 </body>
 </html>

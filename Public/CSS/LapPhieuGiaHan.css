@@ -3,22 +3,15 @@ body {
     text-align: center;
     margin: 20px;
 }
-.box_TraCuu_text
-{
-    width: 21vw; /* Chiều rộng */
-    height: 7vh;  /* Chiều cao */
-    background-color: #FCE4EC; /* Màu nền xanh */
-    color: black; /* Màu chữ */
-    display: flex;
-    align-items: center; /* Căn giữa theo chiều dọc */
-    justify-content: center; /* Căn giữa theo chiều ngang */
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 10px; /* Bo góc */
-    border: 2px solid #FCE4EC; /* Viền */
-    font-size: 1.82vw;
-    margin-top:10vh;
-    margin-left:38vw
+h1 {
+    /* position: relative;  */
+    margin-top: 5%; /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
+    margin-left: 20%; /* Căn giữa phần tử theo chiều ngang */
+    transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
+    padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
+    background: #FCE4EC; /* background-m */
+    border-radius: 10px; /* border-m */
+    display: inline-block;
 }
 
 /* input[type="text"] {
@@ -34,7 +27,7 @@ button {
     cursor: pointer;
     padding: 0.46vh 0.52vw;
     border: none;
-    background-color: #E5EEFFFF;
+    background-color: #F8BBD0;
     color: black;
     border-radius: 5px;
     margin-top:1vh;
@@ -44,7 +37,7 @@ button {
 {
     width: 27vw; /* Chiều rộng */
     height: 50vh;  /* Chiều cao */
-    background-color: #E5EEFFFF; /* Màu nền xanh */
+    background-color: #FDF5F4; /* Màu nền xanh */
     color: black; /* Màu chữ */
     display: flex;
     align-items: center; /* Căn giữa theo chiều dọc */
@@ -52,9 +45,9 @@ button {
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px; /* Bo góc */
-    border: 2px solid #E5EEFFFF; /* Viền */
+    border: 2px solid #FDF5F4; /* Viền */
     margin-top:3vh;
-    margin-left:35vw;
+    margin-left:36vw;
     position: relative;
 }
 #Input_HoVaTen
@@ -178,8 +171,8 @@ button {
     position: absolute;
     margin-top:40vh;
     margin-left:-13vw;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
 }
 
 #btn_InPhieu
@@ -187,8 +180,8 @@ button {
     position: absolute;
     margin-top:40vh;
     margin-left:0vw;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
 }
 
 #btn_GuiPhieuDenKeToan
@@ -196,8 +189,8 @@ button {
     position: absolute;
     margin-top:40vh;
     margin-left:14vw;
-    background-color: #6c5ce7;
-    color: white;
+    background-color: #F8BBD0;
+    color: black;
 }
 
 .btn_Tra_cuu_SLGH
@@ -205,12 +198,11 @@ button {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    background-color: #6c5ce7;
-    color: white;
+    color: black;
     border-radius: 5px;
-    margin-top:20vh;
+    margin-top:15vh;
     position:absolute;
-    margin-left:27vw;
+    margin-left:18vw;
 }
 
 .btn_Tra_cuu_PGH
@@ -218,10 +210,9 @@ button {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    background-color: #6c5ce7;
-    color: white;
+    color: black;
     border-radius: 5px;
-    margin-top:20vh;
-    margin-left:37vw;
+    margin-top:15vh;
+    margin-left:34vw;
     position:absolute;
 }

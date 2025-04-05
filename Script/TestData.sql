@@ -7,7 +7,7 @@ values ('NV000014', N'Tram Dao', '2004-12-23', '0965422253', '2000000', 'ketoan'
 insert into NhanVien(MaNhanVien,HoTen,NgaySinh,SoDienThoai,Luong,BoPhan)
 values ('NV000013', N'VirusS', '2004-12-23', '0965422252', '2000000', 'tiepnhan')
 
- insert into Users(MaNhanVien, PassWord, Role)
+insert into Users(MaNhanVien, PassWord, Role)
 values ('NV000014', '123','ketoan');
  insert into Users(MaNhanVien, PassWord, Role)
 values ('NV000013', '123','tiepnhan');
@@ -25,23 +25,44 @@ VALUES (N'Nguyễn Văn C', 'nguyenvanc@example.com', '0987654321', N'Hà Nội'
 INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
 VALUES (N'Trần Thị D', 'tranthid@example.com', '0912345678', N'TP. Hồ Chí Minh', N'đơn vị')
 
+select*from BangGiaThi
+
 INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
 VALUES (1, N'Chứng chỉ Tiếng Anh B1', 1500000)
 
 INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
 VALUES (2, N'Chứng chỉ Công nghệ thông tin', 1200000)
 
-INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, ThoiGianMongMuonThi, MaKhachHang)
-VALUES (1, '2025-04-02', 1, '2025-05-10', 1)
 
-INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, ThoiGianMongMuonThi, MaKhachHang)
-VALUES (2, '2025-04-02', 0, '2025-06-15', 2)
+--nu
+Select*from ThiSinh
+Select*from LichThi
+Select* from PhongThi
+
+INSERT INTO PhongThi (SucChuaToiDa, SoLuongHienTai)
+VALUES (100, 50),(150, 120); 
+
+INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi)
+VALUES ('2025-04-10', '08:00:00', 50, 1, 1),('2025-04-12', '14:00:00', 30, 2, 2);
+
+INSERT INTO ChungChi (NgayCap, NgayHetHan, LoaiChungChi, TrangThai, CCCD)
+VALUES ('2025-03-01', '2027-03-01', 1, N'Còn hiệu lực', '123456789012'),('2025-03-15', '2027-03-15', 2, N'Còn hiệu lực', '987654321098');
+
+INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, LichThi, MaKhachHang)
+VALUES (1, '2025-03-01', 0, 1, 1),(2, '2025-03-02', 1, 2, 2);
 
 INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD, SoLanGiaHan)
-VALUES (2, '123456789012', 0)
+VALUES (2, '123456789012', 0), (3, '987654321098', 1);
 
-INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD, SoLanGiaHan)
-VALUES (2, '987654321098', 1)
+INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayGiaHan)
+VALUES('123456789012', 2, N'Hợp lệ', 200000, N'Cần thêm thời gian học', '2025-03-01'),('987654321098', 3, N'Không hợp lệ', 0, N'Không đủ điều kiện gia hạn', '2025-03-05');
+--nu
+
+Select*from PhieuDangKy
+
+Select*from ThiSinh
+
+
 
 Select *from ChiTietPhieuDangKy
 
