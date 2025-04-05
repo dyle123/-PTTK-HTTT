@@ -24,26 +24,55 @@
             opacity: 0;
         }
 
-        .image-container {
+        /* .image-container {
             display: flex;
             justify-content: center;
             gap: 20px;
             margin-top: 35px;
-        }
-        .image-container img {
+        } */
+        /* .image-container img {
             width: 300px;
             height: auto;
             border: 1px solid #000;
-        }
-        h1 {
-            margin-top: 100px;
+        } */
+        /* h1 {
+            margin-top: 15vh;
             color: #333;
+            margin-bottom: 10vh;
+        } */
+        #ChaoMung
+        {
+            font-size:10vh;
+            margin-top:39vh;
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInSmooth 7s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+        @keyframes slideInSmooth {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        }
+        #TrungTam
+        {
+            font-size:7vh;
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInSmooth 7s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+        @keyframes slideInSmooth {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
         }
     </style>
 </head>
 <body>
     <!-- Modal thông báo -->
-    <h1>Hệ thống tổ chức thi chứng chỉ</h1>
+    <h1 id="ChaoMung">Chào mừng đến với</h1>
+    <h1 id="TrungTam">Trung tâm ACCI</h1>
     <div id="customModal" class="modal">
         <div class="modal-content">
             <p id="modalText"></p>
@@ -51,11 +80,9 @@
     </div>
     <div id="navbar-container"><img src="/Image/logo.png" alt="Logo" id="logo"></div>
     
-    <div class="image-container">
-        <img src="/Image/image1.jpg" alt="Hình ảnh 1">
-        <img src="/Image/image2.jpg" alt="Hình ảnh 2">
-        <img src="/Image/image3.jpg" alt="Hình ảnh 3">
-    </div>
+    <!-- <div class="image-container">
+        <img src="/Image/bg.jpg" alt="Hình nền">
+    </div> -->
     
     <!-- <script src="/DangNhap/common.js"></script> -->
     <script src="/DangNhap/Navbar.js"></script>
