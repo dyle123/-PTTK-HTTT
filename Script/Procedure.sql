@@ -319,7 +319,7 @@ BEGIN
         END;
 
         -- Tạo phiếu đăng ký
-        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianThi, MaKhachHang)
         VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
 
         SET @MaPhieuDangKy = SCOPE_IDENTITY();
@@ -342,7 +342,7 @@ GO
 
 
 
-
+EXEC PHATHANHPHIEUDUTHI 1
 CREATE OR ALTER PROC PHATHANHPHIEUDUTHI
     @MaPhieuDangKy INT
 AS
@@ -358,7 +358,7 @@ BEGIN
 
     IF @MaLichThi IS NULL
     BEGIN
-        PRINT 'Không tìm thấy lịch thi phù hợp.';
+        PRINT N'Không tìm thấy lịch thi phù hợp.';
         RETURN;
     END;
 
@@ -366,16 +366,17 @@ BEGIN
     SELECT @NgayThi = NgayThi, @MaChungChi = LoaiChungChi FROM LichThi WHERE MaLichThi = @MaLichThi;
 
     -- Kiểm tra nếu phiếu đăng ký đã quá hạn 14 ngày
-    IF NOT EXISTS (
+    IF EXISTS (
         SELECT 1 
         FROM PhieuDangKy 
-        WHERE MaPhieuDangKy = @MaPhieuDangKy 
-          AND DATEDIFF(DAY, GETDATE(), @NgayThi) <= 14
+        WHERE MaPhieuDangKy = @MaPhieuDangKy AND DATEDIFF(DAY, GETDATE(), @NgayThi) > 14
     )
     BEGIN
-        PRINT 'Phiếu đăng ký không hợp lệ hoặc đã quá 14 ngày.';
-        RETURN;
-    END;
+    PRINT N'Phiếu đăng ký chưa đến ngày để tạo phiếu dự thi. Ngày thi: ' 
+        + CONVERT(nvarchar, @NgayThi, 103) 
+        + N'. Còn ' + CONVERT(nvarchar, DATEDIFF(DAY, GETDATE(), @NgayThi)) + N' ngày nữa.';
+    RETURN;
+END;
 
     -- Lấy danh sách thí sinh thuộc phiếu đăng ký
     DECLARE @CCCD CHAR(12);
@@ -403,10 +404,10 @@ BEGIN
 
             -- Chèn vào bảng PhieuDuThi
             INSERT INTO PhieuDuThi (SoBaoDanh, CCCD, TrangThai, LichThi)
-            VALUES (@SoBaoDanh, @CCCD, N'Chưa thi', @MaLichThi);
+            VALUES (@SoBaoDanh, @CCCD, 0, @MaLichThi);
 
             -- Debug: In số báo danh đã cấp
-            PRINT 'Thí sinh có CCCD: ' + @CCCD + ' - Số báo danh: ' + @SoBaoDanh;
+            PRINT N'Thí sinh có CCCD: ' + @CCCD + N' - Số báo danh: ' + @SoBaoDanh;
 
             -- Tăng số thứ tự
             SET @SoThuTu = @SoThuTu + 1;

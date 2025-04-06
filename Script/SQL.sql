@@ -38,6 +38,7 @@ CREATE TABLE PhieuThanhToan (
 	NhanVienThucHien char(8) NOT NULL,--f
 );
 
+
 CREATE TABLE HoaDonThanhToan(
 	MaHoaDon int IDENTITY(1,1) Primary Key,
 	TongTien int,
@@ -136,7 +137,7 @@ CREATE TABLE Users
 CREATE TABLE PhieuDuThi(
 	SoBaoDanh char(12)  Primary Key,
 	CCCD char(12),--f
-	TrangThai nvarchar(50),
+	TrangThai TINYINT DEFAULT 0 CHECK (TrangThai IN (0,1,2)),
 	LichThi int --f
 )
 

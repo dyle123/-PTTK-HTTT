@@ -42,8 +42,8 @@ Select* from PhongThi
 INSERT INTO PhongThi (SucChuaToiDa, SoLuongHienTai)
 VALUES (100, 50),(150, 120); 
 
-INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi)
-VALUES ('2025-04-10', '08:00:00', 50, 1, 1),('2025-04-12', '14:00:00', 30, 2, 2);
+INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, LoaiChungChi)
+VALUES ('2025-04-10', '08:00:00', 50, 1),('2025-04-12', '14:00:00', 30, 2);
 
 INSERT INTO ChungChi (NgayCap, NgayHetHan, LoaiChungChi, TrangThai, CCCD)
 VALUES ('2025-03-01', '2027-03-01', 1, N'Còn hiệu lực', '123456789012'),('2025-03-15', '2027-03-15', 2, N'Còn hiệu lực', '987654321098');
@@ -75,6 +75,7 @@ UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
  select* from ThiSinh
  select* from PhieuDangKy
  select* from  PhieuThanhToan
+  select* from  PhieuDuThi
  update  PhieuDangKy
  set TrangThaiThanhToan = 0 where MaPhieuDangKy = 1
  select* from NhanVien
@@ -82,17 +83,14 @@ UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
  select* from HoaDonThanhToan
  select* from Payments
  update PhieuDangKy
+ delete from PhieuDuThi
+ drop table PhieuDuThi
+
+ select GioThi From LichThi
+
+ select* from PhieuDuThi
  set NgayDangKy = '2025-03-26' where MaPhieuDangKy = 1
  delete from Payments where MaPhieuDangKy = 2
- -- Giả sử đã có bảng LichThi như sau:
--- CREATE TABLE LichThi (
---     MaLichThi INT PRIMARY KEY IDENTITY,
---     NgayThi DATE,
---     GioThi TIME,
---     SoLuongDangKy INT DEFAULT 0,
---     MaPhongThi NVARCHAR(10),
---     LoaiChungChi INT
--- );
 SET IDENTITY_INSERT PhongThi ON;
 INSERT INTO PhongThi (MaPhongThi, SucChuaToiDa, SoLuongHienTai)
 VALUES 
