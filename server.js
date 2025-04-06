@@ -33,19 +33,19 @@ app.listen(PORT, () => {
 });
 
 
-//Cấu hình kết nối SQL Server
-// const config = {
-//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'sa',
-//     password: '1928374650Vy',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
+//
+const config = {
+    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'sa',
+    password: '1928374650Vy',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 async function sqlQuery(query, params = {}) {
     try {
         const pool = await sql.connect({
@@ -109,19 +109,19 @@ async function sqlQuery(query, params = {}) {
 
 
 
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.174.1',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'BENU',
-    password: 'benu123',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.174.1',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'BENU',
+//     password: 'benu123',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 
 // Cấu hình kết nối SQL Server
 // const config = {
@@ -873,6 +873,8 @@ app.post('/api/xacNhanLichThi', async (req, res) => {
 
 
 
+
+
 app.get('/api/getPhieuDangKy', async (req, res) => {
     const { dieuKien, maPhieu } = req.query; // Lấy từ query string
 
@@ -884,10 +886,10 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
         console.log('DieuKien:', dieuKien);
 
         // Điều kiện lọc theo trạng thái thanh toán
-        if (dieuKien === "chuathanhtoan") {
-            conditions.push(`TrangThaiThanhToan = 0`);
-        } else if (dieuKien === "dathanhtoan") {
-            conditions.push(`TrangThaiThanhToan = 1`);
+        if (dieuKien === "chuaphathanh") {
+            conditions.push(`TrangThai = 0`);
+        } else if (dieuKien === "daphathanh") {
+            conditions.push(`TrangThai = 1`);
         }
 
         // Điều kiện lọc theo mã phiếu đăng ký
@@ -922,6 +924,75 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
     }
 });
 
+
+
+app.get('/api/getPhieuDuThi', async (req, res) => {
+    const {dieuKien, ngayThi, loaiChungChi, CCCD} = req.query;
+    console.log('Điều kiện nhận vào:', dieuKien, ngayThi, loaiChungChi, CCCD);
+    
+    try {
+        const pool = await sql.connect(config);
+        let query = `
+            SELECT 
+                PDT.SoBaoDanh,
+                PDT.CCCD,
+                PDT.TrangThai,
+                CONVERT(varchar, LT.NgayThi, 23) as NgayThi,
+                CONVERT(varchar(5), LT.GioThi, 108) as GioThi,
+                LT.LoaiChungChi, 
+                BG.TenChungChi
+            FROM PhieuDuThi PDT
+            JOIN LichThi LT ON PDT.LichThi = LT.MaLichThi
+            JOIN BangGiaThi BG ON LT.LoaiChungChi = BG.MaLoaiChungChi
+        `;
+        
+        let conditions = [];
+        const request = pool.request();
+
+        // Xử lý điều kiện CCCD
+        if (CCCD) {
+            request.input('CCCD', sql.VarChar(12), CCCD);
+            conditions.push('PDT.CCCD = @CCCD');
+            console.log('Điều kiện CCCD:', conditions);
+        }
+
+        // Xử lý điều kiện trạng thái phát hành
+        if (dieuKien === "chuaphathanh") {
+            conditions.push('PDT.TrangThai = 0');
+            console.log('Điều kiện chưa phát hành:', conditions);
+        } else if (dieuKien === "daphathanh") {
+            conditions.push('PDT.TrangThai = 1');
+            console.log('Điều kiện đã phát hành:', conditions);
+        }
+
+        // Xử lý điều kiện ngày thi
+        if (ngayThi) {
+            request.input('NgayThi', sql.Date, ngayThi);
+            conditions.push('CONVERT(date, LT.NgayThi) = @NgayThi');
+            console.log('Điều kiện ngày thi:', conditions);
+        }
+
+        // Xử lý điều kiện loại chứng chỉ
+        if (loaiChungChi) {
+            request.input('LoaiChungChi', sql.Int, parseInt(loaiChungChi));
+            conditions.push('LT.LoaiChungChi = @LoaiChungChi');
+            console.log('Điều kiện loại chứng chỉ:', conditions);
+        }
+
+        // Thêm WHERE nếu có điều kiện
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
+            
+        }
+
+        // Thực thi query
+        const result = await request.query(query);
+        res.json(result);
+    } catch (err) {
+        console.error('❌ Lỗi lay phieu du thi:', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
 
 
 
@@ -1271,5 +1342,67 @@ app.get('/api/getNgayThi', async (req,res)=>{
         console.error('❌ Lỗi lay ngay thi', err);
         res.status(500).json({ error: 'Lỗi server' });
     }
-})
+});
+
+app.get('/api/postTaoPhieuDuThi', async (req,res)=>{
+    const {maPhieuDangKy} = req.body;
+    try{
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .execute(`PHATHANHPHIEUDUTHI`);
+        res.json(result);
+    }catch(err){
+        console.error('❌ Lỗi tao phieu du thi', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+
+
+app.get('/api/getLoaiChungChi', async (req, res) => {
+    try{
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .query(`SELECT * FROM BangGiaThi`);
+
+        res.json(result.recordset);
+    }catch(err){
+        console.error('❌ Lỗi lay bang gia thi', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+
+
+
+app.post('/api/updateTrangThaiPhieuDuThi', async (req, res) => {
+    const { sbd } = req.body;
+    
+    try {
+        const pool = await sql.connect(config);
+        const request = pool.request();
+        
+        request.input('SoBaoDanh', sql.VarChar(12), sbd);
+        
+        const query = `
+            UPDATE PhieuDuThi 
+            SET TrangThai = 1 
+            WHERE SoBaoDanh = @SoBaoDanh
+        `;
+        
+        await request.query(query);
+        if (result.rowsAffected[0] === 0) {
+            throw new Error('Không tìm thấy phiếu dự thi');
+        }
+        
+        res.json({ success: true });
+    } catch (err) {
+        console.error('❌ Lỗi cập nhật trạng thái phiếu:', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+
+
 

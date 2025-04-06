@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách phiếu dự thi</title>
+    <link rel="stylesheet" href="/CSS/ThanhToan.css">
+    <link rel="stylesheet" href="/CSS/Transaction.css">
+    <link rel="stylesheet" href="/CSS/PhieuDuThi.css">
+</head>
+<body>
+    <!-- Modal thông báo -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <p id="modalText"></p>
+        </div>
+    </div>
+    <div id="navbar-container"></div>
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <p id="modalText"></p>
+        </div>
+    </div>
+    <h1>Danh sách phiếu dự thi</h1>
+
+    <!-- Bộ lọc -->
+    <div class="filter-container">
+        <div class="radio-filters">
+            <label><input type="radio" name="filter" id="filter-all" checked> Tất cả</label>
+            <label><input type="radio" name="filter" value="daphathanh" id="filter-da-phat-hanh"> Đã phát hành</label>
+            <label><input type="radio" name="filter" value="chuaphathanh" id="filter-chua-phat-hanh"> Chưa phát hành</label>
+        </div>
+        <div class="input-filters">
+            <label for="search-day-box">Ngày thi:</label>
+            <input type="date" id="search-day-box" aria-label="Chọn ngày thi">
+            
+            <label for="search-type-box">Loại chứng chỉ:</label>
+            <select id="search-type-box" aria-label="Chọn loại chứng chỉ">
+                <option value="">-- Chọn loại chứng chỉ --</option>
+            </select>
+            
+            <label for="search-paper-box">CCCD:</label>
+            <input type="text" id="search-paper-box" placeholder="Tìm theo CCCD" aria-label="Nhập CCCD">
+            
+            <button id="search-btn" aria-label="Tìm kiếm">🔍</button>
+            <button id="clear-btn" aria-label="Bỏ lọc">❌ Bỏ lọc</button>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách phiếu đăng ký -->
+    <table>
+        <thead>
+            <tr>
+                <th>Số báo danh</th>
+                <th>Căn cước công dân</th>
+                <th>Loại chứng chỉ</th>
+                <th>Lịch thi</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+        </tbody>
+    </table>
+</body>
+<!-- <script src="/DangNhap/common.js"></script> -->
+<script src="/DangNhap/Navbar.js"></script>
+<script src="/PhieuDuThi/PhieuDuThi.js"></script>
+<script src="/DangNhap/Transaction.js"></script>
+</html>

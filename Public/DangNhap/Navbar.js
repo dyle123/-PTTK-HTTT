@@ -43,7 +43,7 @@ async function checkLoginStatus() {
 
 // ✅ Hàm chặn truy cập vào các trang khi chưa đăng nhập
 function disableProtectedLinks() {
-    ["pay", "postpone","register"].forEach(id => {
+    ["pay", "postpone","register", "examform"].forEach(id => {
         let link = document.getElementById(id).querySelector("a");
         if (link) {
             link.addEventListener("click", function (event) {

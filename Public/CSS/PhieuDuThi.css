@@ -1,0 +1,40 @@
+.filter-container {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.input-filters {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.loading {
+    display: inline-block;
+    padding: 10px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+
+
+#search-type-box {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+    min-width: 200px;
+}
+
+#search-type-box:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+#search-type-box option {
+    padding: 8px;
+}
