@@ -9,7 +9,7 @@
 </head>
 <body>
     <div id="navbar-container"></div>
-    <h1>Tra Cứu Số Phiếu Gia Hạn</h1>
+    <h1>Tra Cứu Phiếu Gia Hạn</h1>
     <input type="number" id="search-box" placeholder="Nhập mã phiếu đăng ký" step="1">
     <button id="search-btn" onclick="fetchData()">🔍</button>
 
@@ -86,27 +86,30 @@
             alert('Có lỗi xảy ra, vui lòng thử lại!');
         }
     }
-    async function deleteRow(cccd, maPhieuDangKy) {
-        console.log('Xóa dữ liệu với CCCD:', cccd, 'và Mã Phiếu Đăng Ký:', maPhieuDangKy); // Kiểm tra giá trị
-        const confirmDelete = confirm("Bạn có chắc chắn muốn xóa phiếu gia hạn này?");
-        if (!confirmDelete) return;
+    async function deleteRow(CCCD, MaPhieuDangKy) {
+        if (!confirm('Bạn có chắc chắn muốn xóa phiếu gia hạn này không?')) return;
 
         try {
-            const response = await fetch(`/api/deletePhieuGiaHan?cccd=${cccd}&maPhieuDangKy=${maPhieuDangKy}`, {
+            const response = await fetch('/api/deletePhieuGiaHan', {
                 method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ CCCD, MaPhieuDangKy })
             });
 
-            const data = await response.json();
-            
-            if (data.success) {
+            const result = await response.json();
+
+            if (result.success) {
+                // Xóa dòng khỏi bảng
+                const row = document.querySelector(`button[onclick="deleteRow('${CCCD}', ${MaPhieuDangKy})"]`).closest('tr');
+                if (row) row.remove();
+
                 alert('Đã xóa phiếu gia hạn thành công!');
-                fetchData(); // Tải lại dữ liệu
             } else {
-                alert('Không thể xóa phiếu gia hạn!');
+                alert('Không thể xóa phiếu gia hạn: ' + result.message);
             }
-        } catch (error) {
-            console.error('Lỗi khi xóa:', error);
-            alert('Có lỗi xảy ra khi xóa dữ liệu!');
+        } catch (err) {
+            console.error(err);
+            alert('Có lỗi xảy ra khi xóa phiếu gia hạn.');
         }
     }
     </script>

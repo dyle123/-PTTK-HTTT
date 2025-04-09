@@ -1208,30 +1208,29 @@ app.get('/api/getPhieuGiaHan', async (req, res) => {
 });
 
 app.delete('/api/deletePhieuGiaHan', async (req, res) => {
-    const { cccd, maPhieuDangKy } = req.query;
-
-    if (!cccd || !maPhieuDangKy) {
-        return res.status(400).json({ success: false, message: 'Thiếu thông tin cần thiết' });
-    }
+    const { CCCD, MaPhieuDangKy } = req.body;
 
     try {
-        const result = await pool.query(
-            'DELETE FROM PhieuGiaHan WHERE CCCD = $1 AND MaPhieuDangKy = $2',
-            [cccd, maPhieuDangKy]
-        );
+        await sql.connect(config);
+        const request = new sql.Request();
 
-        console.log(result);  // Kiểm tra kết quả từ SQL
+        const result = await request.query(`
+            DELETE FROM PhieuGiaHan
+            WHERE CCCD = '${CCCD}' AND MaPhieuDangKy = ${MaPhieuDangKy}
+        `);
 
-        if (result.rowCount > 0) {
-            res.json({ success: true });
-        } else {
-            res.json({ success: false, message: 'Không tìm thấy phiếu gia hạn' });
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy phiếu gia hạn để xóa.' });
         }
-    } catch (error) {
-        console.error('Lỗi khi xóa dữ liệu:', error);
-        res.status(500).json({ success: false, message: 'Có lỗi xảy ra khi xóa dữ liệu' });
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Lỗi khi xóa phiếu gia hạn:', err);
+        res.status(500).json({ success: false, message: 'Lỗi máy chủ khi xóa phiếu gia hạn.' });
     }
 });
+
+
 
 
 

@@ -181,6 +181,8 @@ CREATE TABLE PhieuGiaHan
 
 
 
+
+
 -- Khóa ngoại ở đây
 ALTER TABLE PhieuThanhToan 
 ADD CONSTRAINT FK_PhieuThanhToan_PhieuDangKy FOREIGN KEY (MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy),
