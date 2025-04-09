@@ -36,7 +36,7 @@ button {
 .form
 {
     width: 27vw; /* Chiều rộng */
-    height: 50vh;  /* Chiều cao */
+    height: 55vh;  /* Chiều cao */
     background-color: #FDF5F4; /* Màu nền xanh */
     color: black; /* Màu chữ */
     display: flex;
@@ -141,7 +141,7 @@ button {
 
 #NgayDuThiCu_label
 {
-    margin-top: 26vh;
+    margin-top: 28vh;
     margin-left:-13vw;
     font-size:0.83vw;
     position:absolute;
@@ -161,7 +161,7 @@ button {
 
 #NgayDuThiMoi_label
 {
-    margin-top: 26vh;
+    margin-top: 28vh;
     margin-left:14vw;
     font-size:0.83vw;
     position:absolute;
