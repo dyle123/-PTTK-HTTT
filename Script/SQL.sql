@@ -10,6 +10,8 @@ GO
 USE PTTK
 GO
 
+
+
 CREATE TABLE KhachHang(
 	MaKhachHang int IDENTITY(1,1) Primary Key,
 	TenKhachHang nvarchar(50) NOT NULL,
@@ -175,7 +177,8 @@ CREATE TABLE PhieuGiaHan
 	LoaiGiaHan nvarchar(12) check (LoaiGiaHan in (N'Hợp lệ', N'Không hợp lệ')),
 	PhiGiaHan int,
 	LiDoGiaHan nvarchar(255),
-	NgayGiaHan Date,
+	NgayThiCu Int,
+	NgayThiMoi Int,
 	CONSTRAINT PK_PhieuGiaHan PRIMARY KEY (CCCD, MaPhieuDangKy)
 )
 
@@ -232,7 +235,10 @@ ADD CONSTRAINT FK_ThongTinTruyCap_KhachHang FOREIGN KEY (MaNhanVien) REFERENCES 
 
 ALTER TABLE PhieuGiaHan
 ADD CONSTRAINT FK_PhieuGiaHan_ThiSinh FOREIGN KEY(CCCD) REFERENCES ThiSinh(CCCD),
-    CONSTRAINT FK_PhieuGiaHan_PhieuDangKy FOREIGN KEY(MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy);
+    CONSTRAINT FK_PhieuGiaHan_PhieuDangKy FOREIGN KEY(MaPhieuDangKy) REFERENCES PhieuDangKy(MaPhieuDangKy),
+	CONSTRAINT FK_PhieuGiaHan_LichThi FOREIGN KEY (NgayThiCu) REFERENCES LichThi(MaLichThi),
+	CONSTRAINT FK_PhieuGiaHan2_LichThi FOREIGN KEY (NgayThiMoi) REFERENCES LichThi(MaLichThi)
 
-
+select*from PhieuGiaHan
+Select*from LichThi
 

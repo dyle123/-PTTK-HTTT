@@ -34,6 +34,8 @@ INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
 VALUES (2, N'Chứng chỉ Công nghệ thông tin', 1200000)
 
 
+
+
 --nu
 Select*from ThiSinh
 Select*from LichThi
@@ -52,13 +54,19 @@ INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, LichThi, 
 VALUES (1, '2025-03-01', 0, 1, 1),(2, '2025-03-02', 1, 2, 2);
 
 INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD, SoLanGiaHan)
-VALUES (2, '123456789012', 0), (3, '987654321098', 1);
+VALUES (1, '123456789012', 0), (2, '987654321098', 1);
 
-INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayGiaHan)
-VALUES('123456789012', 2, N'Hợp lệ', 200000, N'Cần thêm thời gian học', '2025-03-01'),('987654321098', 3, N'Không hợp lệ', 0, N'Không đủ điều kiện gia hạn', '2025-03-05');
+Select*from ChiTietPhieuDangKy
+Select*from PhieuDangKy
 
-INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayGiaHan)
-VALUES('123456789012', 2, N'Hợp lệ', 200000, N'Cần thêm thời gian học', '2025-03-01');
+--INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi)
+--VALUES('123456789012', 2, N'Hợp lệ', 200000, N'Cần thêm thời gian học', '2025-03-01'),('987654321098', 3, N'Không hợp lệ', 0, N'Không đủ điều kiện gia hạn', '2025-03-05');
+
+INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi)
+VALUES('123456789012', 2, N'Hợp lệ', 200000, N'Cần thêm thời gian học', 1,2);
+
+insert into PhieuDuThi (SoBaoDanh, CCCD, TrangThai, LichThi) values ('090909090909','123456789012',0,1)
+
 --nu
 
 Select*from PhieuDangKy
@@ -121,3 +129,69 @@ VALUES
 select* from ThiSinh
 
 select* from PhongThi
+
+
+Create procedure LapPhieuGiaHan 
+	@CCCD char(12),
+	@MaPhieuDangKy int,
+	@LiDoGiaHan nvarchar(255),
+	@NgayThiCu Int,
+	@NgayThiMoi Int
+	
+AS
+BEGIN
+	IF NOT EXISTS (SELECT 1 FROM THISINH WHERE CCCD=@CCCD)
+		BEGIN
+			RAISERROR(N'Căn cước công dân không tồn tại.', 16, 1);
+		END
+	ELSE
+		BEGIN
+			IF NOT EXISTS (SELECT 1 FROM PhieuDangKy WHERE MaPhieuDangKy=@MaPhieuDangKy)
+				BEGIN
+					RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
+				END
+			ELSE
+				BEGIN
+					DECLARE @NgayCu DATE, @NgayMoi Date
+
+					SELECT @NgayCu=NgayThi
+					FROM LichThi WHERE MaLichThi=@NgayThiCu
+
+					SELECT @NgayMoi=NgayThi
+					FROM LichThi WHERE MaLichThi=@NgayThiMoi
+
+					IF (@NgayCu=@NgayMoi)
+						BEGIN
+							RAISERROR(N'Ngày thi mới phải khác ngày thi cũ',16,1)
+						END
+					ELSE
+						BEGIN
+							IF NOT EXISTS (SELECT 1 FROM LichThi WHERE MaLichThi=@NgayThiCu)
+								BEGIN
+									RAISERROR(N'Ngày thi cũ bạn nhập không tồn tại',16,1)
+								END
+
+							ELSE
+								BEGIN
+									IF NOT EXISTS (SELECT 1 FROM LichThi WHERE MaLichThi=@NgayThiMoi)
+										BEGIN
+											RAISERROR(N'Ngày thi mới bạn nhập không tồn tại',16,1)
+										END
+									ELSE
+										BEGIN
+											INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy,LiDoGiaHan, NgayThiCu, NgayThiMoi)
+											VALUES (@CCCD, @MaPhieuDangKy,@LiDoGiaHan, @NgayThiCu, @NgayThiMoi);
+
+											UPDATE PhieuDuThi
+											SET LichThi=@NgayThiMoi
+											WHERE CCCD=@CCCD AND LichThi=@NgayThiCu
+										END
+								END
+						END
+				END
+		END
+END
+
+drop proc LapPhieuGiaHan
+
+select *from ThiSinh
