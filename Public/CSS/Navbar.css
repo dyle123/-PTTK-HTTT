@@ -16,10 +16,6 @@ body {
     justify-content: space-between;
     align-items: center;
     background: linear-gradient(90deg, #ff758c, #8860d0);
-
-
-
-
     padding: 20px 30px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -50,7 +46,7 @@ body {
 }
 
 .imageLogo-container img {
-    width: 50px;
+    width: 70px;
     /* Điều chỉnh kích thước logo nếu cần */
 }
 
