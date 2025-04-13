@@ -53,18 +53,9 @@ body {
     /* Khoảng cách giữa logo và khung đăng nhập */
   }
   
-  /* Định dạng logo */
-  .logo {
-    width: 200px;
-    /* Kích thước logo */
-    height: auto;
-    margin-top: 0;
-    margin-bottom: 20px;
-  }
-  
   /* Khung chứa form đăng nhập */
   .signup-container {
-    background-color: rgba(230, 57, 70, 0.9);
+    background-color: #FCE4EC;
     /* Màu đỏ đậm */
     color: white;
     border-radius: 12px;
@@ -72,7 +63,7 @@ body {
     /* Hiệu ứng bóng */
     padding: 30px 40px;
     /* Khoảng cách nội dung trong khung */
-    max-width: 400px;
+    max-width: 380px;
     /* Chiều rộng tối đa */
     text-align: center;
   }
@@ -88,10 +79,10 @@ body {
   }
   /* Ô nhập liệu */
   .signup-container input {
-    width: 100%;
+    width: 90%;
     background-color: #FFFFFF;
     /* Màu nền trắng */
-    border: 1px solid #E63946;
+    border: 1px solid #F8BBD0;
     /* Viền đỏ đậm */
     padding: 10px;
     /* Khoảng cách trong ô nhập liệu */
@@ -117,9 +108,8 @@ body {
   
   /* Nút đăng nhập */
   .signup-container button {
-    background-color: #F7C843;
-    /* Màu vàng nhạt */
-    color: #2C2C2C;
+    background-color: #F8BBD0;
+    color: black;
     /* Màu chữ đậm */
     font-weight: bold;
     /* Chữ in đậm */
@@ -130,7 +120,7 @@ body {
     /* Bo góc nút */
     padding: 12px 20px;
     /* Khoảng cách nội dung trong nút */
-    width: 100%;
+    width: 40%;
     transition: all 0.3s ease;
     /* Hiệu ứng mượt */
     cursor: pointer;
@@ -139,7 +129,7 @@ body {
   
   /* Hiệu ứng khi hover vào nút đăng nhập */
   .signup-container button:hover {
-    background-color: #E63946;
+    background-color: #FF6B81;
     /* Màu đỏ khi hover */
     color: white;
     /* Màu chữ trắng khi hover */
