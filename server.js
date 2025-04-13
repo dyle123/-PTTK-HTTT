@@ -106,19 +106,19 @@ app.use(session({
 
 
 
-// const config = {
-//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.174.1',
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'BENU',
-//     password: 'benu123',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
+const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.174.1',
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'BENU',
+    password: 'benu123',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 // Cấu hình kết nối SQL Server
 // const config = {
@@ -136,19 +136,19 @@ app.use(session({
 // };
 
 // Cấu hình kết nối SQL Server
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.1.9',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'dungluonghoang',
-    password: 'teuklee1983#',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.1.9',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'dungluonghoang',
+//     password: 'teuklee1983#',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 
 
 
@@ -847,8 +847,8 @@ app.post('/api/lapPhieuGiaHan', async (req, res) => {
             .input('CCCD', sql.Char(12), CCCD)
             .input('MaPhieuDangKy', sql.Int, MaPhieuDangKy)
             .input('LiDoGiaHan', sql.NVarChar(255), LiDoGiaHan)
-            .input('NgayThiCu', sql.Int, NgayThiCu)       // Là MaLichThi
-            .input('NgayThiMoi', sql.Int, NgayThiMoi)     // Là MaLichThi
+            .input('NgayThiCu', sql.Date, NgayThiCu)       // Là MaLichThi
+            .input('NgayThiMoi', sql.Date, NgayThiMoi)     // Là MaLichThi
             .execute('LapPhieuGiaHan'); // gọi procedure bạn đã viết bên SQL
 
         res.json({ success: true });
