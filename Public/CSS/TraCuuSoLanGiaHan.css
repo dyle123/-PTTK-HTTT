@@ -10,7 +10,8 @@ h1 {
     left: 50%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
     padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background: #FCE4EC; /* background-m */
+    /*background: #ecc94b	; 
+    box-shadow: 0 2px 5px rgba(160, 176, 255, 0.3);*/
     border-radius: 10px; /* border-m */
     display: inline-block;
 }
@@ -27,15 +28,15 @@ h1 {
 
 #search-btn {
     padding: 8px 12px;
-    background-color: #F8BBD0;
-    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    background-color: #a0b0ff;
 }
 
 #search-btn:hover {
-    background-color: #ff6b81;
+    background-color: #8860d0;
+    ;
 }
 
 input[type="number"] {
@@ -47,20 +48,24 @@ table {
     position: absolute;
     width: 90%;
     top: 30vh; /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
-    left: 5%; /* Căn giữa phần tử theo chiều ngang */
-    margin: 20px auto;
+    left: 4%; /* Căn giữa phần tử theo chiều ngang */
+    margin: 20px;
     border-collapse: collapse;
-    border: 2px solid #F8BBD0;
+    border: 2px solid #a0b0ff;
 }
 
 th, td {
-    border: 1px solid #F8BBD0;
+    border: 1px solid #00A2FF;
     padding: 10px;
     text-align: center;
 }
 
 th {
-    background-color: #F8BBD0;
+    background-color: #f4f4fb;
+}
+tr:hover {
+    background-color: #f1eaf9;
+    transition: background-color 0.2s ease;
 }
 
 .btn_Tra_cuu_PGH
@@ -68,12 +73,17 @@ th {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    background-color: #F8BBD0;
-    color: black;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
     border-radius: 5px;
     margin-top:85vh;
     position:absolute;
     margin-left:10vw; 
+}
+
+.btn_Tra_cuu_PGH:hover {
+    background-color: #a0b0ff;
 }
 
 .btn_Lap_Phieu_Gia_Han
@@ -81,10 +91,15 @@ th {
     cursor: pointer;
     padding: 1vh 2vw;
     border: none;
-    background-color: #F8BBD0;
-    color: black;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
     border-radius: 5px;
     margin-top:85vh;
     margin-left:25vw;
     position:absolute;
+}
+
+.btn_Lap_Phieu_Gia_Han:hover {
+    background-color: #a0b0ff;
 }

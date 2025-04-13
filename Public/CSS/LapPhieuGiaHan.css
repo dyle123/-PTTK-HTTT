@@ -4,12 +4,13 @@ body {
     margin: 20px;
 }
 h1 {
-    /* position: relative;  */
-    margin-top: 5%; /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
-    margin-left: 20%; /* Căn giữa phần tử theo chiều ngang */
+    position: absolute;
+    top: 12%; /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
+    left: 50%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
     padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background: #FCE4EC; /* background-m */
+    /*background: #ecc94b	; 
+    box-shadow: 0 2px 5px rgba(160, 176, 255, 0.3);*/
     border-radius: 10px; /* border-m */
     display: inline-block;
 }
@@ -35,9 +36,9 @@ button {
 
 .form
 {
-    width: 27vw; /* Chiều rộng */
+    width: 28vw; /* Chiều rộng */
     height: 55vh;  /* Chiều cao */
-    background-color: #FDF5F4; /* Màu nền xanh */
+    background-color: #a0b0ff; /* Màu nền xanh */
     color: black; /* Màu chữ */
     display: flex;
     align-items: center; /* Căn giữa theo chiều dọc */
@@ -45,9 +46,9 @@ button {
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px; /* Bo góc */
-    border: 2px solid #FDF5F4; /* Viền */
-    margin-top:3vh;
-    margin-left:36vw;
+    background-color: #a0b0ff; /* Viền */
+    margin-top:22vh;
+    margin-left:34.7vw;
     position: relative;
 }
 #Input_HoVaTen
@@ -170,18 +171,30 @@ button {
 {
     position: absolute;
     margin-top:40vh;
-    margin-left:-13vw;
-    background-color: #F8BBD0;
-    color: black;
+    margin-left:-15vw;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
+}
+
+#btn_XacNhan:hover
+{
+    background-color: #a0b0ff;
 }
 
 #btn_InPhieu
 {
     position: absolute;
     margin-top:40vh;
-    margin-left:0vw;
-    background-color: #F8BBD0;
-    color: black;
+    margin-left:-3.5vw;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
+}
+
+#btn_InPhieu:hover
+{
+    background-color: #a0b0ff;
 }
 
 #btn_GuiPhieuDenKeToan
@@ -189,8 +202,14 @@ button {
     position: absolute;
     margin-top:40vh;
     margin-left:14vw;
-    background-color: #F8BBD0;
-    color: black;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
+}
+
+#btn_GuiPhieuDenKeToan:hover
+{
+    background-color: #a0b0ff;
 }
 
 .btn_Tra_cuu_SLGH
@@ -198,11 +217,18 @@ button {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    color: black;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
     border-radius: 5px;
     margin-top:15vh;
     position:absolute;
     margin-left:18vw;
+}
+
+.btn_Tra_cuu_SLGH:hover
+{
+    background-color: #a0b0ff;
 }
 
 .btn_Tra_cuu_PGH
@@ -210,9 +236,16 @@ button {
     cursor: pointer;
     padding: 1vh 1vw;
     border: none;
-    color: black;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
     border-radius: 5px;
     margin-top:15vh;
     margin-left:34vw;
     position:absolute;
+}
+
+.btn_Tra_cuu_PGH:hover
+{
+    background-color: #a0b0ff;
 }
