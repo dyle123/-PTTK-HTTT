@@ -15,56 +15,70 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #a0b0ff;
+    background: linear-gradient(90deg, #ff758c, #8860d0);
+
+
+
+
     padding: 20px 30px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: fixed;  /* Thay position: absolute thành position: fixed */
+    position: fixed;
+    /* Thay position: absolute thành position: fixed */
     top: 0;
     left: 0;
-    width: 100%;  /* Đảm bảo navbar chiếm hết chiều rộng */
-    z-index: 1000; /* Đảm bảo navbar luôn nằm trên các phần tử khác */
+    width: 100%;
+    /* Đảm bảo navbar chiếm hết chiều rộng */
+    z-index: 1000;
+    /* Đảm bảo navbar luôn nằm trên các phần tử khác */
 }
 
 .logo {
     font-size: 18px;
     font-weight: bold;
     color: white;
+
 }
 
 .logo-container {
     display: flex;
-    align-items: center; /* Căn giữa theo chiều dọc */
-    gap: 10px; /* Khoảng cách giữa ảnh logo và chữ */
-    height: 30px; /* Điều chỉnh kích thước logo nếu cần */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    gap: 10px;
+    /* Khoảng cách giữa ảnh logo và chữ */
+    height: 30px;
+    /* Điều chỉnh kích thước logo nếu cần */
 }
 
 .imageLogo-container img {
-    width: 50px; /* Điều chỉnh kích thước logo nếu cần */
+    width: 50px;
+    /* Điều chỉnh kích thước logo nếu cần */
 }
 
 .nav-links {
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 20px; /* Điều chỉnh khoảng cách giữa các mục */
+    gap: 20px;
+    /* Điều chỉnh khoảng cách giữa các mục */
 
 }
 
 .nav-links li {
     margin: 1 15px;
-    line-height: 30px; /* Đảm bảo dòng này bằng với chiều cao của các mục */
+    line-height: 30px;
+    /* Đảm bảo dòng này bằng với chiều cao của các mục */
 }
 
 .nav-links a {
     text-decoration: none;
-    color: black;
+    color: white;
     font-weight: bold;
     font-size: 16px;
     transition: color 0.3s;
 }
 
 .nav-links a:hover {
-    color: #007bff;
+    color: #a8dfff;
 }
 
 .logout {
@@ -102,7 +116,7 @@ body {
 .dropdown-menu {
     display: none;
     position: absolute;
-    background-color: #eef3ff;
+    background: white;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -127,7 +141,3 @@ body {
     padding: 8px 12px;
 }
 
-/* Hiệu ứng hover */
-.dropdown-menu li a:hover {
-    background-color: #eef3ff;
-}
