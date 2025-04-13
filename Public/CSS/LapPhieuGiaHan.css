@@ -135,13 +135,13 @@ button {
     border-radius: 10px;
     border: 2px solid gray; /* Viền */
     position: absolute;
-    margin-top: 20vh;
+    margin-top: 15vh;
     margin-left:-13vw;
 }
 
 #NgayDuThiCu_label
 {
-    margin-top: 28vh;
+    margin-top: 23vh;
     margin-left:-13vw;
     font-size:0.83vw;
     position:absolute;
@@ -155,13 +155,13 @@ button {
     border-radius: 10px;
     border: 2px solid gray; /* Viền */
     position: absolute;
-    margin-top: 20vh;
+    margin-top: 15vh;
     margin-left:14vw;
 }
 
 #NgayDuThiMoi_label
 {
-    margin-top: 28vh;
+    margin-top: 23vh;
     margin-left:14vw;
     font-size:0.83vw;
     position:absolute;

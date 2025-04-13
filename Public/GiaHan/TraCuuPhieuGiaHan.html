@@ -24,7 +24,8 @@
                 <th>Loại gia hạn</th>
                 <th>Phí gia hạn</th>
                 <th>Lí do gia hạn</th>
-                <th>Ngày gia hạn</th>
+                <th>Ngày Thi Cũ</th>
+                <th>Ngày Thi Mới</th>
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -46,44 +47,47 @@
         this.value = this.value.replace(/[^0-9]/g, "");
         })
 
-        async function fetchData() 
-        {
-            const maPhieu = document.getElementById('search-box').value;
-            if (!maPhieu) {
-                alert('Vui lòng nhập mã phiếu đăng ký!');
+        async function fetchData() {
+        const maPhieu = document.getElementById('search-box').value.trim();
+
+        if (!maPhieu) {
+            alert('Vui lòng nhập mã phiếu đăng ký!');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/getPhieuGiaHan?maPhieuDangKy=${maPhieu}`);
+            const data = await response.json();
+
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+
+            if (!response.ok || data.error) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">${data.error || 'Lỗi không xác định'}</td></tr>`;
                 return;
             }
 
-            try {
-                const response = await fetch(`/api/getPhieuGiaHan?maPhieuDangKy=${maPhieu}`);
-                const data = await response.json();
-
-                const tableBody = document.getElementById('table-body');
-                tableBody.innerHTML = '';
-
-            if (data.error) {
-                tableBody.innerHTML = '<tr><td colspan="3">Không tìm thấy phiếu gia hạn</td></tr>';
-            } else {
-                let rows = data.map(item => `
+            const rows = data.map(item => `
                 <tr>
                     <td>${item.CCCD}</td>
                     <td>${item.MaPhieuDangKy}</td>
                     <td>${item.LoaiGiaHan}</td>
                     <td>${item.PhiGiaHan}</td>
                     <td>${item.LiDoGiaHan}</td>
-                    <td>${new Date(item.NgayGiaHan).toLocaleDateString('vi-VN')}</td>
+                    <td>${new Date(item.NgayThiCu).toLocaleDateString('vi-VN')}</td>
+                    <td>${new Date(item.NgayThiMoi).toLocaleDateString('vi-VN')}</td>
                     <td>
                         <button class="edit-btn" onclick="editRow('${item.CCCD}', ${item.MaPhieuDangKy})">Sửa</button>
                         <button class="delete-btn" onclick="deleteRow('${item.CCCD}', ${item.MaPhieuDangKy})">Xóa</button>
                     </td>
                 </tr>
-                `).join('');
+            `).join('');
 
-        tableBody.innerHTML = rows;
-        }
+            tableBody.innerHTML = rows;
+
         } catch (error) {
-            console.error('Lỗi khi lấy dữ liệu:', error);
-            alert('Có lỗi xảy ra, vui lòng thử lại!');
+            console.error('Lỗi khi fetch dữ liệu:', error);
+            alert('Đã xảy ra lỗi khi truy vấn dữ liệu. Vui lòng thử lại!');
         }
     }
     async function deleteRow(CCCD, MaPhieuDangKy) {
@@ -112,6 +116,7 @@
             alert('Có lỗi xảy ra khi xóa phiếu gia hạn.');
         }
     }
+
     </script>
 </body>
 </html>

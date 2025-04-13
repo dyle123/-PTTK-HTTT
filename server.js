@@ -90,23 +90,23 @@ async function sqlQuery(query, params = {}) {
 //         throw error;
 //     }
 // }
+// const config = {
+//     user: 'sa',
+//     password: '12345678',
+//     server: 'localhost',
+//     port: 1433,
+//     database: 'PTTK',
+//     options: {
+//         encrypt: false,
+//         trustServerCertificate: true,
+//         enableArithAbort: true,
+//         connectTimeout: 30000
+//     }
+// };
+
+
+
 const config = {
-    user: 'sa',
-    password: '12345678',
-    server: 'localhost',
-    port: 1433,
-    database: 'PTTK',
-    options: {
-        encrypt: false,
-        trustServerCertificate: true,
-        enableArithAbort: true,
-        connectTimeout: 30000
-    }
-};
-
-
-
-/*const config = {
     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
     server: '192.168.174.1',
     port: 1433, // Cổng SQL Server
@@ -119,7 +119,7 @@ const config = {
         connectTimeout: 30000, // Thời gian chờ 30 giây
     },
 };
-*/
+
 // Cấu hình kết nối SQL Server
 // const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
@@ -785,6 +785,7 @@ app.get('/api/getChiTietPhieuDangKy', async (req, res) => {
 //API TraCuuPhieuGiaHan
 app.get('/api/getPhieuGiaHan', async (req, res) => {
     const { maPhieuDangKy } = req.query;
+
     if (!maPhieuDangKy) {
         return res.status(400).json({ error: 'Mã phiếu đăng ký là bắt buộc' });
     }
@@ -792,8 +793,16 @@ app.get('/api/getPhieuGiaHan', async (req, res) => {
     try {
         const pool = await sql.connect(config);
         const result = await pool.request()
-            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-            .query(`SELECT * FROM PhieuGiaHan WHERE MaPhieuDangKy = @maPhieuDangKy`);
+            .input('maPhieuDangKy', sql.Int, maPhieuDangKy)
+            .query(`
+                SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan,
+                       FORMAT(LTC.NgayThi, 'dd/MM/yyyy') AS NgayThiCu,
+                       FORMAT(LTM.NgayThi, 'dd/MM/yyyy') AS NgayThiMoi
+                FROM PhieuGiaHan PGH
+                LEFT JOIN LichThi LTC ON PGH.NgayThiCu = LTC.MaLichThi
+                LEFT JOIN LichThi LTM ON PGH.NgayThiMoi = LTM.MaLichThi
+                WHERE PGH.MaPhieuDangKy = @maPhieuDangKy
+            `);
 
         if (result.recordset.length === 0) {
             return res.status(404).json({ error: 'Không tìm thấy phiếu gia hạn' });
@@ -801,8 +810,8 @@ app.get('/api/getPhieuGiaHan', async (req, res) => {
 
         res.json(result.recordset);
     } catch (err) {
-        console.error('Lỗi khi lấy dữ liệu:', err);
-        res.status(500).json({ error: err.message });
+        console.error('Lỗi khi lấy dữ liệu phiếu gia hạn:', err);
+        res.status(500).json({ error: 'Lỗi máy chủ. Vui lòng thử lại sau.' });
     }
 });
 
@@ -829,7 +838,25 @@ app.delete('/api/deletePhieuGiaHan', async (req, res) => {
     }
 });
 
+app.post('/api/lapPhieuGiaHan', async (req, res) => {
+    const { CCCD, MaPhieuDangKy, LiDoGiaHan, NgayThiCu, NgayThiMoi } = req.body;
 
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('CCCD', sql.Char(12), CCCD)
+            .input('MaPhieuDangKy', sql.Int, MaPhieuDangKy)
+            .input('LiDoGiaHan', sql.NVarChar(255), LiDoGiaHan)
+            .input('NgayThiCu', sql.Int, NgayThiCu)       // Là MaLichThi
+            .input('NgayThiMoi', sql.Int, NgayThiMoi)     // Là MaLichThi
+            .execute('LapPhieuGiaHan'); // gọi procedure bạn đã viết bên SQL
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ error: err.message });
+    }
+});
 
 
 
