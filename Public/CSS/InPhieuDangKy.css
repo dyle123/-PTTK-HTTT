@@ -75,7 +75,15 @@ th, td {
 th {
     background-color: #fce4ec
 }
+@media print {
+    body>*:not(#phieu-in) {
+        display: none !important;
+    }
 
+    #phieu-in {
+        display: block !important;
+    }
+}
 
 
 

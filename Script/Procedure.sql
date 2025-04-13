@@ -280,7 +280,6 @@ CREATE OR ALTER PROCEDURE TaoPhieuDangKy
     @DiaChiKH NVARCHAR(255),
     @LoaiKhachHang NVARCHAR(20),
     @LoaiChungChi INT,
-    @ThoiGianThi DATE,
     @TenTS NVARCHAR(50),
     @CCCDTS CHAR(12),
     @NgaySinh DATE, 
@@ -310,7 +309,6 @@ BEGIN
         EXEC KIEMTRATHISINH 
             @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
 
-        -- Nếu có lỗi trong KIEMTRATHISINH
         IF @@ERROR <> 0 
         BEGIN 
             RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
@@ -318,9 +316,9 @@ BEGIN
             RETURN;
         END;
 
-        -- Tạo phiếu đăng ký
-        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, ThoiGianThi, MaKhachHang)
-        VALUES (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
+        -- 3. Tạo phiếu đăng ký
+        INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, MaKhachHang)
+        VALUES (@LoaiChungChi, GETDATE(), @MaKhachHang);
 
         SET @MaPhieuDangKy = SCOPE_IDENTITY();
 
@@ -337,7 +335,7 @@ BEGIN
         RAISERROR(@Err, 16, 1);
     END CATCH
 END;
-GO
+
 
 
 

@@ -27,10 +27,7 @@ app.use(session({
     cookie: { secure: false } // Cookie không yêu cầu HTTPS (chỉ cho local)
 }));
 
-// Khởi động server
-app.listen(PORT, () => {
-    console.log(`Server đang chạy tại http://localhost:${PORT}`);
-});
+
 
 
 //
@@ -93,23 +90,23 @@ async function sqlQuery(query, params = {}) {
 //         throw error;
 //     }
 // }
-//const config = {
-//    user: 'sa',
-//    password: '12345678',
-//    server: 'localhost',
-//    port: 1433,
-//    database: 'PTTK',
-//    options: {
-//        encrypt: false,
-//        trustServerCertificate: true,
-//        enableArithAbort: true,
-//        connectTimeout: 30000
-//    }
-//};
-
-
-
 const config = {
+    user: 'sa',
+    password: '12345678',
+    server: 'localhost',
+    port: 1433,
+    database: 'PTTK',
+    options: {
+        encrypt: false,
+        trustServerCertificate: true,
+        enableArithAbort: true,
+        connectTimeout: 30000
+    }
+};
+
+
+
+/*const config = {
     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
     server: '192.168.174.1',
     port: 1433, // Cổng SQL Server
@@ -122,7 +119,7 @@ const config = {
         connectTimeout: 30000, // Thời gian chờ 30 giây
     },
 };
-
+*/
 // Cấu hình kết nối SQL Server
 // const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
@@ -381,33 +378,35 @@ app.get('/api/getCurrentUser', (req, res) => {
     console.log('Thông tin người dùng trong session:', req.session.user.id);
     res.json({ user: req.session.user.id, role: req.session.user.role });
 });
-
 app.post('/api/dangky', async (req, res) => {
   const {
-    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang, LoaiChungChi,
+    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
+    LoaiChungChi,
     TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
   } = req.body;
 
   try {
     const pool = await sql.connect(config);
 
-    // 🛠️ Gọi thủ tục Back KHÔNG truyền ThoiGianThi
     await pool.request()
       .input('TenKH', sql.NVarChar(50), TenKH)
       .input('EmailKH', sql.NVarChar(100), EmailKH)
       .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
       .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
       .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
-      .input('LoaiChungChi', sql.Int, LoaiChungChi) 
+
+      .input('LoaiChungChi', sql.Int, LoaiChungChi)
+
       .input('TenTS', sql.NVarChar(50), TenTS)
       .input('CCCDTS', sql.Char(12), CCCDTS)
       .input('NgaySinh', sql.Date, NgaySinh)
       .input('EmailTS', sql.NVarChar(100), EmailTS)
       .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
       .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
+
       .execute('TaoPhieuDangKy');
 
-    // ✅ Lấy mã phiếu đăng ký vừa tạo
+    // Lấy mã phiếu đăng ký mới nhất
     const result = await pool.request()
       .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
 
@@ -425,455 +424,55 @@ app.post('/api/dangky', async (req, res) => {
 });
 
 app.post('/api/xacNhanLichThi', async (req, res) => {
-    const { maPhieuDangKy, maLichThi, loaiChungChi } = req.body;
+  const { maPhieuDangKy, maLichThi } = req.body;
 
-    const transaction = new sql.Transaction();
-
-    try {
-        await transaction.begin();
-        const request = new sql.Request(transaction);
-
-        await request
-            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-            .input('LoaiChungChi', sql.Int, loaiChungChi)
-            .input('MaLichThi', sql.Int, maLichThi) // 👉 KHÔNG gán 2 lần!
-            .query(`
-                UPDATE PhieuDangKy
-                SET LoaiChungChi = @LoaiChungChi,
-                    LichThi = @MaLichThi
-                WHERE MaPhieuDangKy = @MaPhieuDangKy
-            `);
-
-        await request
-            .query(`
-                UPDATE LichThi
-                SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
-                WHERE MaLichThi = @MaLichThi
-            `);
-
-        const phongResult = await request
-            .query(`SELECT MaPhongThi FROM LichThi WHERE MaLichThi = @MaLichThi`);
-
-        const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
-
-        if (maPhongThi) {
-            await request
-                .input('MaPhongThi', sql.Int, maPhongThi)
-                .query(`
-                    UPDATE PhongThi
-                    SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
-                    WHERE MaPhongThi = @MaPhongThi
-                `);
-        }
-
-        await transaction.commit();
-        res.json({ message: "✅ Cập nhật lịch thi và phòng thi thành công!" });
-
-    } catch (err) {
-        await transaction.rollback();
-        console.error("❌ Lỗi khi cập nhật lịch thi:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-
-app.post('/api/dangky', async (req, res) => {
-  const {
-    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
-    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
-  } = req.body;
-
-  const LoaiChungChi = 1;
-  const ThoiGianThi = '2025-04-20';
+  const transaction = new sql.Transaction();
 
   try {
-    const pool = await sql.connect(config);
+    await transaction.begin();
+    const request = new sql.Request(transaction);
 
-    // Gọi thủ tục để thêm dữ liệu
-    await pool.request()
-      .input('TenKH', sql.NVarChar(50), TenKH)
-      .input('EmailKH', sql.NVarChar(100), EmailKH)
-      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
-      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
-      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
-      .input('LoaiChungChi', sql.Int, LoaiChungChi)
-      .input('ThoiGianThi', sql.Date, ThoiGianThi)
-      .input('TenTS', sql.NVarChar(50), TenTS)
-      .input('CCCDTS', sql.Char(12), CCCDTS)
-      .input('NgaySinh', sql.Date, NgaySinh)
-      .input('EmailTS', sql.NVarChar(100), EmailTS)
-      .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
-      .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
-      .execute('Back');
+    // Cập nhật phiếu đăng ký: gán mã lịch thi vào phiếu đã tạo
+    await request
+      .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+      .input('MaLichThi', sql.Int, maLichThi)
+      .query(`
+        UPDATE PhieuDangKy
+        SET LichThi = @MaLichThi
+        WHERE MaPhieuDangKy = @MaPhieuDangKy
+      `);
 
-    // ✅ Sau khi gọi xong, lấy mã phiếu vừa tạo
-    const result = await pool.request()
-      .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
+    // Tăng số lượng đăng ký trong bảng LichThi
+    await request
+      .query(`
+        UPDATE LichThi
+        SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
+        WHERE MaLichThi = ${maLichThi}
+      `);
 
-    const maPhieuDangKy = result.recordset[0]?.MaPhieuDangKy;
+    // Lấy mã phòng thi tương ứng để cập nhật số lượng
+    const phongResult = await request.query(`
+      SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${maLichThi}
+    `);
 
-    res.status(200).json({ message: 'Đăng ký thành công!', maPhieuDangKy });
+    const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
+    if (maPhongThi) {
+      await request.query(`
+        UPDATE PhongThi
+        SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
+        WHERE MaPhongThi = ${maPhongThi}
+      `);
+    }
+
+    await transaction.commit();
+    res.json({ message: "✅ Cập nhật lịch thi và phòng thi thành công!" });
+
   } catch (err) {
-    console.error('❌ Lỗi khi đăng ký:', err);
+    await transaction.rollback();
+    console.error("❌ Lỗi khi xác nhận lịch thi:", err);
     res.status(500).json({ error: err.message });
   }
 });
-
-app.post('/api/xacNhanLichThi', async (req, res) => {
-    const { maPhieuDangKy, maLichThi, loaiChungChi, thoiGianThi } = req.body;
-
-    const transaction = new sql.Transaction();
-
-    try {
-        await transaction.begin();
-
-        const request = new sql.Request(transaction);
-
-        // Cập nhật phiếu đăng ký
-        await request
-            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-            .input('LoaiChungChi', sql.Int, loaiChungChi)
-            .input('ThoiGianThi', sql.Date, thoiGianThi)
-            .query(`
-                UPDATE PhieuDangKy
-                SET LoaiChungChi = @LoaiChungChi,
-                    ThoiGianMongMuonThi = @ThoiGianThi
-                WHERE MaPhieuDangKy = @MaPhieuDangKy
-            `);
-
-
-        // Cập nhật số lượng trong LichThi
-        await request
-            .input('MaLichThi', sql.Int, maLichThi)
-            .query(`UPDATE LichThi
-                SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
-                WHERE MaLichThi = @MaLichThi`
-            );
-
-        // Lấy phòng thi và cập nhật số lượng
-        const phongResult = await request.query(`
-            SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${maLichThi}
-        `);
-
-        const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
-        if (maPhongThi) {
-            await request.query(`
-                UPDATE PhongThi
-                SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
-                WHERE MaPhongThi = ${maPhongThi}
-                `);
-        }
-
-        await transaction.commit();
-        res.json({ message: "Cập nhật lịch thi và phòng thi thành công!" });
-    } catch (err) {
-        await transaction.rollback();
-        console.error("❌ Lỗi cập nhật lịch hoặc phòng:", err);
-        res.status(500).json({ error: "Lỗi máy chủ khi cập nhật lịch thi" });
-    }
-});
-
-
-
-
-
-app.post('/api/dangky', async (req, res) => {
-  const {
-    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
-    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
-  } = req.body;
-
-  const LoaiChungChi = 1;
-  const ThoiGianThi = '2025-04-20';
-
-  try {
-    const pool = await sql.connect(config);
-
-    // Gọi thủ tục để thêm dữ liệu
-    await pool.request()
-      .input('TenKH', sql.NVarChar(50), TenKH)
-      .input('EmailKH', sql.NVarChar(100), EmailKH)
-      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
-      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
-      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
-      .input('LoaiChungChi', sql.Int, LoaiChungChi)
-      .input('ThoiGianThi', sql.Date, ThoiGianThi)
-      .input('TenTS', sql.NVarChar(50), TenTS)
-      .input('CCCDTS', sql.Char(12), CCCDTS)
-      .input('NgaySinh', sql.Date, NgaySinh)
-      .input('EmailTS', sql.NVarChar(100), EmailTS)
-      .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
-      .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
-      .execute('Back');
-
-    // ✅ Sau khi gọi xong, lấy mã phiếu vừa tạo
-    const result = await pool.request()
-      .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
-
-    const maPhieuDangKy = result.recordset[0]?.MaPhieuDangKy;
-
-    res.status(200).json({ message: 'Đăng ký thành công!', maPhieuDangKy });
-  } catch (err) {
-    console.error('❌ Lỗi khi đăng ký:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/xacNhanLichThi', async (req, res) => {
-    const { maPhieuDangKy, maLichThi, loaiChungChi, thoiGianThi } = req.body;
-
-    const transaction = new sql.Transaction();
-
-    try {
-        await transaction.begin();
-
-        const request = new sql.Request(transaction);
-
-        // Cập nhật phiếu đăng ký
-        await request
-            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-            .input('LoaiChungChi', sql.Int, loaiChungChi)
-            .input('ThoiGianThi', sql.Date, thoiGianThi)
-            .query(`
-                UPDATE PhieuDangKy
-                SET LoaiChungChi = @LoaiChungChi,
-                    ThoiGianMongMuonThi = @ThoiGianThi
-                WHERE MaPhieuDangKy = @MaPhieuDangKy
-            `);
-
-
-        // Cập nhật số lượng trong LichThi
-        await request
-            .input('MaLichThi', sql.Int, maLichThi)
-            .query(`UPDATE LichThi
-                SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
-                WHERE MaLichThi = @MaLichThi`
-            );
-
-        // Lấy phòng thi và cập nhật số lượng
-        const phongResult = await request.query(`
-            SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${maLichThi}
-        `);
-
-        const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
-        if (maPhongThi) {
-            await request.query(`
-                UPDATE PhongThi
-                SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
-                WHERE MaPhongThi = ${maPhongThi}
-                `);
-        }
-
-        await transaction.commit();
-        res.json({ message: "Cập nhật lịch thi và phòng thi thành công!" });
-    } catch (err) {
-        await transaction.rollback();
-        console.error("❌ Lỗi cập nhật lịch hoặc phòng:", err);
-        res.status(500).json({ error: "Lỗi máy chủ khi cập nhật lịch thi" });
-    }
-});
-
-
-
-
-
-app.post('/api/dangky', async (req, res) => {
-  const {
-    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
-    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
-  } = req.body;
-
-  const LoaiChungChi = 1;
-  const ThoiGianThi = '2025-04-20';
-
-  try {
-    const pool = await sql.connect(config);
-
-    // Gọi thủ tục để thêm dữ liệu
-    await pool.request()
-      .input('TenKH', sql.NVarChar(50), TenKH)
-      .input('EmailKH', sql.NVarChar(100), EmailKH)
-      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
-      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
-      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
-      .input('LoaiChungChi', sql.Int, LoaiChungChi)
-      .input('ThoiGianThi', sql.Date, ThoiGianThi)
-      .input('TenTS', sql.NVarChar(50), TenTS)
-      .input('CCCDTS', sql.Char(12), CCCDTS)
-      .input('NgaySinh', sql.Date, NgaySinh)
-      .input('EmailTS', sql.NVarChar(100), EmailTS)
-      .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
-      .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
-      .execute('Back');
-
-    // ✅ Sau khi gọi xong, lấy mã phiếu vừa tạo
-    const result = await pool.request()
-      .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
-
-    const maPhieuDangKy = result.recordset[0]?.MaPhieuDangKy;
-
-    res.status(200).json({ message: 'Đăng ký thành công!', maPhieuDangKy });
-  } catch (err) {
-    console.error('❌ Lỗi khi đăng ký:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/xacNhanLichThi', async (req, res) => {
-    const { maPhieuDangKy, maLichThi, loaiChungChi, thoiGianThi } = req.body;
-
-    const transaction = new sql.Transaction();
-
-    try {
-        await transaction.begin();
-
-        const request = new sql.Request(transaction);
-
-        // Cập nhật phiếu đăng ký
-        await request
-            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-            .input('LoaiChungChi', sql.Int, loaiChungChi)
-            .input('ThoiGianThi', sql.Date, thoiGianThi)
-            .query(`
-                UPDATE PhieuDangKy
-                SET LoaiChungChi = @LoaiChungChi,
-                    ThoiGianMongMuonThi = @ThoiGianThi
-                WHERE MaPhieuDangKy = @MaPhieuDangKy
-            `);
-
-
-        // Cập nhật số lượng trong LichThi
-        await request
-            .input('MaLichThi', sql.Int, maLichThi)
-            .query(`UPDATE LichThi
-                SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
-                WHERE MaLichThi = @MaLichThi`
-            );
-
-        // Lấy phòng thi và cập nhật số lượng
-        const phongResult = await request.query(`
-            SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${maLichThi}
-        `);
-
-        const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
-        if (maPhongThi) {
-            await request.query(`
-                UPDATE PhongThi
-                SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
-                WHERE MaPhongThi = ${maPhongThi}
-                `);
-        }
-
-        await transaction.commit();
-        res.json({ message: "Cập nhật lịch thi và phòng thi thành công!" });
-    } catch (err) {
-        await transaction.rollback();
-        console.error("❌ Lỗi cập nhật lịch hoặc phòng:", err);
-        res.status(500).json({ error: "Lỗi máy chủ khi cập nhật lịch thi" });
-    }
-});
-
-
-app.post('/api/dangky', async (req, res) => {
-  const {
-    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
-    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
-  } = req.body;
-
-  const LoaiChungChi = 1;
-  const ThoiGianThi = '2025-04-20';
-
-  try {
-    const pool = await sql.connect(config);
-
-    // Gọi thủ tục để thêm dữ liệu
-    await pool.request()
-      .input('TenKH', sql.NVarChar(50), TenKH)
-      .input('EmailKH', sql.NVarChar(100), EmailKH)
-      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
-      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
-      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
-      .input('LoaiChungChi', sql.Int, LoaiChungChi)
-      .input('ThoiGianThi', sql.Date, ThoiGianThi)
-      .input('TenTS', sql.NVarChar(50), TenTS)
-      .input('CCCDTS', sql.Char(12), CCCDTS)
-      .input('NgaySinh', sql.Date, NgaySinh)
-      .input('EmailTS', sql.NVarChar(100), EmailTS)
-      .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
-      .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
-      .execute('Back');
-
-    // ✅ Sau khi gọi xong, lấy mã phiếu vừa tạo
-    const result = await pool.request()
-      .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
-
-    const maPhieuDangKy = result.recordset[0]?.MaPhieuDangKy;
-
-    res.status(200).json({ message: 'Đăng ký thành công!', maPhieuDangKy });
-  } catch (err) {
-    console.error('❌ Lỗi khi đăng ký:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/xacNhanLichThi', async (req, res) => {
-    const { maPhieuDangKy, maLichThi, loaiChungChi, thoiGianThi } = req.body;
-
-    const transaction = new sql.Transaction();
-
-    try {
-        await transaction.begin();
-
-        const request = new sql.Request(transaction);
-
-        // Cập nhật phiếu đăng ký
-        await request
-            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-            .input('LoaiChungChi', sql.Int, loaiChungChi)
-            .input('ThoiGianThi', sql.Date, thoiGianThi)
-            .query(`
-                UPDATE PhieuDangKy
-                SET LoaiChungChi = @LoaiChungChi,
-                    ThoiGianMongMuonThi = @ThoiGianThi
-                WHERE MaPhieuDangKy = @MaPhieuDangKy
-            `);
-
-
-        // Cập nhật số lượng trong LichThi
-        await request
-            .input('MaLichThi', sql.Int, maLichThi)
-            .query(`UPDATE LichThi
-                SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
-                WHERE MaLichThi = @MaLichThi`
-            );
-
-        // Lấy phòng thi và cập nhật số lượng
-        const phongResult = await request.query(`
-            SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${maLichThi}
-        `);
-
-        const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
-        if (maPhongThi) {
-            await request.query(`
-                UPDATE PhongThi
-                SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
-                WHERE MaPhongThi = ${maPhongThi}
-                `);
-        }
-
-        await transaction.commit();
-        res.json({ message: "Cập nhật lịch thi và phòng thi thành công!" });
-    } catch (err) {
-        await transaction.rollback();
-        console.error("❌ Lỗi cập nhật lịch hoặc phòng:", err);
-        res.status(500).json({ error: "Lỗi máy chủ khi cập nhật lịch thi" });
-    }
-});
-
-
-
-
-
 
 app.get('/api/getPhieuDangKy', async (req, res) => {
     const { dieuKien, maPhieu } = req.query; // Lấy từ query string
@@ -1399,6 +998,206 @@ app.post('/api/updateTrangThaiPhieuDuThi', async (req, res) => {
     } catch (err) {
         console.error('❌ Lỗi cập nhật trạng thái phiếu:', err);
         res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+app.post('/api/dangkyFull', async (req, res) => {
+  const {
+    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
+    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS,
+    LoaiChungChi, MaLichThi
+  } = req.body;
+
+  const transaction = new sql.Transaction();
+
+  try {
+    await transaction.begin();
+    const request = new sql.Request(transaction);
+
+    // 1. Thêm Khách Hàng
+    await request
+      .input('TenKH', sql.NVarChar(50), TenKH)
+      .input('EmailKH', sql.VarChar(60), EmailKH)
+      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
+      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
+      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
+      .query(`
+        INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
+        VALUES (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang)
+      `);
+
+    const maKHResult = await request.query(`SELECT TOP 1 MaKhachHang FROM KhachHang ORDER BY MaKhachHang DESC`);
+    const maKH = maKHResult.recordset[0].MaKhachHang;
+
+    // 2. Thêm Thí Sinh nếu chưa có
+    await request.input('CCCDTS', sql.Char(12), CCCDTS);
+    const tsCheck = await request.query(`SELECT * FROM ThiSinh WHERE CCCD = @CCCDTS`);
+    if (tsCheck.recordset.length === 0) {
+      await request.query(`
+        INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+        VALUES ('${CCCDTS}', N'${TenTS}', '${NgaySinh}', '${EmailTS}', '${SoDienThoaiTS}', N'${DiaChiTS}')
+      `);
+    }
+
+    // 3. Thêm Phiếu Đăng Ký
+    await request
+      .input('LoaiChungChi', sql.Int, LoaiChungChi)
+      .input('MaKH', sql.Int, maKH)
+      .input('MaLichThi', sql.Int, MaLichThi)
+      .query(`
+        INSERT INTO PhieuDangKy (LoaiChungChi, MaKhachHang, NgayDangKy, LichThi)
+        VALUES (@LoaiChungChi, @MaKH, GETDATE(), @MaLichThi)
+      `);
+
+    const maPhieuRes = await request.query(`SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC`);
+    const maPhieu = maPhieuRes.recordset[0].MaPhieuDangKy;
+
+    // 4. Chi tiết phiếu
+    await request.query(`
+      INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
+      VALUES (${maPhieu}, '${CCCDTS}')
+    `);
+
+    // 5. Cập nhật số lượng lịch thi + phòng
+    const phongRes = await request.query(`SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${MaLichThi}`);
+    const maPhongThi = phongRes.recordset[0]?.MaPhongThi;
+
+    await request.query(`
+      UPDATE LichThi SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
+      WHERE MaLichThi = ${MaLichThi}
+    `);
+
+    if (maPhongThi) {
+      await request.query(`
+        UPDATE PhongThi SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
+        WHERE MaPhongThi = ${maPhongThi}
+      `);
+    }
+
+    await transaction.commit();
+    res.json({ message: '✅ Đăng ký thành công!', maPhieuDangKy: maPhieu });
+  } catch (err) {
+    await transaction.rollback();
+    console.error("❌ Lỗi trong /api/dangkyFull:", err);
+    res.status(500).json({ error: 'Lỗi server khi đăng ký' });
+  }
+});
+app.get('/api/test-db', async (req, res) => {
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request().query("SELECT GETDATE() AS ThoiGianHienTai");
+        res.json({
+            message: '✅ Kết nối database thành công!',
+            thoiGianServer: result.recordset[0].ThoiGianHienTai
+        });
+    } catch (err) {
+        console.error("❌ Lỗi khi test DB:", err);
+        res.status(500).json({ error: "Lỗi khi kết nối database", details: err.message });
+    }
+});
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+});
+app.get('/api/getThisinhByCCCD', async (req, res) => {
+    const { cccd } = req.query;
+
+    if (!cccd) {
+        return res.status(400).json({ error: 'Thiếu CCCD' });
+    }
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('CCCD', sql.Char(12), cccd)
+            .query(`SELECT * FROM ThiSinh WHERE CCCD = @CCCD`);
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error('❌ Lỗi lấy thông tin thí sinh:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+app.get('/api/getKhachHangByPhieu', async (req, res) => {
+    const { maPhieuDangKy } = req.query;
+
+    if (!maPhieuDangKy) {
+        return res.status(400).json({ error: 'Thiếu mã phiếu đăng ký' });
+    }
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .query(`
+                SELECT KH.*
+                FROM KhachHang KH
+                JOIN PhieuDangKy PD ON KH.MaKhachHang = PD.MaKhachHang
+                WHERE PD.MaPhieuDangKy = @MaPhieuDangKy
+            `);
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error('❌ Lỗi lấy thông tin khách hàng:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+app.get('/api/getPhieuDangKyTD', async (req, res) => {
+    const { dieuKien, maPhieu } = req.query;
+
+    try {
+        const pool = await sql.connect(config);
+        let query = `
+            SELECT P.*, 
+                   L.NgayThi, 
+                   L.GioThi, 
+                   L.MaPhongThi
+            FROM PhieuDangKy P
+            LEFT JOIN LichThi L ON P.LichThi = L.MaLichThi
+        `;
+        let conditions = [];
+
+        if (dieuKien === "chuaphathanh") {
+            conditions.push(`P.TrangThai = 0`);
+        } else if (dieuKien === "daphathanh") {
+            conditions.push(`P.TrangThai = 1`);
+        }
+
+        if (maPhieu) {
+            conditions.push(`P.MaPhieuDangKy = @MaPhieu`);
+        }
+
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
+        }
+
+        const request = pool.request();
+        if (maPhieu) request.input('MaPhieu', sql.Int, maPhieu);
+
+        const result = await request.query(query);
+
+        // ✅ Format lại ngày/giờ
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            return new Date(dateString).toISOString().split('T')[0]; // YYYY-MM-DD
+        };
+
+        const formatTime = (timeValue) => {
+            if (!timeValue) return null;
+            return timeValue.toString().substring(0, 8); // HH:mm:ss
+        };
+
+        const formattedData = result.recordset.map(row => ({
+            ...row,
+            NgayDangKy: formatDate(row.NgayDangKy),
+            NgayThi: formatDate(row.NgayThi),
+            GioThi: formatTime(row.GioThi)
+        }));
+
+        res.json(formattedData);
+    } catch (err) {
+        console.error('❌ Lỗi khi lấy phiếu đăng ký:', err);
+        res.status(500).json({ error: 'Lỗi khi lấy phiếu đăng ký' });
     }
 });
 

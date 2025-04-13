@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In Phiếu Đăng Ký</title>
+    <link rel="stylesheet" href="/CSS/InPhieuDangKy.css">
+    <link rel="stylesheet" href="/CSS/Transaction.css">
+    <script src="/DangNhap/Transaction.js" defer></script>
+    <script src="/DangNhap/Navbar.js" defer></script>
+    <script src="/InPhieuDangKy1/InPhieuDangKy1.js" defer></script>
+
+    <style>
+        @media print {
+            body *:not(#phieu-in) {
+                display: none !important;
+            }
+
+            #phieu-in {
+                display: block !important;
+                margin: 0 auto;
+            }
+        }
+    </style>
+
+    <script>
+        async function inPhieu(maPhieuDangKy) {
+            try {
+                const res = await fetch(`/api/getPhieuDangKy?maPhieu=${maPhieuDangKy}`);
+                const phieu = (await res.json())[0];
+                if (!phieu) {
+                    alert("Không tìm thấy phiếu");
+                    return;
+                }
+
+                const khachHang = await fetch(`/api/getKhachHangByPhieu?maPhieuDangKy=${maPhieuDangKy}`).then(r => r.json()).then(r => r[0]);
+                const chiTiet = await fetch(`/api/getChiTietPhieuDangKy?maPhieuDangKy=${maPhieuDangKy}`).then(r => r.json()).then(r => r[0]);
+                const thisinh = await fetch(`/api/getThisinhByCCCD?cccd=${chiTiet?.CCCD}`).then(r => r.json()).then(r => r[0]);
+
+                const html = `
+                    <div style="padding: 20px; font-family: Arial;">
+                        <h2 style="text-align:center">PHIẾU ĐĂNG KÝ DỰ THI</h2>
+
+                        <h3>1. Thông tin khách hàng</h3>
+                        <p>Họ tên: ${khachHang?.TenKhachHang}</p>
+                        <p>Email: ${khachHang?.Email}</p>
+                        <p>SDT: ${khachHang?.SoDienThoai}</p>
+                        <p>Địa chỉ: ${khachHang?.DiaChi}</p>
+                        <p>Loại: ${khachHang?.LoaiKhachHang}</p>
+
+                        <h3>2. Thông tin thí sinh</h3>
+                        <p>Họ tên: ${thisinh?.HoVaTen}</p>
+                        <p>CCCD: ${thisinh?.CCCD}</p>
+                        <p>Ngày sinh: ${thisinh?.NgaySinh}</p>
+                        <p>Email: ${thisinh?.Email}</p>
+                        <p>SDT: ${thisinh?.SoDienThoai}</p>
+                        <p>Địa chỉ: ${thisinh?.DiaChi}</p>
+
+                        <h3>3. Thông tin phiếu đăng ký</h3>
+                        <p>Mã phiếu: ${phieu.MaPhieuDangKy}</p>
+                        <p>Ngày đăng ký: ${phieu.NgayDangKy}</p>
+                        <p>Ngày thi: ${phieu.NgayThi}</p>
+                        <p>Giờ thi: ${phieu.GioThi}</p>
+                        <p>Phòng thi: ${phieu.MaPhongThi}</p>
+                        <p>Loại chứng chỉ: ${phieu.LoaiChungChi}</p>
+                    </div>
+                `;
+
+                const container = document.getElementById("phieu-in");
+                container.innerHTML = html;
+                container.style.display = "block";
+
+                setTimeout(() => {
+                    window.print();
+                    container.style.display = "none";
+                }, 500);
+            } catch (err) {
+                alert("Lỗi khi in phiếu: " + err.message);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <h1>Danh Sách Phiếu Đăng Ký</h1>
+
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Tìm theo mã phiếu">
+        <button id="search-btn">🔍</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Mã phiếu</th>
+                <th>Loại chứng chỉ</th>
+                <th>Ngày đăng ký</th>
+                <th>Thời gian thi đăng ký</th>
+                <th>Mã khách hàng</th>
+                <th>In phiếu</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Dữ liệu sẽ được render ở JS, ví dụ mỗi dòng có nút:
+            <button onclick="inPhieu(123)">🖨️ In phiếu</button>
+            -->
+        </tbody>
+    </table>
+
+    <!-- Phần in sẽ render vào đây -->
+    <div id="phieu-in" style="display:none"></div>
+</body>
+
+</html>
