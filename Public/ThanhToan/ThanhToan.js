@@ -42,16 +42,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 const tr = document.createElement("tr");
                 let trangThaiHienThi = "";
                 let trangThaiClass = "";
+                let thaoTacHTML = "";
                 
                 if (phieu.TrangThaiThanhToan == 1) {
                     trangThaiHienThi = "Đã thanh toán";
                     trangThaiClass = "da-thanh-toan";
+                    thaoTacHTML = `<button class="btn-xem" data-maphieu="${phieu.MaPhieuDangKy}">Xem phiếu thanh toán</button>`;
                 } else if (phieu.TrangThaiThanhToan == 2) {
                     trangThaiHienThi = "Quá hạn";
                     trangThaiClass = "qua-han";
+                    thaoTacHTML = `<button class="btn-xem" data-maphieu="${phieu.MaPhieuDangKy}"disabled style="opacity: 0.6; cursor: not-allowed">Xem phiếu thanh toán</button>`;
                 } else {
                     trangThaiHienThi = "Chưa thanh toán";
                     trangThaiClass = "chua-thanh-toan";
+                    thaoTacHTML = `<button class="btn-xem" data-maphieu="${phieu.MaPhieuDangKy}">Xem phiếu thanh toán</button>`;
                 }
                 
 
@@ -64,9 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${phieu.LichThi}</td>
                     <td>${phieu.MaKhachHang}</td>
                     <td class="${trangThaiClass}">${trangThaiHienThi}</td>
-                    <td>
-                        <button class="btn-xem" data-maphieu="${phieu.MaPhieuDangKy}">Xem phiếu thanh toán</button>
-                    </td>
+                    <td>${thaoTacHTML}</-td>
                 `;
                 tableBody.appendChild(tr);
             });

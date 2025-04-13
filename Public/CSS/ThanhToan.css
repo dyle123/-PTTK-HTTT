@@ -6,7 +6,8 @@ body {
 }
 
 h1 {
-    background-color: #FCE4EC;
+    background-color: #f0f3ff;
+    box-shadow: 0 2px 5px rgba(160, 176, 255, 0.3);
     display: inline-block;
     padding: 10px 20px;
     border-radius: 10px;
@@ -37,18 +38,28 @@ table {
     width: 90%;
     margin: 20px auto;
     border-collapse: collapse;
-    border: 2px solid #F8BBD0;
+    border: 2px solid #a0b0ff;
     
 }
 
 th, td {
-    border: 1px solid #F8BBD0;
+    border: 1px solid #a0b0ff;
     padding: 10px;
     text-align: center;
 }
 
 th {
-    background-color: #FCE4EC;
+    background-color: #e6e9ff;
+}
+
+
+tr:nth-child(even) {
+    background-color: #f8f9ff;
+}
+
+tr:hover {
+    background-color: #f0f3ff;
+    transition: background-color 0.2s ease;
 }
 
 button.thanh-toan {

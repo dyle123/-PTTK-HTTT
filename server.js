@@ -886,10 +886,10 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
         console.log('DieuKien:', dieuKien);
 
         // Điều kiện lọc theo trạng thái thanh toán
-        if (dieuKien === "chuaphathanh") {
-            conditions.push(`TrangThai = 0`);
-        } else if (dieuKien === "daphathanh") {
-            conditions.push(`TrangThai = 1`);
+        if (dieuKien === "chuathanhtoan") {
+            conditions.push(`TrangThaiThanhToan = 0`);
+        } else if (dieuKien === "dathanhtoan") {
+            conditions.push(`TrangThaiThanhToan = 1`);
         }
 
         // Điều kiện lọc theo mã phiếu đăng ký

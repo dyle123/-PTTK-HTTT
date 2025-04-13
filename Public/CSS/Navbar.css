@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #F8BBD0;
+    background-color: #a0b0ff;
     padding: 20px 30px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: fixed;  /* Thay position: absolute thành position: fixed */
@@ -46,6 +46,7 @@ body {
     list-style: none;
     display: flex;
     align-items: center;
+
     gap: 20px; /* Điều chỉnh khoảng cách giữa các mục */
 
 }
