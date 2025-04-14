@@ -767,14 +767,14 @@ app.get('/api/getChiTietPhieuDangKy', async (req, res) => {
     try {
         const pool = await sql.connect(config);
         const result = await pool.request()
-            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-            .query(`SELECT * FROM ChiTietPhieuDangKy WHERE MaPhieuDangKy = @MaPhieuDangKy`);
+            .input('MaPhieuDangKy', sql.Int, parseInt(maPhieuDangKy))
+            .execute('TraCuuSoLanGiaHan'); // Gọi stored procedure thay vì query trực tiếp
 
         if (result.recordset.length === 0) {
             return res.status(404).json({ error: 'Không tìm thấy phiếu đăng ký' });
         }
 
-        res.json(result.recordset);
+        res.json(result.recordset); // Trả về kết quả từ stored procedure
     } catch (err) {
         console.error('Lỗi khi lấy dữ liệu:', err);
         res.status(500).json({ error: err.message });
