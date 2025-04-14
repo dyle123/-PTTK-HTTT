@@ -505,12 +505,19 @@ BEGIN
     END
 END;
 
-drop proc LapPhieuGiaHan
+Select*from ChiTietPhieuDangKy
 
-Select*from PhieuDuThi
+CREATE PROCEDURE TraCuuSoLanGiaHan
+	@MaPhieuDangKy int
+AS
+BEGIN
+	IF NOT EXISTS (SELECT 1 From ChiTietPhieuDangKy WHERE MaPhieuDangKy=@MaPhieuDangKy)
+		BEGIN
+			RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
+			return;
+		END
+	SELECT *
+	FROM ChiTietPhieuDangKy WHERE MaPhieuDangKy=@MaPhieuDangKy
+END
+GO
 
-Select *from PhieuDangKy
-
-Select*from PhieuDuThi
-
-Select *from ChiTietPhieuDangKy
