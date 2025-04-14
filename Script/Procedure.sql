@@ -2,6 +2,7 @@
 GO
 
 
+
 CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
 AS
 BEGIN
@@ -493,6 +494,10 @@ BEGIN
 
 					UPDATE ChiTietPhieuDangKy
 					SET SoLanGiaHan=SoLanGiaHan+1
+					WHERE MaPhieuDangKy=@MaPhieuDangKy
+
+					UPDATE PhieuDangKy
+					SET LichThi=@NgayMoi
 					WHERE MaPhieuDangKy=@MaPhieuDangKy
 				END
 			END
