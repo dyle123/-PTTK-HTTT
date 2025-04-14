@@ -758,83 +758,77 @@ app.get('/api/getHoaDon', async (req, res) => {
 
 
 //API TraCuuSoLanGiaHan
-app.get('/api/getChiTietPhieuDangKy', async (req, res) => {
-    const { maPhieuDangKy } = req.query;
-    if (!maPhieuDangKy) {
-        return res.status(400).json({ error: 'Mã phiếu đăng ký là bắt buộc' });
-    }
+app.post('/api/TraCuuSoLanGiaHan', async (req, res) => {
+    const { CCCD, NgayThi } = req.body;
 
     try {
         const pool = await sql.connect(config);
         const result = await pool.request()
-            .input('MaPhieuDangKy', sql.Int, parseInt(maPhieuDangKy))
-            .execute('TraCuuSoLanGiaHan'); // Gọi stored procedure thay vì query trực tiếp
+            .input('CCCD', sql.Char(12), CCCD)
+            .input('NgayThi', sql.Date, NgayThi)
+            .execute('TraCuuSoLanGiaHan');
 
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ error: 'Không tìm thấy phiếu đăng ký' });
-        }
-
-        res.json(result.recordset); // Trả về kết quả từ stored procedure
+        res.json(result.recordset);
     } catch (err) {
-        console.error('Lỗi khi lấy dữ liệu:', err);
-        res.status(500).json({ error: err.message });
+        // Lấy message gốc của RAISERROR
+        res.status(400).json({ error: err.originalError?.message || err.message });
     }
 });
 
 
 //API TraCuuPhieuGiaHan
 app.get('/api/getPhieuGiaHan', async (req, res) => {
-    const { maPhieuDangKy } = req.query;
+    const { cccd } = req.query;
 
-    if (!maPhieuDangKy) {
-        return res.status(400).json({ error: 'Mã phiếu đăng ký là bắt buộc' });
+    if (!cccd) {
+        return res.status(400).json({ error: 'CCCD là bắt buộc' });
     }
 
     try {
         const pool = await sql.connect(config);
         const result = await pool.request()
-            .input('maPhieuDangKy', sql.Int, maPhieuDangKy)
-            .query(`
-                SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan,
-                       FORMAT(LTC.NgayThi, 'dd/MM/yyyy') AS NgayThiCu,
-                       FORMAT(LTM.NgayThi, 'dd/MM/yyyy') AS NgayThiMoi
-                FROM PhieuGiaHan PGH
-                LEFT JOIN LichThi LTC ON PGH.NgayThiCu = LTC.MaLichThi
-                LEFT JOIN LichThi LTM ON PGH.NgayThiMoi = LTM.MaLichThi
-                WHERE PGH.MaPhieuDangKy = @maPhieuDangKy
-            `);
+            .input('CCCD', sql.Char(12), cccd) // CCCD truyền vào
+            .execute('TraCuuPhieuGiaHan'); // gọi thủ tục
 
         if (result.recordset.length === 0) {
-            return res.status(404).json({ error: 'Không tìm thấy phiếu gia hạn' });
+            return res.status(404).json({ error: 'Không có dữ liệu phiếu gia hạn.' });
         }
 
         res.json(result.recordset);
+
     } catch (err) {
-        console.error('Lỗi khi lấy dữ liệu phiếu gia hạn:', err);
-        res.status(500).json({ error: 'Lỗi máy chủ. Vui lòng thử lại sau.' });
+        console.error('Lỗi khi gọi stored procedure:', err);
+
+        // Lấy message từ RAISERROR trong SQL Server
+        const sqlError = err.originalError?.info?.message || err.message;
+
+        res.status(500).json({ error: `Lỗi: ${sqlError}` });
     }
 });
 
 app.delete('/api/deletePhieuGiaHan', async (req, res) => {
     const { CCCD, MaPhieuDangKy } = req.body;
 
+    if (!CCCD || !MaPhieuDangKy) {
+        return res.status(400).json({ success: false, message: 'Thiếu CCCD hoặc MaPhieuDangKy.' });
+    }
+
     try {
         await sql.connect(config);
         const request = new sql.Request();
 
-        const result = await request.query(`
-            DELETE FROM PhieuGiaHan
-            WHERE CCCD = '${CCCD}' AND MaPhieuDangKy = ${MaPhieuDangKy}
-        `);
+        request.input('CCCD', sql.Char(12), CCCD);
+        request.input('MaPhieuDangKy', sql.Int, MaPhieuDangKy);
 
-        if (result.rowsAffected[0] === 0) {
-            return res.status(404).json({ success: false, message: 'Không tìm thấy phiếu gia hạn để xóa.' });
-        }
+        await request.execute('XoaPhieuGiaHan'); // Gọi thủ tục
 
         res.json({ success: true });
     } catch (err) {
-        console.error('Lỗi khi xóa phiếu gia hạn:', err);
-        res.status(500).json({ success: false, message: 'Lỗi máy chủ khi xóa phiếu gia hạn.' });
+        console.error('Lỗi khi gọi SP XoaPhieuGiaHan:', err);
+
+        // Nếu lỗi là từ RAISERROR trong SP thì phản hồi cho người dùng
+        const message = err?.originalError?.info?.message || 'Lỗi máy chủ khi xóa phiếu gia hạn.';
+        res.status(500).json({ success: false, message });
     }
 });
 

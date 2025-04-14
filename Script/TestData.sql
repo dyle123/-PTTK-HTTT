@@ -63,7 +63,7 @@ Select*from PhieuDangKy
 --VALUES('123456789012', 2, N'Hợp lệ', 200000, N'Cần thêm thời gian học', '2025-03-01'),('987654321098', 3, N'Không hợp lệ', 0, N'Không đủ điều kiện gia hạn', '2025-03-05');
 
 INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi)
-VALUES('123456789012', 2, N'Hợp lệ', 200000, N'Cần thêm thời gian học', 1,2);
+VALUES('123456789012', 1, N'Hợp lệ', 200000, N'Cần thêm thời gian học', 1,2);
 
 insert into PhieuDuThi (SoBaoDanh, CCCD, TrangThai, LichThi) values ('090909090909','123456789012',0,1)
 

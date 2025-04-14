@@ -10,7 +10,7 @@
 <body>
     <div id="navbar-container"></div>
     <h1>Tra Cứu Phiếu Gia Hạn</h1>
-    <input type="number" id="search-box" placeholder="Nhập mã phiếu đăng ký" step="1">
+    <input type="text" id="search-box" placeholder="Nhập CCCD">
     <button id="search-btn" onclick="fetchData()">🔍</button>
 
     <!-- <input type="text" id="search-box" placeholder="Nhập CCCD">
@@ -43,79 +43,86 @@
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/GiaHan.js"></script>
     <script>
-        document.getElementById("search-box").addEventListener("input", function(){
-        this.value = this.value.replace(/[^0-9]/g, "");
-        })
-
         async function fetchData() {
-        const maPhieu = document.getElementById('search-box').value.trim();
-
-        if (!maPhieu) {
-            alert('Vui lòng nhập mã phiếu đăng ký!');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/getPhieuGiaHan?maPhieuDangKy=${maPhieu}`);
-            const data = await response.json();
-
+            const cccd = document.getElementById('search-box').value.trim();
             const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '';
+            tableBody.innerHTML = ''; // Xóa dữ liệu cũ
 
-            if (!response.ok || data.error) {
-                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">${data.error || 'Lỗi không xác định'}</td></tr>`;
+            if (!cccd) {
+                alert('Vui lòng nhập CCCD!');
                 return;
             }
 
-            const rows = data.map(item => `
-                <tr>
-                    <td>${item.CCCD}</td>
-                    <td>${item.MaPhieuDangKy}</td>
-                    <td>${item.LoaiGiaHan}</td>
-                    <td>${item.PhiGiaHan}</td>
-                    <td>${item.LiDoGiaHan}</td>
-                    <td>${new Date(item.NgayThiCu).toLocaleDateString('vi-VN')}</td>
-                    <td>${new Date(item.NgayThiMoi).toLocaleDateString('vi-VN')}</td>
-                    <td>
-                        <button class="edit-btn" onclick="editRow('${item.CCCD}', ${item.MaPhieuDangKy})">Sửa</button>
-                        <button class="delete-btn" onclick="deleteRow('${item.CCCD}', ${item.MaPhieuDangKy})">Xóa</button>
-                    </td>
-                </tr>
-            `).join('');
+            try {
+                const response = await fetch(`/api/getPhieuGiaHan?cccd=${cccd}`);
+                const data = await response.json();
 
-            tableBody.innerHTML = rows;
+                // Trường hợp lỗi từ backend (ví dụ: RAISERROR từ SQL Server)
+                if (!response.ok || data.error) {
+                    tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">${data.error || 'Lỗi không xác định'}</td></tr>`;
+                    return;
+                }
 
-        } catch (error) {
-            console.error('Lỗi khi fetch dữ liệu:', error);
-            alert('Đã xảy ra lỗi khi truy vấn dữ liệu. Vui lòng thử lại!');
+                // Trường hợp không có dữ liệu
+                if (data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Không tìm thấy dữ liệu</td></tr>`;
+                    return;
+                }
+
+                // Trường hợp có dữ liệu, hiển thị
+                const rows = data.map(item => `
+                    <tr>
+                        <td>${item.CCCD}</td>
+                        <td>${item.MaPhieuDangKy}</td>
+                        <td>${item.LoaiGiaHan}</td>
+                        <td>${item.PhiGiaHan}</td>
+                        <td>${item.LiDoGiaHan}</td>
+                        <td>${new Date(item.NTC).toLocaleDateString('vi-VN')}</td>
+                        <td>${new Date(item.NTM).toLocaleDateString('vi-VN')}</td>
+                        <td>
+                            <button class="edit-btn" onclick="editRow('${item.CCCD}', ${item.MaPhieuDangKy})">Sửa</button>
+                            <button class="delete-btn" onclick="deleteRow('${item.CCCD}', ${item.MaPhieuDangKy})">Xóa</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                tableBody.innerHTML = rows;
+
+            } catch (error) {
+                console.error('Lỗi khi fetch dữ liệu:', error);
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Lỗi khi kết nối tới máy chủ.</td></tr>`;
+            }
         }
-    }
-    async function deleteRow(CCCD, MaPhieuDangKy) {
-        if (!confirm('Bạn có chắc chắn muốn xóa phiếu gia hạn này không?')) return;
+        async function deleteRow(CCCD, MaPhieuDangKy) {
+            if (!confirm('Bạn có chắc chắn muốn xóa phiếu gia hạn này không?')) return;
 
-        try {
-            const response = await fetch('/api/deletePhieuGiaHan', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ CCCD, MaPhieuDangKy })
-            });
+            try {
+                const response = await fetch('/api/deletePhieuGiaHan', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ CCCD, MaPhieuDangKy })
+                });
 
-            const result = await response.json();
+                const result = await response.json();
 
-            if (result.success) {
-                // Xóa dòng khỏi bảng
-                const row = document.querySelector(`button[onclick="deleteRow('${CCCD}', ${MaPhieuDangKy})"]`).closest('tr');
+                if (!response.ok || !result.success) {
+                    alert('Không thể xóa phiếu gia hạn: ' + (result.message || 'Lỗi máy chủ'));
+                    return;
+                }
+
+                const escapedCCCD = CCCD.replace(/'/g, "\\'");
+                const row = document.querySelector(
+                    `button[onclick="deleteRow('${escapedCCCD}', ${MaPhieuDangKy})"]`
+                )?.closest('tr');
+
                 if (row) row.remove();
 
                 alert('Đã xóa phiếu gia hạn thành công!');
-            } else {
-                alert('Không thể xóa phiếu gia hạn: ' + result.message);
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra khi xóa phiếu gia hạn.');
             }
-        } catch (err) {
-            console.error(err);
-            alert('Có lỗi xảy ra khi xóa phiếu gia hạn.');
         }
-    }
 
     </script>
 </body>

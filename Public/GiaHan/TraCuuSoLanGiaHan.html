@@ -10,7 +10,8 @@
 <body>
     <div id="navbar-container"></div>
     <h1>Tra Cứu Số Lần Gia Hạn</h1>
-    <input type="number" id="search-box" placeholder="Nhập mã phiếu đăng ký" step="1">
+    <input type="text" id="search-box" placeholder="Nhập CCCD">
+    <input type="Date" id="date-box">
     <button id="search-btn" onclick="fetchData()">🔍</button>
 
     
@@ -19,6 +20,7 @@
             <tr>
                 <th>Mã phiếu</th>
                 <th>CCCD</th>
+                <th>Ngày Thi</th>
                 <th>Số lần gia hạn</th>
             </tr>
         </thead>
@@ -36,42 +38,57 @@
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/GiaHan.js"></script>
     <script>
-        document.getElementById("search-box").addEventListener("input", function(){
-        this.value = this.value.replace(/[^0-9]/g, "");
-        })
+        async function fetchData() {
+            const cccd = document.getElementById("search-box").value.trim();
+            const date = document.getElementById("date-box").value;
 
-        async function fetchData() 
-        {
-            const maPhieu = document.getElementById('search-box').value;
-            if (!maPhieu) {
-                alert('Vui lòng nhập mã phiếu đăng ký!');
+            if (!cccd || !date) {
+                alert("Vui lòng nhập đầy đủ CCCD và ngày thi.");
                 return;
             }
 
             try {
-                const response = await fetch(`/api/getChiTietPhieuDangKy?maPhieuDangKy=${maPhieu}`);
-                const data = await response.json();
+                const response = await fetch('/api/TraCuuSoLanGiaHan', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ CCCD: cccd, NgayThi: date })
+                });
 
-                const tableBody = document.getElementById('table-body');
-                tableBody.innerHTML = '';
+                const result = await response.json();
 
-            if (data.error) {
-                tableBody.innerHTML = '<tr><td colspan="3">Không tìm thấy phiếu đăng ký</td></tr>';
-            } else {
-            data.forEach(item => {
-                const row = `<tr>
-                <td>${item.MaPhieuDangKy}</td>
-                <td>${item.CCCD}</td>
-                <td>${item.SoLanGiaHan}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
+                // Nếu API trả lỗi
+                if (!response.ok) {
+                    alert("Lỗi: " + result.error);
+                    return;
+                }
+
+                // Nếu không có dữ liệu
+                if (result.length === 0) {
+                    alert("Không tìm thấy dữ liệu.");
+                    return;
+                }
+
+                // Hiển thị kết quả
+                const tableBody = document.getElementById("table-body");
+                tableBody.innerHTML = "";
+
+                result.forEach(row => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${row.MaPhieuDangKy}</td>
+                            <td>${row.CCCD}</td>
+                            <td>${new Date(row.NgayThi).toLocaleDateString('vi-VN')}</td>
+                            <td>${row.SoLanGiaHan}</td>
+                        </tr>
+                    `;
+                });
+
+            } catch (error) {
+                alert("Lỗi hệ thống: " + error.message);
+            }
         }
-        } catch (error) {
-            console.error('Lỗi khi lấy dữ liệu:', error);
-            alert('Có lỗi xảy ra, vui lòng thử lại!');
-        }
-    }
-</script>
+    </script>
 </body>
 </html>

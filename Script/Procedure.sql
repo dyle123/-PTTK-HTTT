@@ -430,6 +430,17 @@ Create procedure LapPhieuGiaHan
 	
 AS
 BEGIN
+	DECLARE @SLGH INT
+	
+	SELECT @SLGH=SoLanGiaHan
+	FROM ChiTietPhieuDangKy WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
+
+	IF(@SLGH=2)
+		BEGIN
+			RAISERROR(N'Không thể lập phiếu gia hạn, do thí sinh đã vượt quá số lần gia hạn',16,1)
+			return;
+		END
+
 	IF EXISTS (SELECT 1 FROM PhieuGiaHan WHERE MaPhieuDangKy=@MaPhieuDangKy AND CCCD!=@CCCD)
 		BEGIN
 			RAISERROR(N'Mã phiếu đăng ký đã bị trùng với thí sinh khác',16,1)
@@ -487,6 +498,7 @@ BEGIN
 			END
 END
 
+
 CREATE TRIGGER trg_KiemTraMaPhieuDangKy
 ON PhieuGiaHan
 AFTER INSERT
@@ -505,19 +517,94 @@ BEGIN
     END
 END;
 
-Select*from ChiTietPhieuDangKy
 
 CREATE PROCEDURE TraCuuSoLanGiaHan
-	@MaPhieuDangKy int
+	@CCCD char(12),
+	@NgayThi Date
 AS
 BEGIN
-	IF NOT EXISTS (SELECT 1 From ChiTietPhieuDangKy WHERE MaPhieuDangKy=@MaPhieuDangKy)
+	IF NOT EXISTS(SELECT 1 from ThiSinh where CCCD=@CCCD)
 		BEGIN
-			RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
+			RAISERROR(N'Không tìm thấy thí sinh trong hệ thống',16,1)
 			return;
 		END
-	SELECT *
-	FROM ChiTietPhieuDangKy WHERE MaPhieuDangKy=@MaPhieuDangKy
+	IF NOT EXISTS (SELECT 1 FROM ChiTietPhieuDangKy WHERE CCCD=@CCCD)
+		BEGIN
+			RAISERROR(N'Không tìm được số lần gia hạn của thí sinh',16,1)
+			return;
+		END
+	IF NOT EXISTS (SELECT 1 FROM LichThi WHERE NgayThi=@NgayThi)
+		BEGIN
+			RAISERROR(N'Không tìm thấy ngày thi trong hệ thống',16,1)
+		END
+
+	DECLARE @MLT INT
+
+	SELECT @MLT=MaLichThi
+	FROM LichThi WHERE NgayThi=@NgayThi
+
+	IF NOT EXISTS (SELECT 1 FROM PhieuDuThi WHERE CCCD=@CCCD AND @MLT=LichThi)
+		BEGIN
+			RAISERROR(N'Phiếu dự thi thí sinh cung cấp không tồn tại trong hệ thống',16,1)
+			return;
+		END
+
+	SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
+	FROM ChiTietPhieuDangKy as CT
+	JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
+	JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+	WHERE CT.CCCD=@CCCD AND LT.NgayThi=@NgayThi
+
 END
 GO
 
+
+CREATE PROCEDURE TraCuuPhieuGiaHan
+	@CCCD char(12)
+AS
+BEGIN
+	IF NOT EXISTS(SELECT 1 from ThiSinh where CCCD=@CCCD)
+		BEGIN
+			RAISERROR(N'Không tìm thấy thí sinh trong hệ thống',16,1)
+			return;
+		END
+	IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD)
+		BEGIN
+			RAISERROR(N'Không tìm được phiếu gia hạn của thí sinh',16,1)
+			return;
+		END
+	SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+	from LichThi AS LT1
+	JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+	JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+	WHERE PGH.CCCD=@CCCD
+
+END
+GO
+
+CREATE PROCEDURE XoaPhieuGiaHan
+	@CCCD CHAR(12),
+	@MaPhieuDangKy int
+AS
+BEGIN
+	IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan where CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
+		BEGIN
+			RAISERROR(N'Không thể xóa phiếu gia hạn do không tìm thấy phiếu gia hạn trong hệ thống',16,1)
+			return;
+		END
+	DELETE FROM PhieuGiaHan
+	WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
+END
+
+
+
+drop proc TraCuuSoLanGiaHan
+drop proc TraCuuPhieuGiaHan
+
+SELECT*FROM ChiTietPhieuDangKy
+
+select *from PhieuDuThi
+
+select*from LichThi
+
+select*from PhieuGiaHan
