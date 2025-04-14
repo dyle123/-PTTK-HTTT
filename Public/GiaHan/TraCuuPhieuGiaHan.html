@@ -123,6 +123,80 @@
                 alert('Có lỗi xảy ra khi xóa phiếu gia hạn.');
             }
         }
+        function editRow(CCCD, MaPhieuDangKy) {
+            const row = document.querySelector(
+                `button[onclick="editRow('${CCCD}', ${MaPhieuDangKy})"]`
+            )?.closest('tr');
+
+            if (!row) return;
+
+            const cells = row.querySelectorAll('td');
+            const values = Array.from(cells).map(cell => cell.textContent.trim());
+
+            row.innerHTML = `
+                <td><input value="${values[0]}" disabled></td>
+                <td><input value="${values[1]}" disabled></td>
+                <td>
+                    <select>
+                        <option value="Hợp lệ" ${values[2] === 'Hợp lệ' ? 'selected' : ''}>Hợp lệ</option>
+                        <option value="Không hợp lệ" ${values[2] === 'Không hợp lệ' ? 'selected' : ''}>Không hợp lệ</option>
+                    </select>
+                </td>
+                <td><input type="number" value="${values[3]}"></td>
+                <td><input value="${values[4]}"></td>
+                <td><input type="date" value="${formatDateForInput(values[5])}"></td>
+                <td><input type="date" value="${formatDateForInput(values[6])}"></td>
+                <td>
+                    <button onclick="saveRow('${CCCD}', ${MaPhieuDangKy}, this)">Lưu</button>
+                     <button onclick="cancelEdit(this, ${MaPhieuDangKy}, '${CCCD}')">Hủy</button>
+                </td>
+            `;
+        }
+        async function saveRow(CCCD, MaPhieuDangKy, button) {
+            const row = button.closest('tr');
+            const inputs = row.querySelectorAll('input, select');
+
+            const data = {
+                CCCD,
+                MaPhieuDangKy,
+                LoaiGiaHan: inputs[2].value,
+                PhiGiaHan: parseInt(inputs[3].value),
+                LiDoGiaHan: inputs[4].value,
+                NgayThiCu: inputs[5].value,
+                NgayThiMoi: inputs[6].value,
+            };
+
+            try {
+                const response = await fetch('/api/updatePhieuGiaHan', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    alert('Không thể cập nhật phiếu gia hạn: ' + (result.message || 'Lỗi máy chủ'));
+                    return;
+                }
+
+                alert('Đã cập nhật phiếu gia hạn thành công!');
+                fetchData(); // Reload lại bảng
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra khi cập nhật phiếu gia hạn.');
+            }
+        }
+
+    function cancelEdit() 
+        {
+            fetchData(); // Gọi lại fetch để reset bảng về trạng thái ban đầu
+        }
+    function formatDateForInput(dateStr) 
+        {
+            const [day, month, year] = dateStr.split('/');
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
 
     </script>
 </body>

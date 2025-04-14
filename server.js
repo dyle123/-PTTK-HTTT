@@ -832,6 +832,28 @@ app.delete('/api/deletePhieuGiaHan', async (req, res) => {
     }
 });
 
+app.put('/api/updatePhieuGiaHan', async (req, res) => {
+    const { CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi } = req.body;
+
+    try {
+        await sql.connect(config);
+        const request = new sql.Request();
+        request.input('CCCD', sql.Char(12), CCCD);
+        request.input('MaPhieuDangKy', sql.Int, MaPhieuDangKy);
+        request.input('LoaiGiaHan', sql.NVarChar(12), LoaiGiaHan);
+        request.input('PhiGiaHan', sql.Int, PhiGiaHan);
+        request.input('LiDoGiaHan', sql.NVarChar(255), LiDoGiaHan);
+        request.input('NgayThiCu', sql.Date, NgayThiCu);
+        request.input('NgayThiMoi', sql.Date, NgayThiMoi);
+
+        await request.execute('SuaPhieuGiaHan');
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Lỗi khi cập nhật phiếu gia hạn:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 app.post('/api/lapPhieuGiaHan', async (req, res) => {
     const { CCCD, MaPhieuDangKy, LiDoGiaHan, NgayThiCu, NgayThiMoi } = req.body;
 

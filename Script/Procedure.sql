@@ -597,6 +597,63 @@ BEGIN
 END
 
 
+CREATE PROCEDURE SuaPhieuGiaHan
+    @CCCD CHAR(12),
+    @MaPhieuDangKy INT,
+    @LoaiGiaHan NVARCHAR(12),
+    @PhiGiaHan INT,
+    @LiDoGiaHan NVARCHAR(255),
+    @NgayThiCu DATE,
+    @NgayThiMoi DATE
+AS
+BEGIN
+    -- Kiểm tra tồn tại trước khi update
+    IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan WHERE CCCD = @CCCD AND MaPhieuDangKy = @MaPhieuDangKy)
+		BEGIN
+			RAISERROR(N'Không tìm thấy phiếu gia hạn để cập nhật.', 16, 1)
+			return;
+		END
+	IF(@PhiGiaHan<0)
+		BEGIN
+			RAISERROR(N'Phí gia hạn không được nhỏ hơn 0',16,1)
+			return;
+		END
+	IF NOT EXISTS (SELECT 1 FROM LichThi WHERE NgayThi=@NgayThiCu)
+		BEGIN
+			RAISERROR(N'Ngày thi cũ không có trong hệ thống',16,1)
+			return;
+		END
+	IF NOT EXISTS (SELECT 1 FROM LichThi WHERE NgayThi=@NgayThiMoi)
+		BEGIN
+			RAISERROR(N'Ngày thi mới không có trong hệ thống',16,1)
+			return;
+		END
+	IF (@NgayThiCu=@NgayThiMoi)
+		BEGIN
+			RAISERROR(N'Ngày thi cũ và ngày thi mới phải khác nhau',16,1)
+			return;
+		END
+
+	DECLARE @NgayCu int, @NgayMoi int
+
+	SELECT @NgayCu=MaLichThi
+	FROM LichThi WHERE NgayThi=@NgayThiCu
+
+	SELECT @NgayMoi=MaLichThi
+	FROM LichThi WHERE NgayThi=@NgayThiMoi
+
+    -- Cập nhật dữ liệu
+    UPDATE PhieuGiaHan
+    SET
+        LoaiGiaHan = @LoaiGiaHan,
+        PhiGiaHan = @PhiGiaHan,
+        LiDoGiaHan = @LiDoGiaHan,
+        NgayThiCu = @NgayCu,
+        NgayThiMoi = @NgayMoi
+    WHERE CCCD = @CCCD AND MaPhieuDangKy = @MaPhieuDangKy;
+END
+
+
 
 drop proc TraCuuSoLanGiaHan
 drop proc TraCuuPhieuGiaHan
