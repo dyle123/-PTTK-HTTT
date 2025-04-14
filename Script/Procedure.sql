@@ -421,3 +421,96 @@ END;
 GO
 
 
+Create procedure LapPhieuGiaHan 
+	@CCCD char(12),
+	@MaPhieuDangKy int,
+	@LiDoGiaHan nvarchar(255),
+	@NgayThiCu Date,
+	@NgayThiMoi Date
+	
+AS
+BEGIN
+	IF EXISTS (SELECT 1 FROM PhieuGiaHan WHERE MaPhieuDangKy=@MaPhieuDangKy AND CCCD!=@CCCD)
+		BEGIN
+			RAISERROR(N'Mã phiếu đăng ký đã bị trùng với thí sinh khác',16,1)
+			return;
+		END
+	
+	IF NOT EXISTS (SELECT 1 FROM THISINH WHERE CCCD=@CCCD)
+		BEGIN
+			RAISERROR(N'Căn cước công dân không tồn tại.', 16, 1);
+			return
+		END
+	IF NOT EXISTS (SELECT 1 FROM LichThi WHERE NgayThi=@NgayThiCu)
+		BEGIN
+			RAISERROR(N'Ngày thi cũ bạn nhập không tồn tại',16,1)
+			return;
+		END
+	IF NOT EXISTS (SELECT 1 FROM LichThi WHERE NgayThi=@NgayThiMoi)
+		BEGIN
+			RAISERROR(N'Ngày thi mới bạn nhập không tồn tại',16,1)
+			return;
+		END
+	IF NOT EXISTS (SELECT 1 FROM PhieuDangKy WHERE MaPhieuDangKy=@MaPhieuDangKy)
+		BEGIN
+			RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
+			return;
+		END
+	ELSE
+		BEGIN
+			DECLARE @NgayCu int, @NgayMoi int
+
+			SELECT @NgayCu=MaLichThi
+			FROM LichThi WHERE NgayThi=@NgayThiCu
+
+			SELECT @NgayMoi=MaLichThi
+			FROM LichThi WHERE NgayThi=@NgayThiMoi
+
+			IF (@NgayCu=@NgayMoi)
+				BEGIN
+					RAISERROR(N'Ngày thi mới phải khác ngày thi cũ',16,1)
+					return;
+				END
+			ELSE			
+				BEGIN
+					INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy,LiDoGiaHan, NgayThiCu, NgayThiMoi)
+					VALUES (@CCCD, @MaPhieuDangKy,@LiDoGiaHan, @NgayCu, @NgayMoi);
+
+					UPDATE PhieuDuThi
+					SET LichThi=@NgayMoi
+					WHERE CCCD=@CCCD AND LichThi=@NgayCu
+
+					UPDATE ChiTietPhieuDangKy
+					SET SoLanGiaHan=SoLanGiaHan+1
+					WHERE MaPhieuDangKy=@MaPhieuDangKy
+				END
+			END
+END
+
+CREATE TRIGGER trg_KiemTraMaPhieuDangKy
+ON PhieuGiaHan
+AFTER INSERT
+AS
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM INSERTED i
+        JOIN PhieuGiaHan p
+            ON i.MaPhieuDangKy = p.MaPhieuDangKy
+           AND i.CCCD <> p.CCCD
+    )
+    BEGIN
+        RAISERROR (N'Mỗi CCCD khác nhau phải có MaPhieuDangKy khác nhau.', 16, 1)
+        ROLLBACK TRANSACTION
+    END
+END;
+
+drop proc LapPhieuGiaHan
+
+Select*from PhieuDuThi
+
+Select *from PhieuDangKy
+
+Select*from PhieuDuThi
+
+Select *from ChiTietPhieuDangKy
