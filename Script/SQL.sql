@@ -12,16 +12,18 @@ GO
 
 
 
-CREATE TABLE KhachHang(
+CREATE TABLE KhachHang
+(
 	MaKhachHang int IDENTITY(1,1) Primary Key,
 	TenKhachHang nvarchar(50) NOT NULL,
-    Email VARCHAR(60) ,
+	Email VARCHAR(60) ,
 	SoDienThoai char(10) ,
 	DiaChi NVARCHAR(255) NOT NULL,
 	LoaiKhachHang nvarchar(20) CHECK(LoaiKhachHang IN (N'tự do', N'đơn vị')) NOT NULL
 );
 
-CREATE TABLE NhanVien(
+CREATE TABLE NhanVien
+(
 	MaNhanVien char(8) Primary Key,
 	HoTen nvarchar(50) NOT NULL,
 	NgaySinh date NOT NULL,
@@ -30,18 +32,21 @@ CREATE TABLE NhanVien(
 	BoPhan nvarchar(20) NOT NULL
 );
 
-CREATE TABLE PhieuThanhToan (
+CREATE TABLE PhieuThanhToan
+(
 	MaPhieuThanhToan int IDENTITY(1,1) Primary Key,
 	TamTinh int,
 	PhanTramGiamGia INT,
 	ThanhTien INT,
-	TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)), --0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN, 2: Quá hạn
+	TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)),
+	--0: CHƯA THANH TOÁN, 1: ĐÃ THANH TOÁN, 2: Quá hạn
 	MaPhieuDangKy int NOT NULL,--f
 	NhanVienThucHien char(8) NOT NULL,--f
 );
 
 
-CREATE TABLE HoaDonThanhToan(
+CREATE TABLE HoaDonThanhToan
+(
 	MaHoaDon int IDENTITY(1,1) Primary Key,
 	TongTien int,
 	HinhThucThanhToan nvarchar(20) DEFAULT N'tiền mặt' CHECK (HinhThucThanhToan IN ( N'tiền mặt',N'chuyển khoản')),
@@ -50,25 +55,28 @@ CREATE TABLE HoaDonThanhToan(
 	MaGiaoDich varchar(30)
 );
 
-CREATE TABLE KetQuaThi (
-    MaKetQua INT IDENTITY(1,1) PRIMARY KEY,
-    MaBaiThi INT,--f
-    DiemTong INT,
-    NgayCongBo DATE,
-    MaChungChi INT--f
+CREATE TABLE KetQuaThi
+(
+	MaKetQua INT IDENTITY(1,1) PRIMARY KEY,
+	MaBaiThi INT,--f
+	DiemTong INT,
+	NgayCongBo DATE,
+	MaChungChi INT--f
 );
 
-CREATE TABLE PhongThi (
-    MaPhongThi INT IDENTITY(1,1) PRIMARY KEY,
-    SucChuaToiDa INT NOT NULL,
-    SoLuongHienTai INT NOT NULL
+CREATE TABLE PhongThi
+(
+	MaPhongThi INT IDENTITY(1,1) PRIMARY KEY,
+	SucChuaToiDa INT NOT NULL,
+	SoLuongHienTai INT NOT NULL
 );
 
-CREATE TABLE BaiThi (
-    MaBaiThi INT IDENTITY(1,1) PRIMARY KEY,
-    SoBaoDanh CHAR(12),
-    DangBaiThi VARCHAR(255),
-    ThoiGianNopBai DATETIME
+CREATE TABLE BaiThi
+(
+	MaBaiThi INT IDENTITY(1,1) PRIMARY KEY,
+	SoBaoDanh CHAR(12),
+	DangBaiThi VARCHAR(255),
+	ThoiGianNopBai DATETIME
 );
 
 
@@ -82,31 +90,34 @@ CREATE TABLE ThiSinh
 	DiaChi NVARCHAR(255)
 )
 
-Create table PhieuDangKy(
-    MaPhieuDangKy int IDENTITY(1,1) Primary Key,
-    LoaiChungChi int ,
-    NgayDangKy date,
-    TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)), 
-    LichThi int,
-    MaKhachHang int,
+Create table PhieuDangKy
+(
+	MaPhieuDangKy int IDENTITY(1,1) Primary Key,
+	LoaiChungChi int ,
+	NgayDangKy date,
+	TrangThaiThanhToan TINYINT DEFAULT 0 CHECK (TrangThaiThanhToan IN (0,1,2)),
+	LichThi int,
+	MaKhachHang int,
 	PaymentLink text
 );
 
 
-create table ChiTietPhieuDangKy(
-    MaPhieuDangKy int ,--f
-    CCCD char(12) ,--f
-    SoLanGiaHan int default 0,
+create table ChiTietPhieuDangKy
+(
+	MaPhieuDangKy int ,--f
+	CCCD char(12) ,--f
+	SoLanGiaHan int default 0,
 	CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
 );
 
-create table ChungChi(
-    MaChungChi int IDENTITY(1,1)  Primary Key,
-    NgayCap date,
-    NgayHetHan date,
-    LoaiChungChi int,
-    TrangThai nvarchar(20),
-    CCCD char(12)--f
+create table ChungChi
+(
+	MaChungChi int IDENTITY(1,1) Primary Key,
+	NgayCap date,
+	NgayHetHan date,
+	LoaiChungChi int,
+	TrangThai nvarchar(20),
+	CCCD char(12)--f
 );
 
 
@@ -115,12 +126,12 @@ CREATE TABLE GacThi
 (
 	MaLichThi INT ,--f
 	MaNhanVienGac char(8)--f,
-	CONSTRAINT PK_GacThi PRIMARY KEY(MaLichThi,MaNhanVienGac)
+		CONSTRAINT PK_GacThi PRIMARY KEY(MaLichThi,MaNhanVienGac)
 )
 
 CREATE TABLE LichThi
 (
-	MaLichThi INT IDENTITY(1,1)  Primary Key,
+	MaLichThi INT IDENTITY(1,1) Primary Key,
 	NgayThi DATE,
 	GioThi TIME,
 	SoLuongDangKy INT,
@@ -131,16 +142,18 @@ CREATE TABLE LichThi
 
 CREATE TABLE Users
 (
-    MaNhanVien char(8) Primary Key,
-    PassWord VARCHAR(50),
-    Role  NVARCHAR(20)  NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'nhaplieu'))-- Vai trò
+	MaNhanVien char(8) Primary Key,
+	PassWord VARCHAR(50),
+	Role NVARCHAR(20) NOT NULL CHECK (Role IN ('ketoan', 'tiepnhan', 'nhaplieu'))-- Vai trò
 )
 
-CREATE TABLE PhieuDuThi(
-	SoBaoDanh char(12)  Primary Key,
+CREATE TABLE PhieuDuThi
+(
+	SoBaoDanh char(12) Primary Key,
 	CCCD char(12),--f
 	TrangThai TINYINT DEFAULT 0 CHECK (TrangThai IN (0,1,2)),
-	LichThi int --f
+	LichThi int
+	--f
 )
 
 CREATE TABLE BangGiaThi
@@ -153,17 +166,22 @@ CREATE TABLE BangGiaThi
 
 
 
-CREATE TABLE ThongTinTruyCap (
-	MaNhanVien char(8) NOT NULL, --Khóa ngoại liên kết đến 'KhachHang'
+CREATE TABLE ThongTinTruyCap
+(
+	MaNhanVien char(8) NOT NULL,
+	--Khóa ngoại liên kết đến 'KhachHang'
 	SessionID INT PRIMARY KEY IDENTITY(1,1),-- Phiên đăng nhập của khách hàng
-	ThoiGianTruyCap INT DEFAULT 0, -- Thời lượng khách hàng thao tác với website
-	ThoiDiemTruyCap DATETIME DEFAULT GETDATE() NOT NULL, -- Thời điểm khách hàng truy cập vào website
+	ThoiGianTruyCap INT DEFAULT 0,
+	-- Thời lượng khách hàng thao tác với website
+	ThoiDiemTruyCap DATETIME DEFAULT GETDATE() NOT NULL,
+	-- Thời điểm khách hàng truy cập vào website
 );
 
-CREATE TABLE Payments (
-    OrderCode INT PRIMARY KEY,
-    PaymentLink NVARCHAR(500),
-    TrangThai NVARCHAR(50) DEFAULT 'pending',
+CREATE TABLE Payments
+(
+	OrderCode INT PRIMARY KEY,
+	PaymentLink NVARCHAR(500),
+	TrangThai NVARCHAR(50) DEFAULT 'pending',
 	MaPhieuDangKy int,
 	QRCode varchar(500)
 );
@@ -239,6 +257,13 @@ ADD CONSTRAINT FK_PhieuGiaHan_ThiSinh FOREIGN KEY(CCCD) REFERENCES ThiSinh(CCCD)
 	CONSTRAINT FK_PhieuGiaHan_LichThi FOREIGN KEY (NgayThiCu) REFERENCES LichThi(MaLichThi),
 	CONSTRAINT FK_PhieuGiaHan2_LichThi FOREIGN KEY (NgayThiMoi) REFERENCES LichThi(MaLichThi)
 
-select*from PhieuGiaHan
-Select*from LichThi
+select*
+from PhieuGiaHan
+Select*
+from ChungChi
+
+ALTER TABLE LichThi
+ADD CONSTRAINT DF_SoLuongDangKy DEFAULT 0 FOR SoLuongDangKy;
+
+
 
