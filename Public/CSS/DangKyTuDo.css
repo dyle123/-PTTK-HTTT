@@ -9,7 +9,7 @@ body {
 .main-title {
     margin: 30px 0;
     font-size: 28px;
-    background-color: #ff6b81;
+    background-color: #a0b0ff;
     display: inline-block;
     padding: 10px 40px;
     border-radius: 8px;
@@ -76,7 +76,7 @@ display: grid;
 }
 
 .submit-btn {
-    background-color: #F8BBD0;
+    background-color: #8860d0;
     color: white;
     padding: 12px 24px;
     border: none;
@@ -88,7 +88,7 @@ display: grid;
 }
 
 .submit-btn:hover {
-    background-color: #ff6b81;
+    background-color: #a0b0ff;
 }
 .next-wrapper {
     display: flex;
@@ -99,7 +99,7 @@ display: grid;
 }
 
 .next-btn {
-    background-color: #F8BBD0;
+    background-color: #8860d0;
     color: white;
     font-weight: bold;
     border: none;
@@ -110,7 +110,7 @@ display: grid;
 }
 
 .next-btn:hover {
-    background-color: #e63946;
+    background-color: #f1eaf9;
     color: white;
 }
 
@@ -128,7 +128,7 @@ h1 {
     /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
     padding: 0.8vw 1.5vw;
     /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background: #fce4ec;
+    background-color: #f4f4fb;
     /* background-m */
     border-radius: 10px;
     /* border-m */
@@ -151,18 +151,18 @@ h1 {
     width: 100%;
     margin-top: 10px;
     border-collapse: collapse;
-    border: 1px solid #f8bbd0;
+    border: 1px solid #00A2FF;
 }
 
 .card table th,
 .card table td {
     padding: 10px;
-    border: 1px solid #f8bbd0;
+    border: 1px solid #00A2FF;
     text-align: center;
 }
 
 .card table th {
-    background-color: #fce4ec;
+    background-color: #f4f4fb;
     font-weight: bold;
 }
 
