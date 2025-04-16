@@ -16,7 +16,7 @@ body {
   }
   
   .modern-clickable {
-    color: yellow; /* Màu vàng ban đầu */
+    color: #8860d0; /* Màu vàng ban đầu */
     text-decoration: none; /* Bỏ gạch chân mặc định */
     cursor: pointer; /* Hiển thị con trỏ như một liên kết */
     font-size: 1.2rem; /* Kích thước chữ lớn hơn một chút */
@@ -30,7 +30,7 @@ body {
     display: block;
     width: 0%;
     height: 2px;
-    background: yellow;
+    background: #8860d0;
     transition: width 0.3s ease;
     position: absolute;
     left: 0;
@@ -38,7 +38,7 @@ body {
   }
   
   .modern-clickable:hover {
-    color: gold; /* Màu vàng đậm hơn khi hover */
+    color: #8860d0; /* Màu vàng đậm hơn khi hover */
     transform: scale(1.05); /* Phóng to nhẹ khi hover */
   }
   
@@ -55,7 +55,7 @@ body {
   
   /* Khung chứa form đăng nhập */
   .signup-container {
-    background-color: #FCE4EC;
+    background-color: #f4f4fb;
     /* Màu đỏ đậm */
     color: white;
     border-radius: 12px;
@@ -82,7 +82,7 @@ body {
     width: 90%;
     background-color: #FFFFFF;
     /* Màu nền trắng */
-    border: 1px solid #F8BBD0;
+    border: 1px solid #a0b0ff;
     /* Viền đỏ đậm */
     padding: 10px;
     /* Khoảng cách trong ô nhập liệu */
@@ -98,7 +98,7 @@ body {
   
   /* Hiệu ứng khi focus vào ô nhập liệu */
   .signup-container input:focus {
-    border-color: #F7C843;
+    border-color: #a0b0ff;;
     /* Màu viền khi focus */
     box-shadow: 0 0 5px rgba(247, 200, 67, 0.5);
     /* Hiệu ứng ánh sáng */
@@ -108,7 +108,7 @@ body {
   
   /* Nút đăng nhập */
   .signup-container button {
-    background-color: #F8BBD0;
+    background-color: #a0b0ff;
     color: black;
     /* Màu chữ đậm */
     font-weight: bold;
@@ -129,7 +129,7 @@ body {
   
   /* Hiệu ứng khi hover vào nút đăng nhập */
   .signup-container button:hover {
-    background-color: #FF6B81;
+    background-color: #8860d0;
     /* Màu đỏ khi hover */
     color: white;
     /* Màu chữ trắng khi hover */
@@ -148,7 +148,7 @@ body {
   
   /* Nút vai trò */
   .role-buttons button {
-    background-color: #f7c843;
+    background-color: #8860d0;
     /* Màu vàng nhạt */
     color: #2c2c2c;
     /* Màu chữ đậm */
@@ -166,7 +166,7 @@ body {
   
   /* Hiệu ứng khi hover */
   .role-buttons button:hover {
-    background-color: #e63946;
+    background-color: #8860d0;
     /* Màu đỏ khi hover */
     color: white;
     /* Màu chữ trắng */
