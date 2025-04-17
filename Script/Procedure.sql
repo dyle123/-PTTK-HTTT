@@ -594,6 +594,16 @@ BEGIN
 END;
 go
 
+CREATE PROCEDURE DocToanBoChiTietPhieuDangKy
+AS
+BEGIN
+	SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
+    FROM ChiTietPhieuDangKy as CT
+    JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
+    JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+END
+GO
+
 CREATE PROCEDURE TraCuuSoLanGiaHan
     @CCCD char(12),
     @NgayThi Date
@@ -643,6 +653,15 @@ BEGIN
 END
 GO
 
+
+CREATE PROC DocToanBoPhieuGiaHan
+AS
+BEGIN
+	SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+    from LichThi AS LT1
+	JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+    JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+END
 
 CREATE PROCEDURE TraCuuPhieuGiaHan
     @CCCD char(12)

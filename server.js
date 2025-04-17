@@ -767,45 +767,44 @@ app.post('/api/TraCuuSoLanGiaHan', async (req, res) => {
 
     try {
         const pool = await sql.connect(config);
-        const result = await pool.request()
-            .input('CCCD', sql.Char(12), CCCD)
-            .input('NgayThi', sql.Date, NgayThi)
-            .execute('TraCuuSoLanGiaHan');
+        const request = pool.request();
 
-        res.json(result.recordset);
+        if (CCCD && NgayThi) {
+            // Có lọc
+            request.input('CCCD', sql.Char(12), CCCD);
+            request.input('NgayThi', sql.Date, NgayThi);
+            const result = await request.execute('TraCuuSoLanGiaHan');
+            res.json(result.recordset);
+        } else {
+            // Không lọc => lấy toàn bộ dữ liệu
+            const result = await request.execute('DocToanBoChiTietPhieuDangKy');
+            res.json(result.recordset);
+        }
     } catch (err) {
-        // Lấy message gốc của RAISERROR
         res.status(400).json({ error: err.originalError?.message || err.message });
     }
 });
 
 
 //API TraCuuPhieuGiaHan
-app.get('/api/getPhieuGiaHan', async (req, res) => {
-    const { cccd } = req.query;
-
-    if (!cccd) {
-        return res.status(400).json({ error: 'CCCD là bắt buộc' });
-    }
+app.post('/api/getPhieuGiaHan', async (req, res) => {
+    const { CCCD } = req.body;
 
     try {
         const pool = await sql.connect(config);
-        const result = await pool.request()
-            .input('CCCD', sql.Char(12), cccd) // CCCD truyền vào
-            .execute('TraCuuPhieuGiaHan'); // gọi thủ tục
+        const request = pool.request();
 
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ error: 'Không có dữ liệu phiếu gia hạn.' });
+        if (CCCD) {
+            request.input('CCCD', sql.Char(12), CCCD);
+            const result = await request.execute('TraCuuPhieuGiaHan');
+            res.json(result.recordset);
+        } else {
+            const result = await request.execute('DocToanBoPhieuGiaHan');
+            res.json(result.recordset);
         }
-
-        res.json(result.recordset);
-
     } catch (err) {
-        console.error('Lỗi khi gọi stored procedure:', err);
-
-        // Lấy message từ RAISERROR trong SQL Server
+        console.error('Lỗi khi gọi SP TraCuuPhieuGiaHan:', err);
         const sqlError = err.originalError?.info?.message || err.message;
-
         res.status(500).json({ error: `Lỗi: ${sqlError}` });
     }
 });
