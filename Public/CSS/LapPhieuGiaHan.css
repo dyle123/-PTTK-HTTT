@@ -161,7 +161,7 @@ button {
 {
     position: absolute;
     margin-top:36vh;
-    margin-left:-3.5vw;
+    margin-left:17vw;
     background-color: #8860d0;
     color: white;
     font-weight: bold;
@@ -172,7 +172,7 @@ button {
     background-color: #a0b0ff;
 }
 
-#btn_GuiPhieuDenKeToan
+/* #btn_GuiPhieuDenKeToan
 {
     position: absolute;
     margin-top:36vh;
@@ -185,7 +185,7 @@ button {
 #btn_GuiPhieuDenKeToan:hover
 {
     background-color: #a0b0ff;
-}
+} */
 
 .btn_Tra_cuu_SLGH
 {
