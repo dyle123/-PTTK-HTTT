@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchBtn = document.getElementById("search-btn");
 
     // Hàm fetch data từ API
-    async function fetchData(filter, maPhieu = "") {
+    async function LayDSPhieuDangKy(filter, maPhieu = "") {
         try {
             let url = new URL("http://localhost:3000/api/getPhieuDangKy");
             let params = new URLSearchParams();
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const response = await fetch(url);
             const data = await response.json();
-            renderTable(data);
+            XuatBang(data);
         } catch (error) {
             console.error("Lỗi khi lấy dữ liệu:", error);
         }
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Hàm render dữ liệu vào bảng
     // Hàm render dữ liệu vào bảng
-        function renderTable(data) {
+        function XuatBang(data) {
             const tableBody = document.getElementById("table-body");
             tableBody.innerHTML = ""; // Xóa dữ liệu cũ
 
@@ -60,12 +60,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 
 
 
-
+                const ngayThi = phieu.NgayThi ? new Date(phieu.NgayThi).toLocaleDateString('vi-VN') : '';
+                const gioThi = phieu.GioThi ? new Date(phieu.GioThi).toLocaleTimeString('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }) : '';
+                const lichThi = `${gioThi} - ${ngayThi} `;
                 tr.innerHTML = `
                     <td>${phieu.MaPhieuDangKy}</td>
-                    <td>${phieu.LoaiChungChi}</td>
+                    <td>${phieu.TenChungChi}</td>
                     <td>${phieu.NgayDangKy}</td>
-                    <td>${phieu.LichThi}</td>
+                    <td>${lichThi}</td>
                     <td>${phieu.MaKhachHang}</td>
                     <td class="${trangThaiClass}">${trangThaiHienThi}</td>
                     <td>${thaoTacHTML}</-td>
@@ -103,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Lắng nghe sự thay đổi radio
     radios.forEach(radio => {
         radio.addEventListener("change", function () {
-            fetchData(this.value);
+            LayDSPhieuDangKy(this.value);
         });
     });
 
@@ -111,11 +117,11 @@ document.addEventListener("DOMContentLoaded", function () {
     searchBtn.addEventListener("click", function () {
         const maPhieu = searchBox.value.trim();
         const selectedFilter = maPhieu ? "" : (document.querySelector("input[name='filter']:checked")?.id || "");
-        fetchData(selectedFilter, maPhieu);
+        LayDSPhieuDangKy(selectedFilter, maPhieu);
     });
 
     // Tải dữ liệu ban đầu (mặc định là 'all')
-    fetchData("all");
+    LayDSPhieuDangKy("all");
 });
 // Hiệu ứng fade-in khi tải trang
 document.addEventListener("DOMContentLoaded", function () {

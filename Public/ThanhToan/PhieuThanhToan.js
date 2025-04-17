@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
    
     // Hàm gọi API tạo phiếu thanh toán
-    async function createPaymentReceipt(maPhieuDangKy) {
+    async function TaoPhieuThanhToan(maPhieuDangKy) {
         try {
             const responseSession = await fetch("http://localhost:3000/api/getCurrentUser"); 
             const sessionData = await responseSession.json();
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // Hàm fetch dữ liệu phiếu thanh toán
-    async function fetchData(maPhieuDangKy) {
+    async function XuatBang(maPhieuDangKy) {
         try {
             let url = new URL("http://localhost:3000/api/getPhieuThanhToan");
             let params = new URLSearchParams();
@@ -79,9 +79,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             
                 // Gán sự kiện click nếu chưa thanh toán
                 if (phieu.TrangThaiThanhToan == 0) {
-                    row.querySelector(".in-phieu").addEventListener("click", () => printReceipt(phieu));
-                    row.querySelector(".thanh-toan").addEventListener("click", () => thanhToan(phieu.MaPhieuDangKy));
-                    row.querySelector(".chuyen-khoan").addEventListener("click", () => chuyenKhoan(phieu.MaPhieuDangKy, phieu.ThanhTien));
+                    row.querySelector(".in-phieu").addEventListener("click", () => InPhieuThanhToan(phieu));
+                    row.querySelector(".thanh-toan").addEventListener("click", () => {
+                        XuatLoaiKhachHang(phieu.MaPhieuDangKy).then(loaiKhachHang => {
+                            moModalThanhToan(phieu.MaPhieuDangKy, loaiKhachHang);
+                        });
+                    });
                 } else if(phieu.TrangThaiThanhToan == 1)  {
                     row.querySelector(".xem-hoa-don").addEventListener("click", () => xemHoaDon(phieu.MaPhieuThanhToan));
                 }
@@ -101,10 +104,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log("Bắt đầu tạo phiếu thanh toán...");
 
         // Gọi API post trước, sau đó mới fetch dữ liệu
-        const postResult = await createPaymentReceipt(maPhieuDangKy);
+        const postResult = await TaoPhieuThanhToan(maPhieuDangKy);
         if (postResult) {
             console.log("Tạo phiếu thành công, bắt đầu lấy dữ liệu...");
-            fetchData(maPhieuDangKy);
+            XuatBang(maPhieuDangKy);
         } else {
             console.error("Tạo phiếu thất bại, không thể lấy dữ liệu.");
         }
@@ -112,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
      // Hàm in phiếu thanh toán
-     async function printReceipt(phieu) {
+     async function InPhieuThanhToan(phieu) {
         try {
             // 🔹 Gọi API tạo payment link trên PayOS
             const response = await fetch("http://localhost:3000/create-payment-link", {
@@ -220,7 +223,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
     
     // Gọi API lấy loại khách hàng khi nhấn nút "Thanh toán"
-    async function fetchLoaiKhachHang(maPhieu) {
+    async function XuatLoaiKhachHang(maPhieu) {
         try {
             const response = await fetch(`http://localhost:3000/api/getLoaiKhachHang?maPhieu=${maPhieu}`);
             const data = await response.json();
@@ -237,7 +240,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     
         if (event.target.classList.contains("thanh-toan")) {
             const maPhieu = event.target.dataset.maPhieu; 
-            const loaiKhachHang = await fetchLoaiKhachHang(maPhieu);
+            const loaiKhachHang = await XuatLoaiKhachHang(maPhieu);
             moModalThanhToan(maPhieu, loaiKhachHang);
         }
     });
@@ -268,7 +271,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (response.ok) {
                 alert("Thanh toán thành công!");
                 document.getElementById("modal-thanh-toan").style.display = "none";
-                fetchData(); // Cập nhật lại danh sách
+                XuatBang(); // Cập nhật lại danh sách
                 window.location.href = `/ThanhToan/PhieuThanhToan.html?maPhieuDangKy=${maPhieu}`;
             } else {
                 alert("Lỗi thanh toán: " + result.error);
@@ -280,31 +283,43 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 });
 
-// Gán sự kiện cho nút chuyển khoản
-async function chuyenKhoan(maPhieu, thanhTien) {
-    
-    if (!maPhieu || !thanhTien) {
-        console.error("Thiếu thông tin để thực hiện chuyển khoản!");
-        alert("Không tìm thấy thông tin thanh toán.");
-        return;
+// Thêm event listener cho document để bắt sự kiện click cho nút chuyển khoản
+document.addEventListener("click", async function(event) {
+    if (event.target.classList.contains("chuyen-khoan")) {
+        const maPhieu = event.target.dataset.maPhieu;
+        const thanhTien = event.target.dataset.thanhTien;
+        await chuyenKhoan(maPhieu, thanhTien);
     }
+});
 
+
+// Sửa lại hàm chuyển khoản
+async function chuyenKhoan(maPhieu, thanhTien) {
     try {
-        const response = await fetch(`http://localhost:3000/create-payment-link`, {
+        console.log("Bắt đầu chuyển khoản với:", {maPhieu, thanhTien}); // Debug
+
+        if (!maPhieu || !thanhTien) {
+            console.error("Thiếu thông tin:", {maPhieu, thanhTien});
+            alert("Không tìm thấy thông tin thanh toán.");
+            return;
+        }
+
+        const response = await fetch("http://localhost:3000/create-payment-link", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
-                Amount: thanhTien,
+                Amount: parseInt(thanhTien),
                 MaPhieuDangKy: maPhieu
-                
             })
         });
 
         const data = await response.json();
+        console.log("Response từ PayOS:", data); // Debug
+
         if (data.url) {
-            window.location.href = data.url;
+            window.open(data.url, '_blank'); // Mở URL trong tab mới
         } else {
-            alert('Lỗi khi tạo link thanh toán!');
+            throw new Error('Không nhận được URL thanh toán');
         }
     } catch (error) {
         console.error("Lỗi khi tạo link thanh toán:", error);
