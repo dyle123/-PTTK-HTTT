@@ -15,6 +15,11 @@
         <input type="text" id="Input_CCCD" placeholder="CCCD">
         <input type="number" id="Input_MaPhieuDangKy" step="1" placeholder="Mã phiếu đăng ký">
         <input type="text" id="Input_LyDoGiaHan" placeholder="Lý do gia hạn">
+        <label for="Input_LoaiGiaHan" id="Input_LoaiGiaHanLabel">Chọn loại gia hạn</label>
+        <select id="Input_LoaiGiaHan" name="Input_LoaiGiaHan">
+            <option value="Hợp lệ">Hợp lệ</option>
+            <option value="Không hợp lệ">Không hợp lệ</option>
+        </select>
         <input type="date" id="Input_NgayDuThiCu">
         <label for="Input_NgayDuThiCu" id="NgayDuThiCu_label">Ngày dự thi cũ</label>
         <input type="date" id="Input_NgayDuThiMoi">
@@ -39,10 +44,11 @@
             const cccd = document.getElementById('Input_CCCD').value.trim();
             const maPhieuDangKy = parseInt(document.getElementById('Input_MaPhieuDangKy').value);
             const lyDo = document.getElementById('Input_LyDoGiaHan').value.trim();
+            const loaiGiaHan = document.getElementById('Input_LoaiGiaHan').value;
             const ngayCu = document.getElementById('Input_NgayDuThiCu').value;
             const ngayMoi = document.getElementById('Input_NgayDuThiMoi').value;
 
-            if (!cccd || !maPhieuDangKy || !lyDo || !ngayCu || !ngayMoi) {
+            if (!cccd || !maPhieuDangKy || !lyDo || !ngayCu || !ngayMoi||!loaiGiaHan) {
                 alert('Vui lòng điền đầy đủ thông tin.');
                 return;
             }
@@ -57,6 +63,7 @@
                         CCCD: cccd,
                         MaPhieuDangKy: maPhieuDangKy,
                         LiDoGiaHan: lyDo,
+                        LoaiGiaHan:loaiGiaHan,
                         NgayThiCu: ngayCu,
                         NgayThiMoi: ngayMoi
                     })

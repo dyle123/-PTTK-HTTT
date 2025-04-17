@@ -37,7 +37,7 @@ button {
 .form
 {
     width: 28vw; 
-    height: 55vh;  
+    height: 51vh;  
     background-color: white;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); 
     color: black; 
@@ -61,7 +61,7 @@ button {
     border-radius: 10px;
     border: 2px solid gray; /* Viền */
     position: absolute;
-    top: 11vh;
+    top: 5vh;
 }
 
 #Input_MaPhieuDangKy
@@ -72,7 +72,7 @@ button {
     border-radius: 10px;
     border: 2px solid gray; /* Viền */
     position: absolute;
-    top: 17vh;
+    top: 11vh;
 }
 
 #Input_LyDoGiaHan
@@ -83,40 +83,24 @@ button {
     border-radius: 10px;
     border: 2px solid gray; /* Viền */
     position: absolute;
-    top: 23vh;
+    top: 17vh;
 }
 
-#hop_le
+#Input_LoaiGiaHan
 {
-    margin-top:9vh;
-    margin-left:-15vw;
-    position:absolute
-}
-#hop_le_label
-{
-    display: inline-block; /* Đảm bảo hiển thị */
-    color: black; /* Đổi màu chữ về đen */
-    font-size: 1.5vh; /* Điều chỉnh kích thước chữ */
-    visibility: visible; /* Đảm bảo không bị ẩn */
-    margin-top:9vh;
-    margin-left:-11vw;
-    position:absolute
+    padding: 5px;
+    width:6vw;
+    border-radius: 10px;
+    border: 2px solid gray; /* Viền */
+    position: absolute;
+    margin-right:13.5vw;
+    
 }
 
-#khong_hop_le
+#Input_LoaiGiaHanLabel
 {
-    margin-top:9vh;
-    margin-left:5vw;
-    position:absolute
-}
-#khong_hop_le_label
-{
-    display: inline-block; /* Đảm bảo hiển thị */
-    color: black; /* Đổi màu chữ về đen */
-    font-size: 1.5vh; /* Điều chỉnh kích thước chữ */
-    visibility: visible; /* Đảm bảo không bị ẩn */
-    margin-top:9vh;
-    margin-left:12vw;
+    font-size:0.83vw;
+    position:absolute;
 }
 
 #Input_NgayDuThiCu
@@ -127,13 +111,13 @@ button {
     border-radius: 10px;
     border: 2px solid gray; /* Viền */
     position: absolute;
-    margin-top: 15vh;
-    margin-left:-13vw;
+    margin-top: 12vh;
+    margin-left:-13.5vw;
 }
 
 #NgayDuThiCu_label
 {
-    margin-top: 23vh;
+    margin-top: 20vh;
     margin-left:-13vw;
     font-size:0.83vw;
     position:absolute;
@@ -147,13 +131,13 @@ button {
     border-radius: 10px;
     border: 2px solid gray; /* Viền */
     position: absolute;
-    margin-top: 15vh;
+    margin-top: 12vh;
     margin-left:14vw;
 }
 
 #NgayDuThiMoi_label
 {
-    margin-top: 23vh;
+    margin-top: 20vh;
     margin-left:14vw;
     font-size:0.83vw;
     position:absolute;
@@ -161,7 +145,7 @@ button {
 #btn_XacNhan
 {
     position: absolute;
-    margin-top:40vh;
+    margin-top:36vh;
     margin-left:-15vw;
     background-color: #8860d0;
     color: white;
@@ -176,7 +160,7 @@ button {
 #btn_InPhieu
 {
     position: absolute;
-    margin-top:40vh;
+    margin-top:36vh;
     margin-left:-3.5vw;
     background-color: #8860d0;
     color: white;
@@ -191,7 +175,7 @@ button {
 #btn_GuiPhieuDenKeToan
 {
     position: absolute;
-    margin-top:40vh;
+    margin-top:36vh;
     margin-left:14vw;
     background-color: #8860d0;
     color: white;
