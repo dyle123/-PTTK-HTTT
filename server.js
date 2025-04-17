@@ -138,7 +138,7 @@ async function sqlQuery(query, params = {}) {
 // Cấu hình kết nối SQL Server
 // const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.1.9',
+//     server: '192.168.1.5',
 //     port: 1433, // Cổng SQL Server
 //     database: 'PTTK',
 //     user: 'dungluonghoang',
@@ -859,7 +859,7 @@ app.put('/api/updatePhieuGiaHan', async (req, res) => {
 });
 
 app.post('/api/lapPhieuGiaHan', async (req, res) => {
-    const { CCCD, MaPhieuDangKy, LiDoGiaHan, NgayThiCu, NgayThiMoi } = req.body;
+    const { CCCD, MaPhieuDangKy, LiDoGiaHan, LoaiGiaHan, NgayThiCu, NgayThiMoi } = req.body;
 
     try {
         const pool = await sql.connect(config);
@@ -867,6 +867,7 @@ app.post('/api/lapPhieuGiaHan', async (req, res) => {
             .input('CCCD', sql.Char(12), CCCD)
             .input('MaPhieuDangKy', sql.Int, MaPhieuDangKy)
             .input('LiDoGiaHan', sql.NVarChar(255), LiDoGiaHan)
+            .input('LoaiGiaHan', sql.NVarChar(12),LoaiGiaHan)
             .input('NgayThiCu', sql.Date, NgayThiCu)       // Là MaLichThi
             .input('NgayThiMoi', sql.Date, NgayThiMoi)     // Là MaLichThi
             .execute('LapPhieuGiaHan'); // gọi procedure bạn đã viết bên SQL
@@ -1249,5 +1250,26 @@ app.get('/api/getPhieuDangKyTD', async (req, res) => {
 });
 
 
+// route trong Express: /api/tao-lich-thi
+app.post('/api/tao-lich-thi', async (req, res) => {
+    const { ngayThi, gioThi, soLuong, loaiChungChi, phongThi } = req.body;
+
+    if (!ngayThi || !gioThi || !soLuong || !loaiChungChi || !phongThi) {
+        return res.status(400).json({ message: 'Thiếu thông tin bắt buộc.' });
+    }
+
+    const sql = `
+        INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    try {
+        await db.execute(sql, [ngayThi, gioThi, soLuong, phongThi, loaiChungChi]);
+        res.status(201).json({ message: 'Lịch thi đã được tạo thành công.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi ghi vào cơ sở dữ liệu.' });
+    }
+});
 
 

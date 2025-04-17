@@ -459,11 +459,18 @@ BEGIN
 END;
 GO
 
+select*from PhieuGiaHan
+delete from PhieuGiaHan where CCCD='987654321098'
+
+select*from ChiTietPhieuDangKy
+update ChiTietPhieuDangKy set SoLanGiaHan=0 where CCCD='987654321098'
+drop proc LapPhieuGiaHan
 
 Create procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
     @LiDoGiaHan nvarchar(255),
+	@LoaiGiaHan nvarchar(12),
     @NgayThiCu Date,
     @NgayThiMoi Date
 
@@ -496,6 +503,13 @@ BEGIN
         RAISERROR(N'Căn cước công dân không tồn tại.', 16, 1);
         return
     END
+	
+	IF(@LoaiGiaHan!=N'Hợp lệ' and @LoaiGiaHan!=N'Không hợp lệ')
+		BEGIN
+			RAISERROR(N'Loại gia hạn không hợp lệ',16,1)
+			return;
+		END
+
     IF NOT EXISTS (SELECT 1
     FROM LichThi
     WHERE NgayThi=@NgayThiCu)
@@ -537,9 +551,9 @@ BEGIN
 			ELSE			
 				BEGIN
             INSERT INTO PhieuGiaHan
-                (CCCD, MaPhieuDangKy,LiDoGiaHan, NgayThiCu, NgayThiMoi)
+                (CCCD, MaPhieuDangKy,LiDoGiaHan, LoaiGiaHan ,NgayThiCu, NgayThiMoi)
             VALUES
-                (@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @NgayCu, @NgayMoi);
+                (@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan,@NgayCu, @NgayMoi);
 
             UPDATE PhieuDuThi
 					SET LichThi=@NgayMoi
@@ -556,6 +570,10 @@ BEGIN
     END
 END
 go
+
+select*from ChiTietPhieuDangKy
+
+update ChiTietPhieuDangKy set SoLanGiaHan=0 where CCCD='987654321098'
 
 CREATE TRIGGER trg_KiemTraMaPhieuDangKy
 ON PhieuGiaHan
