@@ -70,8 +70,10 @@ insert into PhieuDuThi (SoBaoDanh, CCCD, TrangThai, LichThi) values ('0909090909
 --nu
 
 Select*from PhieuDangKy
-
+select* from KhachHang
 Select*from ThiSinh
+update LichThi
+set SoLuongDangKy = 1
 
 
 
