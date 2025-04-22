@@ -29,7 +29,7 @@ h1 {
 
 #inputForm {
     position: absolute;
-    top: 35%;  /* Đặt vị trí xuống dưới để không bị che */
+    top: 37%;  /* Đặt vị trí xuống dưới để không bị che */
     left: 25%;
     transform: translateX(-50%);
     display: flex;
@@ -51,8 +51,8 @@ h1 {
 
 #chooseForm {
     position: absolute;
-    top: 37%;  /* Đặt vị trí xuống dưới để không bị che */
-    left: 75%;
+    top: 35%;  /* Đặt vị trí xuống dưới để không bị che */
+    left: 73%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;

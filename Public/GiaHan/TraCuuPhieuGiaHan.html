@@ -43,33 +43,33 @@
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/GiaHan.js"></script>
     <script>
+        window.onload = fetchData;
         async function fetchData() {
             const cccd = document.getElementById('search-box').value.trim();
             const tableBody = document.getElementById('table-body');
             tableBody.innerHTML = ''; // Xóa dữ liệu cũ
 
-            if (!cccd) {
-                alert('Vui lòng nhập CCCD!');
-                return;
-            }
-
             try {
-                const response = await fetch(`/api/getPhieuGiaHan?cccd=${cccd}`);
+                const response = await fetch('/api/getPhieuGiaHan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({CCCD: cccd}),
+                });
+
                 const data = await response.json();
 
-                // Trường hợp lỗi từ backend (ví dụ: RAISERROR từ SQL Server)
                 if (!response.ok || data.error) {
                     tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">${data.error || 'Lỗi không xác định'}</td></tr>`;
                     return;
                 }
 
-                // Trường hợp không có dữ liệu
                 if (data.length === 0) {
                     tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Không tìm thấy dữ liệu</td></tr>`;
                     return;
                 }
 
-                // Trường hợp có dữ liệu, hiển thị
                 const rows = data.map(item => `
                     <tr>
                         <td>${item.CCCD}</td>

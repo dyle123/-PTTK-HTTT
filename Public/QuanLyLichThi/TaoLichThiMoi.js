@@ -1,29 +1,116 @@
+async function layDanhSachChungChi() {
+    try {
+        const response = await fetch('/api/getLoaiChungChi');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Dữ liệu JSON nhận được:', data);
+        const selectLoaiChungChi = document.getElementById('loaiChungChi');
+
+        selectLoaiChungChi.innerHTML = '<option value="">Chọn loại chứng chỉ</option>';
+
+        data.forEach(chungChi => {
+            console.log('Đang xử lý chứng chỉ:', chungChi);
+            const option = document.createElement('option');
+            option.value = chungChi.MaLoaiChungChi;
+            option.textContent = chungChi.TenChungChi;
+            selectLoaiChungChi.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách chứng chỉ:', error);
+    }
+}
+
+async function layDanhSachPhongThi() {
+    try {
+        const response = await fetch('/api/phongthi'); // Gọi API mà không có tham số query
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const selectPhongThi = document.getElementById('phongThi');
+
+        selectPhongThi.innerHTML = '<option value="">Chọn phòng thi</option>';
+
+        data.forEach(phongThi => {
+            const option = document.createElement('option');
+            option.value = phongThi.MaPhongThi;
+            option.textContent = `Phòng ${phongThi.MaPhongThi} (Sức chứa: ${phongThi.SucChuaToiDa})`;
+            selectPhongThi.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách phòng thi:', error);
+    }
+}
+
+async function layDanhSachNhanVien() {
+    try {
+        const response = await fetch('/api/nhanvien'); // **CẦN THAY THẾ BẰNG URL API THỰC TẾ**
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const selectNhanVien = document.getElementById('nhanVien');
+
+        // Xóa các option cũ (nếu có)
+        selectNhanVien.innerHTML = '<option value="">Chọn nhân viên</option>';
+
+        data.forEach(nhanVien => {
+            const option = document.createElement('option');
+            option.value = nhanVien.MaNhanVien;
+            option.textContent = nhanVien.HoTen;
+            selectNhanVien.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách nhân viên:', error);
+    }
+}
 document.addEventListener('DOMContentLoaded', () => {
+    layDanhSachChungChi();
+    layDanhSachPhongThi();
+    layDanhSachNhanVien();
+
     const submitBtn = document.getElementById('submit-btn');
     const cancelBtn = document.getElementById('cancel-btn');
+    const gioThiInput = document.getElementById('gioThi'); // Lấy tham chiếu đến input giờ thi
 
     submitBtn.addEventListener('click', async (e) => {
         e.preventDefault();
 
         const ngayThi = document.getElementById('ngayThi').value;
-        const gioThi = document.getElementById('gioThi').value;
-        const soLuong = parseInt(document.getElementById('soLuong').value);
+        let gioThi = gioThiInput.value; // Lấy giá trị từ input type='time'
+
+        // Đảm bảo định dạng HH:mm:ss
+        if (gioThi && gioThi.split(':').length === 2) {
+            gioThi += ':00'; // Thêm giây nếu chỉ có giờ và phút
+        } else if (!gioThi) {
+            alert("Vui lòng chọn giờ thi.");
+            return;
+        }
+
         const loaiChungChi = parseInt(document.getElementById('loaiChungChi').value);
         const phongThi = parseInt(document.getElementById('phongThi').value);
 
-        if (!ngayThi || !gioThi || !soLuong || !loaiChungChi || !phongThi) {
-            alert("Vui lòng điền đầy đủ thông tin.");
+        console.log('ngayThi:', ngayThi);
+        console.log('gioThi (đã xử lý):', gioThi);
+        console.log('loaiChungChi:', loaiChungChi);
+        console.log('phongThi:', phongThi);
+
+        if (!ngayThi || !gioThi || isNaN(loaiChungChi) || isNaN(phongThi)) {
+            alert("Vui lòng điền đầy đủ thông tin ngày thi, giờ thi, loại chứng chỉ và phòng thi.");
             return;
         }
 
         const data = {
-            ngayThi,
-            gioThi,
-            soLuong,
-            loaiChungChi,
-            phongThi
+            ngayThi: ngayThi,
+            gioThi: gioThi,
+            loaiChungChi: loaiChungChi,
+            phongThi: phongThi,
+            SoLuongDangKy: 0
         };
 
+        console.log('Dữ liệu gửi đi:', data);
         try {
             const response = await fetch('/api/tao-lich-thi', {
                 method: 'POST',
@@ -37,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('Tạo lịch thi thành công!');
-                location.reload(); // hoặc redirect đến trang khác
+                location.reload();
             } else {
                 alert(`Lỗi: ${result.message}`);
             }

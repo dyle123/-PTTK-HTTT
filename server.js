@@ -31,40 +31,40 @@ app.use(session({
 
 
 
-const config = {
-    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'sa',
-    password: '1928374650Vy',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
-async function sqlQuery(query, params = {}) {
-    try {
-        const pool = await sql.connect({
-            user: 'sa',
-            password: '12345678',
-            database: 'PTTK',
-            server: 'localhost',
-            options: { encrypt: false, trustServerCertificate: true }
-        });
- 
-        const request = pool.request();
-        for (const param in params) {
-            request.input(param, params[param]);
-        }
- 
-      const result = await request.query(query);
-        return result.recordset;
-    } catch (error) {
-        console.error("❌ Lỗi SQL:", error);
-        throw error;
-    }
- }
+// const config = {
+//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'sa',
+//     password: '1928374650Vy',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
+// async function sqlQuery(query, params = {}) {
+//     try {
+//         const pool = await sql.connect({
+//             user: 'sa',
+//             password: '12345678',
+//             database: 'PTTK',
+//             server: 'localhost',
+//             options: { encrypt: false, trustServerCertificate: true }
+//         });
+
+//         const request = pool.request();
+//         for (const param in params) {
+//             request.input(param, params[param]);
+//         }
+
+//         const result = await request.query(query);
+//         return result.recordset;
+//     } catch (error) {
+//         console.error("❌ Lỗi SQL:", error);
+//         throw error;
+//     }
+// }
 
 
 
@@ -135,20 +135,20 @@ async function sqlQuery(query, params = {}) {
 //     },
 // };
 
-// Cấu hình kết nối SQL Server
-// const config = {
-//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.1.5',
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'dungluonghoang',
-//     password: 'teuklee1983#',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
+//Cấu hình kết nối SQL Server
+const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.1.5',
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'dungluonghoang',
+    password: 'teuklee1983#',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 
 
@@ -206,7 +206,7 @@ app.post('/create-payment-link', async (req, res) => {
         await sqlQuery(`
             INSERT INTO Payments (OrderCode, MaPhieuDangKy, PaymentLink, TrangThai, QRCode) 
             VALUES (@OrderCode, @MaPhieuDangKy, @PaymentLink, 'pending', @QRCode)
-        `, {orderCode, MaPhieuDangKy, PaymentLink: paymentLink.checkoutUrl, QRCode: paymentLink.qrCode });
+        `, { orderCode, MaPhieuDangKy, PaymentLink: paymentLink.checkoutUrl, QRCode: paymentLink.qrCode });
 
         res.json({
             url: paymentLink.checkoutUrl,
@@ -379,99 +379,99 @@ app.get('/api/getCurrentUser', (req, res) => {
     res.json({ user: req.session.user.id, role: req.session.user.role });
 });
 app.post('/api/dangky', async (req, res) => {
-  const {
-    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
-    LoaiChungChi,
-    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
-  } = req.body;
+    const {
+        TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
+        LoaiChungChi,
+        TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS
+    } = req.body;
 
-  try {
-    const pool = await sql.connect(config);
+    try {
+        const pool = await sql.connect(config);
 
-    await pool.request()
-      .input('TenKH', sql.NVarChar(50), TenKH)
-      .input('EmailKH', sql.NVarChar(100), EmailKH)
-      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
-      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
-      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
+        await pool.request()
+            .input('TenKH', sql.NVarChar(50), TenKH)
+            .input('EmailKH', sql.NVarChar(100), EmailKH)
+            .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
+            .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
+            .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
 
-      .input('LoaiChungChi', sql.Int, LoaiChungChi)
+            .input('LoaiChungChi', sql.Int, LoaiChungChi)
 
-      .input('TenTS', sql.NVarChar(50), TenTS)
-      .input('CCCDTS', sql.Char(12), CCCDTS)
-      .input('NgaySinh', sql.Date, NgaySinh)
-      .input('EmailTS', sql.NVarChar(100), EmailTS)
-      .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
-      .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
+            .input('TenTS', sql.NVarChar(50), TenTS)
+            .input('CCCDTS', sql.Char(12), CCCDTS)
+            .input('NgaySinh', sql.Date, NgaySinh)
+            .input('EmailTS', sql.NVarChar(100), EmailTS)
+            .input('SoDienThoaiTS', sql.Char(10), SoDienThoaiTS)
+            .input('DiaChiTS', sql.NVarChar(255), DiaChiTS)
 
-      .execute('TaoPhieuDangKy');
+            .execute('TaoPhieuDangKy');
 
-    // Lấy mã phiếu đăng ký mới nhất
-    const result = await pool.request()
-      .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
+        // Lấy mã phiếu đăng ký mới nhất
+        const result = await pool.request()
+            .query('SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC');
 
-    const maPhieuDangKy = result.recordset[0]?.MaPhieuDangKy;
+        const maPhieuDangKy = result.recordset[0]?.MaPhieuDangKy;
 
-    res.status(200).json({
-      message: 'Đăng ký thành công!',
-      maPhieuDangKy
-    });
+        res.status(200).json({
+            message: 'Đăng ký thành công!',
+            maPhieuDangKy
+        });
 
-  } catch (err) {
-    console.error('❌ Lỗi khi đăng ký:', err);
-    res.status(500).json({ error: err.message });
-  }
+    } catch (err) {
+        console.error('❌ Lỗi khi đăng ký:', err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.post('/api/xacNhanLichThi', async (req, res) => {
-  const { maPhieuDangKy, maLichThi } = req.body;
+    const { maPhieuDangKy, maLichThi } = req.body;
 
-  const transaction = new sql.Transaction();
+    const transaction = new sql.Transaction();
 
-  try {
-    await transaction.begin();
-    const request = new sql.Request(transaction);
+    try {
+        await transaction.begin();
+        const request = new sql.Request(transaction);
 
-    // Cập nhật phiếu đăng ký: gán mã lịch thi vào phiếu đã tạo
-    await request
-      .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
-      .input('MaLichThi', sql.Int, maLichThi)
-      .query(`
+        // Cập nhật phiếu đăng ký: gán mã lịch thi vào phiếu đã tạo
+        await request
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .input('MaLichThi', sql.Int, maLichThi)
+            .query(`
         UPDATE PhieuDangKy
         SET LichThi = @MaLichThi
         WHERE MaPhieuDangKy = @MaPhieuDangKy
       `);
 
-    // Tăng số lượng đăng ký trong bảng LichThi
-    await request
-      .query(`
+        // Tăng số lượng đăng ký trong bảng LichThi
+        await request
+            .query(`
         UPDATE LichThi
         SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
         WHERE MaLichThi = ${maLichThi}
       `);
 
-    // Lấy mã phòng thi tương ứng để cập nhật số lượng
-    const phongResult = await request.query(`
+        // Lấy mã phòng thi tương ứng để cập nhật số lượng
+        const phongResult = await request.query(`
       SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${maLichThi}
     `);
 
-    const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
-    if (maPhongThi) {
-      await request.query(`
+        const maPhongThi = phongResult.recordset[0]?.MaPhongThi;
+        if (maPhongThi) {
+            await request.query(`
         UPDATE PhongThi
         SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
         WHERE MaPhongThi = ${maPhongThi}
       `);
+        }
+
+        await transaction.commit();
+        res.json({ message: "✅ Cập nhật lịch thi và phòng thi thành công!" });
+
+    } catch (err) {
+        await transaction.rollback();
+        console.error("❌ Lỗi khi xác nhận lịch thi:", err);
+        res.status(500).json({ error: err.message });
     }
-
-    await transaction.commit();
-    res.json({ message: "✅ Cập nhật lịch thi và phòng thi thành công!" });
-
-  } catch (err) {
-    await transaction.rollback();
-    console.error("❌ Lỗi khi xác nhận lịch thi:", err);
-    res.status(500).json({ error: err.message });
-  }
 });
 
 app.get('/api/getPhieuDangKy', async (req, res) => {
@@ -530,9 +530,9 @@ app.get('/api/getPhieuDangKy', async (req, res) => {
 
 
 app.get('/api/getPhieuDuThi', async (req, res) => {
-    const {dieuKien, ngayThi, loaiChungChi, CCCD} = req.query;
+    const { dieuKien, ngayThi, loaiChungChi, CCCD } = req.query;
     console.log('Điều kiện nhận vào:', dieuKien, ngayThi, loaiChungChi, CCCD);
-    
+
     try {
         const pool = await sql.connect(config);
         let query = `
@@ -548,7 +548,7 @@ app.get('/api/getPhieuDuThi', async (req, res) => {
             JOIN LichThi LT ON PDT.LichThi = LT.MaLichThi
             JOIN BangGiaThi BG ON LT.LoaiChungChi = BG.MaLoaiChungChi
         `;
-        
+
         let conditions = [];
         const request = pool.request();
 
@@ -585,7 +585,7 @@ app.get('/api/getPhieuDuThi', async (req, res) => {
         // Thêm WHERE nếu có điều kiện
         if (conditions.length > 0) {
             query += ' WHERE ' + conditions.join(' AND ');
-            
+
         }
 
         // Thực thi query
@@ -767,45 +767,44 @@ app.post('/api/TraCuuSoLanGiaHan', async (req, res) => {
 
     try {
         const pool = await sql.connect(config);
-        const result = await pool.request()
-            .input('CCCD', sql.Char(12), CCCD)
-            .input('NgayThi', sql.Date, NgayThi)
-            .execute('TraCuuSoLanGiaHan');
+        const request = pool.request();
 
-        res.json(result.recordset);
+        if (CCCD && NgayThi) {
+            // Có lọc
+            request.input('CCCD', sql.Char(12), CCCD);
+            request.input('NgayThi', sql.Date, NgayThi);
+            const result = await request.execute('TraCuuSoLanGiaHan');
+            res.json(result.recordset);
+        } else {
+            // Không lọc => lấy toàn bộ dữ liệu
+            const result = await request.execute('DocToanBoChiTietPhieuDangKy');
+            res.json(result.recordset);
+        }
     } catch (err) {
-        // Lấy message gốc của RAISERROR
         res.status(400).json({ error: err.originalError?.message || err.message });
     }
 });
 
 
 //API TraCuuPhieuGiaHan
-app.get('/api/getPhieuGiaHan', async (req, res) => {
-    const { cccd } = req.query;
-
-    if (!cccd) {
-        return res.status(400).json({ error: 'CCCD là bắt buộc' });
-    }
+app.post('/api/getPhieuGiaHan', async (req, res) => {
+    const { CCCD } = req.body;
 
     try {
         const pool = await sql.connect(config);
-        const result = await pool.request()
-            .input('CCCD', sql.Char(12), cccd) // CCCD truyền vào
-            .execute('TraCuuPhieuGiaHan'); // gọi thủ tục
+        const request = pool.request();
 
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ error: 'Không có dữ liệu phiếu gia hạn.' });
+        if (CCCD) {
+            request.input('CCCD', sql.Char(12), CCCD);
+            const result = await request.execute('TraCuuPhieuGiaHan');
+            res.json(result.recordset);
+        } else {
+            const result = await request.execute('DocToanBoPhieuGiaHan');
+            res.json(result.recordset);
         }
-
-        res.json(result.recordset);
-
     } catch (err) {
-        console.error('Lỗi khi gọi stored procedure:', err);
-
-        // Lấy message từ RAISERROR trong SQL Server
+        console.error('Lỗi khi gọi SP TraCuuPhieuGiaHan:', err);
         const sqlError = err.originalError?.info?.message || err.message;
-
         res.status(500).json({ error: `Lỗi: ${sqlError}` });
     }
 });
@@ -867,7 +866,7 @@ app.post('/api/lapPhieuGiaHan', async (req, res) => {
             .input('CCCD', sql.Char(12), CCCD)
             .input('MaPhieuDangKy', sql.Int, MaPhieuDangKy)
             .input('LiDoGiaHan', sql.NVarChar(255), LiDoGiaHan)
-            .input('LoaiGiaHan', sql.NVarChar(12),LoaiGiaHan)
+            .input('LoaiGiaHan', sql.NVarChar(12), LoaiGiaHan)
             .input('NgayThiCu', sql.Date, NgayThiCu)       // Là MaLichThi
             .input('NgayThiMoi', sql.Date, NgayThiMoi)     // Là MaLichThi
             .execute('LapPhieuGiaHan'); // gọi procedure bạn đã viết bên SQL
@@ -929,7 +928,7 @@ app.get('/api/getLichThi', async (req, res) => {
             if (!timeValue) return null;
             return timeValue.toISOString().split('T')[1].slice(0, 8); // Lấy HH:mm:ss
         };
-        
+
 
 
         const formattedData = result.recordset.map(row => ({
@@ -973,10 +972,10 @@ app.post('/api/xoaPayment', async (req, res) => {
     }
 });
 
-app.get('/api/getNgayThi', async (req,res)=>{
-    const {maLichThi} = req.query;
+app.get('/api/getNgayThi', async (req, res) => {
+    const { maLichThi } = req.query;
     console.log('Lich thi nhan vao: ', maLichThi);
-    try{
+    try {
         const pool = await sql.connect(config);
         const result = await pool.request()
             .input('MaLichThi', sql.Int, maLichThi)
@@ -984,21 +983,21 @@ app.get('/api/getNgayThi', async (req,res)=>{
             select NgayThi from LichThi where MaLichThi = @MaLichThi
             `)
         res.json(result);
-    }catch{
+    } catch {
         console.error('❌ Lỗi lay ngay thi', err);
         res.status(500).json({ error: 'Lỗi server' });
     }
 });
 
-app.get('/api/postTaoPhieuDuThi', async (req,res)=>{
-    const {maPhieuDangKy} = req.body;
-    try{
+app.get('/api/postTaoPhieuDuThi', async (req, res) => {
+    const { maPhieuDangKy } = req.body;
+    try {
         const pool = await sql.connect(config);
         const result = await pool.request()
             .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
             .execute(`PHATHANHPHIEUDUTHI`);
         res.json(result);
-    }catch(err){
+    } catch (err) {
         console.error('❌ Lỗi tao phieu du thi', err);
         res.status(500).json({ error: 'Lỗi server' });
     }
@@ -1007,13 +1006,13 @@ app.get('/api/postTaoPhieuDuThi', async (req,res)=>{
 
 
 app.get('/api/getLoaiChungChi', async (req, res) => {
-    try{
+    try {
         const pool = await sql.connect(config);
         const result = await pool.request()
             .query(`SELECT * FROM BangGiaThi`);
 
         res.json(result.recordset);
-    }catch(err){
+    } catch (err) {
         console.error('❌ Lỗi lay bang gia thi', err);
         res.status(500).json({ error: 'Lỗi server' });
     }
@@ -1024,24 +1023,24 @@ app.get('/api/getLoaiChungChi', async (req, res) => {
 
 app.post('/api/updateTrangThaiPhieuDuThi', async (req, res) => {
     const { sbd } = req.body;
-    
+
     try {
         const pool = await sql.connect(config);
         const request = pool.request();
-        
+
         request.input('SoBaoDanh', sql.VarChar(12), sbd);
-        
+
         const query = `
             UPDATE PhieuDuThi 
             SET TrangThai = 1 
             WHERE SoBaoDanh = @SoBaoDanh
         `;
-        
+
         await request.query(query);
         if (result.rowsAffected[0] === 0) {
             throw new Error('Không tìm thấy phiếu dự thi');
         }
-        
+
         res.json({ success: true });
     } catch (err) {
         console.error('❌ Lỗi cập nhật trạng thái phiếu:', err);
@@ -1049,85 +1048,85 @@ app.post('/api/updateTrangThaiPhieuDuThi', async (req, res) => {
     }
 });
 app.post('/api/dangkyFull', async (req, res) => {
-  const {
-    TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
-    TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS,
-    LoaiChungChi, MaLichThi
-  } = req.body;
+    const {
+        TenKH, EmailKH, SoDienThoaiKH, DiaChiKH, LoaiKhachHang,
+        TenTS, CCCDTS, NgaySinh, EmailTS, SoDienThoaiTS, DiaChiTS,
+        LoaiChungChi, MaLichThi
+    } = req.body;
 
-  const transaction = new sql.Transaction();
+    const transaction = new sql.Transaction();
 
-  try {
-    await transaction.begin();
-    const request = new sql.Request(transaction);
+    try {
+        await transaction.begin();
+        const request = new sql.Request(transaction);
 
-    // 1. Thêm Khách Hàng
-    await request
-      .input('TenKH', sql.NVarChar(50), TenKH)
-      .input('EmailKH', sql.VarChar(60), EmailKH)
-      .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
-      .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
-      .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
-      .query(`
+        // 1. Thêm Khách Hàng
+        await request
+            .input('TenKH', sql.NVarChar(50), TenKH)
+            .input('EmailKH', sql.VarChar(60), EmailKH)
+            .input('SoDienThoaiKH', sql.Char(10), SoDienThoaiKH)
+            .input('DiaChiKH', sql.NVarChar(255), DiaChiKH)
+            .input('LoaiKhachHang', sql.NVarChar(20), LoaiKhachHang)
+            .query(`
         INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
         VALUES (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang)
       `);
 
-    const maKHResult = await request.query(`SELECT TOP 1 MaKhachHang FROM KhachHang ORDER BY MaKhachHang DESC`);
-    const maKH = maKHResult.recordset[0].MaKhachHang;
+        const maKHResult = await request.query(`SELECT TOP 1 MaKhachHang FROM KhachHang ORDER BY MaKhachHang DESC`);
+        const maKH = maKHResult.recordset[0].MaKhachHang;
 
-    // 2. Thêm Thí Sinh nếu chưa có
-    await request.input('CCCDTS', sql.Char(12), CCCDTS);
-    const tsCheck = await request.query(`SELECT * FROM ThiSinh WHERE CCCD = @CCCDTS`);
-    if (tsCheck.recordset.length === 0) {
-      await request.query(`
+        // 2. Thêm Thí Sinh nếu chưa có
+        await request.input('CCCDTS', sql.Char(12), CCCDTS);
+        const tsCheck = await request.query(`SELECT * FROM ThiSinh WHERE CCCD = @CCCDTS`);
+        if (tsCheck.recordset.length === 0) {
+            await request.query(`
         INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
         VALUES ('${CCCDTS}', N'${TenTS}', '${NgaySinh}', '${EmailTS}', '${SoDienThoaiTS}', N'${DiaChiTS}')
       `);
-    }
+        }
 
-    // 3. Thêm Phiếu Đăng Ký
-    await request
-      .input('LoaiChungChi', sql.Int, LoaiChungChi)
-      .input('MaKH', sql.Int, maKH)
-      .input('MaLichThi', sql.Int, MaLichThi)
-      .query(`
+        // 3. Thêm Phiếu Đăng Ký
+        await request
+            .input('LoaiChungChi', sql.Int, LoaiChungChi)
+            .input('MaKH', sql.Int, maKH)
+            .input('MaLichThi', sql.Int, MaLichThi)
+            .query(`
         INSERT INTO PhieuDangKy (LoaiChungChi, MaKhachHang, NgayDangKy, LichThi)
         VALUES (@LoaiChungChi, @MaKH, GETDATE(), @MaLichThi)
       `);
 
-    const maPhieuRes = await request.query(`SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC`);
-    const maPhieu = maPhieuRes.recordset[0].MaPhieuDangKy;
+        const maPhieuRes = await request.query(`SELECT TOP 1 MaPhieuDangKy FROM PhieuDangKy ORDER BY MaPhieuDangKy DESC`);
+        const maPhieu = maPhieuRes.recordset[0].MaPhieuDangKy;
 
-    // 4. Chi tiết phiếu
-    await request.query(`
+        // 4. Chi tiết phiếu
+        await request.query(`
       INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
       VALUES (${maPhieu}, '${CCCDTS}')
     `);
 
-    // 5. Cập nhật số lượng lịch thi + phòng
-    const phongRes = await request.query(`SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${MaLichThi}`);
-    const maPhongThi = phongRes.recordset[0]?.MaPhongThi;
+        // 5. Cập nhật số lượng lịch thi + phòng
+        const phongRes = await request.query(`SELECT MaPhongThi FROM LichThi WHERE MaLichThi = ${MaLichThi}`);
+        const maPhongThi = phongRes.recordset[0]?.MaPhongThi;
 
-    await request.query(`
+        await request.query(`
       UPDATE LichThi SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + 1
       WHERE MaLichThi = ${MaLichThi}
     `);
 
-    if (maPhongThi) {
-      await request.query(`
+        if (maPhongThi) {
+            await request.query(`
         UPDATE PhongThi SET SoLuongHienTai = ISNULL(SoLuongHienTai, 0) + 1
         WHERE MaPhongThi = ${maPhongThi}
       `);
-    }
+        }
 
-    await transaction.commit();
-    res.json({ message: '✅ Đăng ký thành công!', maPhieuDangKy: maPhieu });
-  } catch (err) {
-    await transaction.rollback();
-    console.error("❌ Lỗi trong /api/dangkyFull:", err);
-    res.status(500).json({ error: 'Lỗi server khi đăng ký' });
-  }
+        await transaction.commit();
+        res.json({ message: '✅ Đăng ký thành công!', maPhieuDangKy: maPhieu });
+    } catch (err) {
+        await transaction.rollback();
+        console.error("❌ Lỗi trong /api/dangkyFull:", err);
+        res.status(500).json({ error: 'Lỗi server khi đăng ký' });
+    }
 });
 app.get('/api/test-db', async (req, res) => {
     try {
@@ -1249,27 +1248,84 @@ app.get('/api/getPhieuDangKyTD', async (req, res) => {
     }
 });
 
-
-// route trong Express: /api/tao-lich-thi
 app.post('/api/tao-lich-thi', async (req, res) => {
-    const { ngayThi, gioThi, soLuong, loaiChungChi, phongThi } = req.body;
+    const { ngayThi, gioThi, loaiChungChi, phongThi } = req.body;
 
-    if (!ngayThi || !gioThi || !soLuong || !loaiChungChi || !phongThi) {
+    console.log('Dữ liệu nhận được từ client:', { ngayThi, gioThi, loaiChungChi, phongThi }); // Log toàn bộ dữ liệu
+
+    if (!ngayThi || !gioThi || !loaiChungChi || !phongThi) {
         return res.status(400).json({ message: 'Thiếu thông tin bắt buộc.' });
     }
 
-    const sql = `
-        INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi)
-        VALUES (?, ?, ?, ?, ?)
+    const sqlQuery = `
+        INSERT INTO LichThi (NgayThi, GioThi, MaPhongThi, LoaiChungChi)
+        VALUES (?, ?, ?, ?)
     `;
 
+    let pool;
+
     try {
-        await db.execute(sql, [ngayThi, gioThi, soLuong, phongThi, loaiChungChi]);
+        pool = await sql.connect(config);
+
+        console.log('Kiểu dữ liệu của các tham số trước khi input:');
+        console.log('ngayThi:', typeof ngayThi, ngayThi);
+        console.log('gioThi:', typeof gioThi, gioThi);
+        console.log('phongThi:', typeof phongThi, phongThi);
+        console.log('loaiChungChi:', typeof loaiChungChi, loaiChungChi);
+
+        const result = await pool.request()
+            .input(1, sql.Date, ngayThi)
+            .input(2, sql.Time, gioThi)
+            .input(3, sql.Int, phongThi)
+            .input(4, sql.Int, loaiChungChi)
+            .query(sqlQuery);
+
         res.status(201).json({ message: 'Lịch thi đã được tạo thành công.' });
+
     } catch (error) {
-        console.error(error);
+        console.error('Lỗi khi ghi vào cơ sở dữ liệu:', error);
         res.status(500).json({ message: 'Lỗi khi ghi vào cơ sở dữ liệu.' });
+
+    } finally {
+        if (pool) {
+            try {
+                await pool.close();
+                console.log('Đã đóng connection pool cho API tạo lịch thi.');
+            } catch (err) {
+                console.error('Lỗi khi đóng connection pool:', err);
+            }
+        }
+
+    };
+});
+
+app.get('/api/nhanvien', async (req, res) => {
+    const { query } = req.query;
+    try {
+        let sqlQuery = `SELECT MaNhanVien, HoTen FROM NhanVien`;
+        if (query) {
+            sqlQuery += ` WHERE HoTen LIKE N'%${query}%'`;
+        }
+        const result = await sql.query(sqlQuery);
+        res.json(result.recordset);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Lỗi khi lấy nhân viên');
     }
 });
 
+app.get('/api/phongthi', async (req, res) => {
+    const { query } = req.query;
+    try {
+        let sqlQuery = `SELECT MaPhongThi, SucChuaToiDa FROM PhongThi`;
+        if (query) {
+            sqlQuery += ` WHERE CAST(MaPhongThi AS NVARCHAR) LIKE N'%${query}%'`;
+        }
+        const result = await sql.query(sqlQuery);
+        res.json(result.recordset);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Lỗi khi lấy phòng thi');
+    }
+});
 

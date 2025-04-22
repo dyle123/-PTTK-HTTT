@@ -38,41 +38,32 @@
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/GiaHan.js"></script>
     <script>
+        window.onload = fetchData;
         async function fetchData() {
             const cccd = document.getElementById("search-box").value.trim();
             const date = document.getElementById("date-box").value;
 
-            if (!cccd || !date) {
-                alert("Vui lòng nhập đầy đủ CCCD và ngày thi.");
-                return;
-            }
-
             try {
                 const response = await fetch('/api/TraCuuSoLanGiaHan', {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ CCCD: cccd, NgayThi: date })
                 });
 
                 const result = await response.json();
 
-                // Nếu API trả lỗi
                 if (!response.ok) {
                     alert("Lỗi: " + result.error);
                     return;
                 }
 
-                // Nếu không có dữ liệu
-                if (result.length === 0) {
-                    alert("Không tìm thấy dữ liệu.");
-                    return;
-                }
-
-                // Hiển thị kết quả
                 const tableBody = document.getElementById("table-body");
                 tableBody.innerHTML = "";
+
+                if (result.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='4'>Không tìm thấy dữ liệu.</td></tr>";
+                    return;
+                }
 
                 result.forEach(row => {
                     tableBody.innerHTML += `
