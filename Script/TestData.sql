@@ -73,8 +73,9 @@ Select*from PhieuDangKy
 
 Select*from ThiSinh
 
-
-
+select*from PhongThi
+select*from BangGiaThi
+SELECT MaLoaiChungChi, TenChungChi FROM BangGiaThi
 Select *from ChiTietPhieuDangKy
 
 UPDATE ChiTietPhieuDangKy SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
@@ -128,3 +129,8 @@ VALUES
 
 delete from PhieuGiaHan
 WHERE CCCD='123456789012'
+
+INSERT INTO LichThi (NgayThi, GioThi, MaPhongThi, LoaiChungChi)
+VALUES ('2025-05-09', '10:03:30', 1, 1); -- Thay thế bằng giá trị thực tế của bạn
+
+select* from LichThi

@@ -26,22 +26,13 @@
 
         <div class="form-group">
             <label for="gioThi">Giờ thi</label>
-            <input type="text" id="gioThi" placeholder="HH:MM:SS" pattern="\d{2}:\d{2}:\d{2}"
-                onfocus="this.type='time'; this.setAttribute('step', '1'); this.removeAttribute('value')"
-                onblur="this.type='text'">
-        </div>
-
-        <div class="form-group">
-            <label for="soLuong">Số lượng thí sinh</label>
-            <input type="number" id="soLuong" min="1" required>
+            <input type="time" id="gioThi" step="1">
         </div>
 
         <div class="form-group">
             <label for="loaiChungChi">Loại chứng chỉ</label>
             <select id="loaiChungChi">
                 <option value="">Chọn loại chứng chỉ</option>
-                <option value="1">Ielts</option>
-                <option value="2">Toeic</option>
             </select>
         </div>
 
@@ -53,9 +44,6 @@
             <label for="phongThi" class="special-label">Xếp phòng thi</label>
             <select id="phongThi">
                 <option value="">Chọn phòng thi</option>
-                <option value="101">Phòng 101</option>
-                <option value="102">Phòng 102</option>
-                <option value="103">Phòng 103</option>
             </select>
         </div>
 
@@ -63,9 +51,6 @@
             <label for="nhanVien" class="special-label">Xếp nhân viên gác thi</label>
             <select id="nhanVien">
                 <option value="">Chọn nhân viên</option>
-                <option value="NV01">Nguyễn Văn A</option>
-                <option value="NV02">Trần Thị B</option>
-                <option value="NV03">Lê Văn C</option>
             </select>
         </div>
     </form>
