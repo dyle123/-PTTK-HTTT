@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ghi nhận thông tin đăng ký</title>
+    <script src="/DangNhap/Navbar.js"></script>
+    <link href="/CSS/DangKyDonVi.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div class="main-content">
+        <h1>Ghi nhận thông tin đăng ký</h1>
+        <div class="form-container">
+            <div class="card">
+                <h2>Điền thông tin khách hàng</h2>
+                <div class="input-group">
+                    <div class="form-field">
+                        <label for="khach-ho-ten">Họ tên</label>
+                        <input id="khach-ho-ten" placeholder="Họ tên đầy đủ của khách hàng" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-dia-chi">Địa chỉ</label>
+                        <input id="khach-dia-chi" placeholder="Địa chỉ" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-sdt">Số điện thoại</label>
+                        <input id="khach-sdt" placeholder="Số điện thoại" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-email">Email</label>
+                        <input id="khach-email" placeholder="Email" type="email" />
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Điền thông tin thí sinh</h2>
+                <div class="input-group">
+                    <div class="form-field">
+                        <label for="thisinh-ho-ten">Họ tên</label>
+                        <input id="thisinh-ho-ten" placeholder="Họ tên thí sinh" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-cccd">Số căn cước công dân</label>
+                        <input id="thisinh-cccd" placeholder="Số căn cước công dân" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-sdt">Số điện thoại</label>
+                        <input id="thisinh-sdt" placeholder="Số điện thoại" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-email">Email</label>
+                        <input id="thisinh-email" placeholder="Email" type="email" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-diachi">Địa chỉ</label>
+                        <input id="thisinh-diachi" placeholder="Địa chỉ" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-ngaysinh">Ngày sinh</label>
+                        <input id="thisinh-ngaysinh" type="date" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Giao diện chọn lịch thi -->
+            <div class="card">
+                <h2>Chọn lịch thi</h2>
+                <div class="filter-container">
+                    <label><input checked id="filter-all" name="filter" type="radio" value="all" /> Tất cả</label>
+                    <label><input name="filter" type="radio" value="ngaythi" /> Ngày thi</label>
+                    <label><input name="filter" type="radio" value="giothi" /> Giờ thi</label>
+                    <label><input name="filter" type="radio" value="loaichungchi" /> Loại chứng chỉ</label>
+                    <input id="search-box" placeholder="Tìm theo mã lịch thi" type="text" />
+                    <button id="search-btn">🔍</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã lịch thi</th>
+                            <th>Ngày thi</th>
+                            <th>Giờ thi</th>
+                            <th>Số thí sinh</th>
+                            <th>Mã phòng</th>
+                            <th>Chứng chỉ</th>
+                            <th>Chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Nút Lưu -->
+            <div class="next-wrapper">
+                <button class="next-btn" onclick="submitDangKy()">Lưu đăng ký</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        fetch('/DangNhap/Navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+                if (typeof checkLoginStatus === 'function') {
+                    checkLoginStatus();
+                }
+            });
+
+        function submitDangKy() {
+            const selected = document.querySelector("input[name='chon-lich']:checked");
+            if (!selected) {
+                alert("⚠️ Vui lòng chọn một lịch thi!");
+                return;
+            }
+
+            const data = {
+                TenKH: document.getElementById("khach-ho-ten").value,
+                DiaChiKH: document.getElementById("khach-dia-chi").value,
+                SoDienThoaiKH: document.getElementById("khach-sdt").value,
+                EmailKH: document.getElementById("khach-email").value,
+                LoaiKhachHang: "tự do",
+
+                TenTS: document.getElementById("thisinh-ho-ten").value,
+                CCCDTS: document.getElementById("thisinh-cccd").value,
+                SoDienThoaiTS: document.getElementById("thisinh-sdt").value,
+                EmailTS: document.getElementById("thisinh-email").value,
+                DiaChiTS: document.getElementById("thisinh-diachi").value,
+                NgaySinh: document.getElementById("thisinh-ngaysinh").value,
+
+                LoaiChungChi: parseInt(selected.getAttribute("data-loaichungchi")),
+                MaLichThi: parseInt(selected.value)
+            };
+
+            fetch("/api/dangkyFull", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.message) {
+                        alert("✅ Đăng ký thành công! Mã phiếu: " + result.maPhieuDangKy);
+                        window.location.href = "/InPhieuDangKy/InPhieuDangKy.html";
+                    } else {
+                        alert("❌ Lỗi: " + result.error);
+                    }
+                })
+                .catch(err => {
+                    console.error("❌ Lỗi kết nối:", err);
+                    alert("Lỗi kết nối tới máy chủ!");
+                });
+        }
+
+        async function fetchLichThi(filter = "all", search = "") {
+            let url = new URL("/api/getLichThi", window.location.origin);
+            if (search) {
+                url.searchParams.append("maLichThi", search);
+            } else if (filter !== "all") {
+                url.searchParams.append("dieuKien", filter);
+            }
+
+            const res = await fetch(url);
+            const data = await res.json();
+            renderLichThi(data);
+        }
+
+        function renderLichThi(data) {
+            const tableBody = document.getElementById("table-body");
+            tableBody.innerHTML = "";
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='7'>Không có lịch thi phù hợp</td></tr>";
+                return;
+            }
+
+            data.forEach(lich => {
+                const disabled = lich.SoLuongDangKy >= 30;
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${lich.MaLichThi}</td>
+                    <td>${lich.NgayThi}</td>
+                    <td>${lich.GioThi}</td>
+                    <td>${lich.SoLuongDangKy || 0}</td>
+                    <td>${lich.MaPhongThi}</td>
+                    <td>${lich.LoaiChungChi}</td>
+                    <td>
+                        ${disabled
+                        ? "<span style='color:gray'>Đã đầy</span>"
+                        : `<input type="radio" name="chon-lich" value="${lich.MaLichThi}" data-loaichungchi="${lich.LoaiChungChi}">`
+                    }
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchLichThi();
+        });
+    </script>
+</body>
+
+</html>
