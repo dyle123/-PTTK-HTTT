@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/CSS/QuanLyLichThi.css">
     <title>Quản Lý Lịch Thi</title>
-    <link rel="stylesheet" href="/CSS/Transaction.css"> 
+    <link rel="stylesheet" href="/CSS/Transaction.css">
     <script src="/DangNhap/Transaction.js"></script>
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/QuanLyLichThi/QuanLyLichThi.js" defer></script>
@@ -19,12 +19,27 @@
 
     <!-- Bộ lọc -->
     <div class="filter-container">
-        <label><input type="radio" name="filter" id="filter-all" checked> Tất cả</label>
-        <label><input type="radio" name="filter" value="ngaythi" id="filter-ngay-thi"> Ngày thi</label>
-        <label><input type="radio" name="filter" value="giothi" id="filter-gio-thi"> Giờ thi</label>
-        <label><input type="radio" name="filter" value="loaichungchi" id="filter-loai-chung-chi"> Loại chứng chỉ</label>
-        <input type="text" id="search-box" placeholder="Tìm theo mã lịch thi">
+        <div>
+            <label for="filter-ma-lich-thi">Mã lịch thi:</label>
+            <input type="text" id="filter-ma-lich-thi" placeholder="Nhập mã lịch thi">
+
+        </div>
+        <div>
+            <label for="filter-ngay-thi">Ngày thi:</label>
+            <input type="date" id="filter-ngay-thi">
+        </div>
+        <div>
+            <label for="filter-gio-thi">Giờ thi:</label>
+            <input type="time" id="filter-gio-thi">
+        </div>
+        <div>
+            <label for="filter-loai-chung-chi">Loại chứng chỉ:</label>
+            <select id="filter-loai-chung-chi">
+                <option value="">Tất cả</option>
+            </select>
+        </div>
         <button id="search-btn">🔍</button>
+        <button id="clear-filter-btn">🔄</button>
     </div>
 
     <!-- Bảng danh sách lịch thi -->
