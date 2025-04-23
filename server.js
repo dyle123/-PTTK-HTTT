@@ -1311,6 +1311,11 @@ app.post('/api/tao-lich-thi', async (req, res) => {
 
     } catch (error) {
         console.error('Lỗi khi ghi vào cơ sở dữ liệu:', error);
+
+        // Kiểm tra xem có lỗi preceding nào không, và nếu có, kiểm tra thông báo lỗi đầu tiên
+        if (error.precedingErrors && error.precedingErrors.length > 0 && error.precedingErrors[0].message.includes('Không thể thêm lịch thi có ngày thi trong quá khứ hoặc cách ngày hiện tại dưới 3 ngày.')) {
+            return res.status(400).json({ message: error.precedingErrors[0].message }); // Gửi thông báo lỗi chi tiết từ trigger
+        }
         // Kiểm tra lỗi cụ thể (ví dụ: khóa ngoại, ...)
         if (error.number === 547) { // Lỗi vi phạm khóa ngoại (FOREIGN KEY constraint)
              console.error('Lỗi khóa ngoại:', error.message);

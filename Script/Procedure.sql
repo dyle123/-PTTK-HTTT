@@ -771,6 +771,29 @@ BEGIN
     WHERE CCCD = @CCCD AND MaPhieuDangKy = @MaPhieuDangKy;
 END
 
+GO
+
+-- Tạo Trigger tên là TG_KiemTraNgayThi
+CREATE TRIGGER TG_KiemTraNgayThi
+ON LichThi
+FOR INSERT
+AS
+BEGIN
+    -- Kiểm tra xem có bản ghi nào được chèn vào có ngày thi không hợp lệ hay không
+    IF EXISTS (
+        SELECT 1
+        FROM inserted
+        WHERE NgayThi <= DATEADD(day, 2, GETDATE())
+    )
+    BEGIN
+        -- Nếu có, ngăn chặn thao tác INSERT và thông báo lỗi
+        RAISERROR ('Không thể thêm lịch thi có ngày thi trong quá khứ hoặc cách ngày hiện tại dưới 3 ngày.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END;
+END;
+GO
+
 
 
 drop proc TraCuuSoLanGiaHan
