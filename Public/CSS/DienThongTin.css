@@ -1,0 +1,172 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 20;
+    background-color: #f5f5f5;
+    text-align: center;
+}
+
+
+.main-title {
+    margin: 30px 0;
+    font-size: 28px;
+
+    display: inline-block;
+
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    /* tăng từ 40px lên 80px */
+    align-items: center;
+    margin-bottom: 60px;
+    margin-top: 30px;
+    /* nếu muốn thêm khoảng cách phía trên */
+}
+
+.card {
+background-color: white;
+    max-width: 700px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    text-align: left;
+}
+
+.card h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.input-group {
+display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px 30px;
+    width: 97%;
+    /* 🔥 thêm dòng này */
+}
+
+.input-group input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+}
+.form-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;/
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #2C2C2C;
+}
+.submit-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.submit-btn {
+    background-color: #8860d0;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #a0b0ff;
+}
+.next-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    padding: 10 30px;
+    /* tạo khoảng cách với mép */
+}
+
+.next-btn {
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.next-btn:hover {
+    background-color: #f1eaf9;
+    color: white;
+}
+
+.main-content {
+    margin-top: 80px;
+    /* hoặc 100px tùy chiều cao navbar */
+}
+h1 {
+    position: absolute;
+    top: 12%;
+    /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
+    left: 50%;
+    /* Căn giữa phần tử theo chiều ngang */
+    transform: translateX(-50%);
+    /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
+    padding: 0.8vw 1.5vw;
+    /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
+    background-color: #f4f4fb;
+    /* background-m */
+    border-radius: 10px;
+    /* border-m */
+    display: inline-block;
+}
+.main-content {
+    padding-top: 50px;
+}
+/* Style cho phần chọn lịch thi */
+.card h2+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.card table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    border: 1px solid #00A2FF;
+}
+
+.card table th,
+.card table td {
+    padding: 10px;
+    border: 1px solid #00A2FF;
+    text-align: center;
+}
+
+.card table th {
+    background-color: #f4f4fb;
+    font-weight: bold;
+}
+
+.card table td input[type="radio"] {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+

@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedMaLichThi = selected.value;
         // Xử lý bước tiếp theo (ví dụ: chuyển trang, lưu vào localStorage, gọi API khác, ...)
         console.log("Lịch thi đã chọn:", selectedMaLichThi);
-        window.location.href = `/DangKyDonVi/NhapThongTin.html?maLichThi=${selectedMaLichThi}`;
+        window.location.href = `/DangKyDonVi/DienThongTin.html?maLichThi=${selectedMaLichThi}`;
     });
 
     // Sự kiện click nút tạo lịch thi mới
