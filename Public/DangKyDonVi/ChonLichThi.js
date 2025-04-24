@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const maLichThiInput = document.getElementById("filter-ma-lich-thi");
     const ngayThiInput = document.getElementById("filter-ngay-thi");
-    const gioThiInput = document.getElementById("filter-gio-thi");
     const loaiChungChiInput = document.getElementById("filter-loai-chung-chi");
 
     const btnTaoLichThi = document.getElementById("create-btn");
@@ -41,15 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (ngayThiInput.value) {
                 params.append("dieuKien", "ngaythi");
                 params.append("ngayThi", ngayThiInput.value);
-            }
-            if (gioThiInput.value) {
-                if (timeRegex.test(gioThiInput.value)) {
-                    params.append("dieuKien", "giothi");
-                    params.append("gioThi", gioThiInput.value);
-                } else {
-                    alert("Vui lòng nhập giờ đúng định dạng HH:mm:ss (ví dụ: 09:30:00)");
-                    return;
-                }
             }
             if (loaiChungChiInput.value) {
                 params.append("dieuKien", "loaichungchi");
@@ -109,7 +99,6 @@ document.addEventListener("DOMContentLoaded", function () {
     clearBtn.addEventListener("click", () => {
         maLichThiInput.value = "";
         ngayThiInput.value = "";
-        gioThiInput.value = "";
         loaiChungChiInput.value = "";
         fetchData();
     });
@@ -117,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // Bắt sự kiện Enter để tìm kiếm nhanh
-    [maLichThiInput, ngayThiInput, gioThiInput, loaiChungChiInput].forEach(input => {
+    [maLichThiInput, ngayThiInput, loaiChungChiInput].forEach(input => {
         input.addEventListener("keypress", function (event) {
             if (event.key === "Enter") {
                 event.preventDefault();

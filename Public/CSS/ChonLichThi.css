@@ -19,7 +19,7 @@ h1 {
 .filter-container {
     position: absolute;
     top: 20%; /* Đặt vị trí xuống dưới tiêu đề */
-    left: 50%;
+    left: 51%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
@@ -98,7 +98,7 @@ input[type="text"] {
 .create-container {
     position: absolute;
     top: 22.7%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
-    left: 11%; /* Căn giữa phần tử theo chiều ngang */
+    left: 18%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
     display: flex;
     align-items: center;
@@ -124,7 +124,7 @@ input[type="text"] {
 .next-container {
     position: absolute;
     top: 22.7%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
-    left: 89%; /* Căn giữa phần tử theo chiều ngang */
+    left: 83%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
     display: flex;
     align-items: center;

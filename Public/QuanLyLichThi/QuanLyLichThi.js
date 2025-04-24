@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const maLichThiInput = document.getElementById("filter-ma-lich-thi");
     const ngayThiInput = document.getElementById("filter-ngay-thi");
-    const gioThiInput = document.getElementById("filter-gio-thi");
+
     const loaiChungChiInput = document.getElementById("filter-loai-chung-chi");
 
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+
 
     // Hàm lấy danh sách loại chứng chỉ và hiển thị vào dropdown
     async function layDanhSachChungChi() {
@@ -44,15 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 params.append("dieuKien", "ngaythi");
                 params.append("ngayThi", ngayThiInput.value);
             }
-            if (gioThiInput.value) {
-                if (timeRegex.test(gioThiInput.value)) {
-                    params.append("dieuKien", "giothi");
-                    params.append("gioThi", gioThiInput.value);
-                } else {
-                    alert("Vui lòng nhập giờ đúng định dạng HH:mm:ss (ví dụ: 09:30:00)");
-                    return;
-                }
-            }
+
             if (loaiChungChiInput.value) {
                 params.append("dieuKien", "loaichungchi");
                 params.append("loaiChungChi", loaiChungChiInput.value);
@@ -102,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
     clearBtn.addEventListener("click", () => {
         maLichThiInput.value = "";
         ngayThiInput.value = "";
-        gioThiInput.value = "";
         loaiChungChiInput.value = "";
         fetchData();
     });
@@ -113,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Thêm sự kiện nhấn Enter ở các input để tự động tìm kiếm
-    const inputFields = [maLichThiInput, ngayThiInput, gioThiInput, loaiChungChiInput];
+    const inputFields = [maLichThiInput, ngayThiInput, loaiChungChiInput];
     inputFields.forEach(input => {
         input.addEventListener("keypress", function (event) {
             if (event.key === "Enter") {
