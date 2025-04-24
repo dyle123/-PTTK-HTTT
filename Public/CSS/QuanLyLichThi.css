@@ -97,11 +97,11 @@ input[type="text"] {
 
 .create-container {
     position: absolute;
-    top: 85vh; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
-    left: 50%; /* Căn giữa phần tử theo chiều ngang */
+    top: 22.7%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
+    left: 11%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
-    display: flex;
     align-items: center;
+    display: flex;
     border-radius: 5px;
     padding: 5px 10px;
 }

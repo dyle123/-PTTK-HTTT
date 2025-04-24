@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Bước 2: Nhập Thông Tin Đăng Ký</title>
+    <script src="/DangNhap/Navbar.js"></script>
+    <link href="/CSS/DangKyDonVi.css" rel="stylesheet" />
+     <style>
+        /* Optional: Add specific styles if needed */
+        .next-wrapper {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .next-btn { /* Renamed from save-btn to next-btn for consistency */
+            padding: 10px 20px;
+            background-color: #28a745; /* Green for save */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .next-btn:hover {
+            background-color: #218838;
+        }
+         .info-banner {
+             background-color: #e7f3fe;
+             border-left: 6px solid #2196F3;
+             margin-bottom: 15px;
+             padding: 15px;
+             border-radius: 4px;
+         }
+         .info-banner p {
+             margin: 0;
+             font-weight: bold;
+         }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div class="main-content">
+        <h1>Bước 2: Ghi nhận thông tin đăng ký</h1>
+
+        <div id="selected-schedule-info" class="info-banner" style="display: none;">
+            <p>Lịch thi đã chọn:</p>
+            <span>Mã lịch thi: <strong id="info-ma-lich-thi"></strong></span> |
+            <span>Loại chứng chỉ ID: <strong id="info-loai-chung-chi"></strong></span>
+            </div>
+
+        <div class="form-container">
+            <div class="card">
+                <h2>Điền thông tin khách hàng (Người đăng ký)</h2>
+                <div class="input-group">
+                    <div class="form-field">
+                        <label for="khach-ho-ten">Họ tên</label>
+                        <input id="khach-ho-ten" placeholder="Họ tên đầy đủ của khách hàng" type="text" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-dia-chi">Địa chỉ</label>
+                        <input id="khach-dia-chi" placeholder="Địa chỉ" type="text" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-sdt">Số điện thoại</label>
+                        <input id="khach-sdt" placeholder="Số điện thoại" type="tel" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-email">Email</label>
+                        <input id="khach-email" placeholder="Email" type="email" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Điền thông tin thí sinh (Người dự thi)</h2>
+                <div class="input-group">
+                    <div class="form-field">
+                        <label for="thisinh-ho-ten">Họ tên</label>
+                        <input id="thisinh-ho-ten" placeholder="Họ tên thí sinh" type="text" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-cccd">Số căn cước công dân</label>
+                        <input id="thisinh-cccd" placeholder="Số căn cước công dân" type="text" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-sdt">Số điện thoại</label>
+                        <input id="thisinh-sdt" placeholder="Số điện thoại" type="tel" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-email">Email</label>
+                        <input id="thisinh-email" placeholder="Email" type="email" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-diachi">Địa chỉ</label>
+                        <input id="thisinh-diachi" placeholder="Địa chỉ" type="text" required/>
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-ngaysinh">Ngày sinh</label>
+                        <input id="thisinh-ngaysinh" type="date" required/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="next-wrapper">
+                <button class="next-btn" id="save-registration-btn">Lưu đăng ký</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="NhapThongTin.js"></script>
+</body>
+
+</html>
