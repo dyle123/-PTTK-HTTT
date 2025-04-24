@@ -7,6 +7,8 @@ values ('NV000014', N'Tram Dao', '2004-12-23', '0965422253', '2000000', 'ketoan'
 insert into NhanVien(MaNhanVien,HoTen,NgaySinh,SoDienThoai,Luong,BoPhan)
 values ('NV000013', N'VirusS', '2004-12-23', '0965422252', '2000000', 'tiepnhan')
 
+
+
 insert into Users(MaNhanVien, PassWord, Role)
 values ('NV000014', '123','ketoan');
  insert into Users(MaNhanVien, PassWord, Role)
@@ -136,3 +138,6 @@ INSERT INTO LichThi (NgayThi, GioThi, MaPhongThi, LoaiChungChi)
 VALUES ('2025-05-09', '10:03:30', 1, 1); -- Thay thế bằng giá trị thực tế của bạn
 
 select* from LichThi
+select*from PhieuGiaHan
+
+delete from PhieuGiaHan where CCCD='987654321098'
