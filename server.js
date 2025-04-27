@@ -90,19 +90,19 @@ app.use(session({
 //         throw error;
 //     }
 // }
-// const config = {
-//     user: 'sa',
-//     password: '12345678',
-//     server: 'localhost',
-//     port: 1433,
-//     database: 'PTTK',
-//     options: {
-//         encrypt: false,
-//         trustServerCertificate: true,
-//         enableArithAbort: true,
-//         connectTimeout: 30000
-//     }
-// };
+ const config = {
+     user: 'sa',
+     password: '12345678',
+     server: 'localhost',
+     port: 1433,
+     database: 'PTTK',
+     options: {
+         encrypt: false,
+         trustServerCertificate: true,
+         enableArithAbort: true,
+         connectTimeout: 30000
+     }
+ };
 
 
 
@@ -136,19 +136,19 @@ app.use(session({
 // };
 
 //Cấu hình kết nối SQL Server
-const config = {
+//const config = {
     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.1.9',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'dungluonghoang',
-    password: 'teuklee1983#',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+//    server: '192.168.1.9',
+//    port: 1433, // Cổng SQL Server
+//    database: 'PTTK',
+//    user: 'dungluonghoang',
+//    password: 'teuklee1983#',
+//    options: {
+//        encrypt: false, // Không cần mã hóa
+//        enableArithAbort: true, // Bật xử lý lỗi số học
+//        connectTimeout: 30000, // Thời gian chờ 30 giây
+//    },
+//};
 
 
 
@@ -1377,4 +1377,130 @@ app.get('/api/phongthi', async (req, res) => {
         res.status(500).send('Lỗi khi lấy phòng thi');
     }
 });
+app.get('/api/getPhieuDangKyMoiNhat', async (req, res) => {
+    const { maPhieuDangKy } = req.query;
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .query(`
+                SELECT 
+                    P.MaPhieuDangKy, 
+                    P.NgayDangKy,
+                    P.TrangThaiThanhToan,
+                    P.LoaiChungChi,
+                    L.NgayThi,
+                    L.GioThi
+                FROM PhieuDangKy P
+                LEFT JOIN LichThi L ON P.LichThi = L.MaLichThi
+                WHERE P.MaPhieuDangKy = @MaPhieuDangKy
+            `);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy phiếu đăng ký' });
+        }
+
+        res.json(result.recordset[0]);
+    } catch (err) {
+        console.error('Lỗi khi lấy phiếu:', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+app.get('/api/GetLichThi', async (req, res) => {
+    const { dieuKien, maLichThi, ngayThi, gioThi, loaiChungChi, thangThi } = req.query;
+
+    try {
+        const pool = await sql.connect(config);
+        let query = `SELECT * FROM LichThi `;
+        let conditions = [];
+
+        console.log('DieuKien:', dieuKien);
+
+        if (dieuKien === "ngaythi" && ngayThi) {
+            conditions.push(`NgayThi = @NgayThi`);
+        }
+        if (dieuKien === "thangthi" && thangThi) {
+            conditions.push(`YEAR(NgayThi) = @Year AND MONTH(NgayThi) = @Month`);
+        }
+        if (dieuKien === "giothi" && gioThi) {
+            conditions.push(`GioThi = @GioThi`);
+        }
+        if (dieuKien === "loaichungchi" && loaiChungChi) {
+            conditions.push(`LoaiChungChi = @LoaiChungChi`);
+        }
+        if (maLichThi) {
+            conditions.push(`MaLichThi = @MaLichThi`);
+        }
+
+        if (conditions.length > 0) {
+            query += ` WHERE ` + conditions.join(" AND ");
+        }
+
+        const request = pool.request();
+
+        if (maLichThi) request.input('MaLichThi', sql.Int, maLichThi);
+        if (ngayThi) request.input('NgayThi', sql.Date, ngayThi);
+        if (gioThi) request.input('GioThi', sql.Time, gioThi);
+        if (loaiChungChi) request.input('LoaiChungChi', sql.NVarChar, loaiChungChi);
+
+        if (thangThi) {
+            const [year, month] = thangThi.split('-'); // Parse '2025-06'
+            request.input('Year', sql.Int, parseInt(year));
+            request.input('Month', sql.Int, parseInt(month));
+        }
+
+        const result = await request.query(query);
+
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            return new Date(dateString).toISOString().split('T')[0];
+        };
+
+        const formatTime = (timeValue) => {
+            if (!timeValue) return null;
+            return timeValue.toISOString().split('T')[1].slice(0, 8);
+        };
+
+        const formattedData = result.recordset.map(row => ({
+            ...row,
+            NgayThi: formatDate(row.NgayThi),
+            GioThi: formatTime(row.GioThi)
+        }));
+
+        res.json(formattedData);
+    } catch (err) {
+        console.error('❌ Lỗi getLichThi:', err);
+        res.status(500).json({ error: 'Lỗi khi lấy lịch thi' });
+    }
+});
+app.get('/api/getPhieuDangKyById', async (req, res) => {
+    const { maPhieu } = req.query;
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('maPhieu', sql.Int, maPhieu)
+            .query(`
+                SELECT 
+                    PD.MaPhieuDangKy, 
+                    PD.NgayDangKy, 
+                    L.NgayThi, 
+                    PD.LoaiChungChi,
+                    KH.TenKhachHang, KH.Email, KH.SoDienThoai, KH.DiaChi,
+                    TS.HoVaTen AS TenThiSinh, TS.NgaySinh, TS.Email AS EmailThiSinh, TS.SoDienThoai AS SDTThiSinh, TS.CCCD
+                FROM PhieuDangKy PD
+                JOIN KhachHang KH ON PD.MaKhachHang = KH.MaKhachHang
+                JOIN ChiTietPhieuDangKy CTP ON PD.MaPhieuDangKy = CTP.MaPhieuDangKy
+                JOIN ThiSinh TS ON TS.CCCD = CTP.CCCD
+                JOIN LichThi L ON PD.LichThi = L.MaLichThi
+                WHERE PD.MaPhieuDangKy = @maPhieu
+            `);
+        res.json(result.recordset);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Lỗi khi lấy thông tin phiếu đăng ký" });
+    }
+});
+
 
