@@ -663,32 +663,94 @@ BEGIN
     JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
 END
 
+SELECT*FROM PhieuGiaHan
+
+DROP PROC TraCuuPhieuGiaHan
+
 CREATE PROCEDURE TraCuuPhieuGiaHan
-    @CCCD char(12)
+    @CCCD char(12),
+	@NgayDuThi Date
 AS
 BEGIN
-    IF NOT EXISTS(SELECT 1
-    from ThiSinh
-    where CCCD=@CCCD)
+    IF (@CCCD=NULL AND @NgayDuThi!=NULL)
 		BEGIN
-        RAISERROR(N'Không tìm thấy thí sinh trong hệ thống',16,1)
-        return;
-    END
-    IF NOT EXISTS (SELECT 1
-    FROM PhieuGiaHan
-    WHERE CCCD=@CCCD)
-		BEGIN
-        RAISERROR(N'Không tìm được phiếu gia hạn của thí sinh',16,1)
-        return;
-    END
-    SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
-    from LichThi AS LT1
-        JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
-        JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
-    WHERE PGH.CCCD=@CCCD
+			IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayDuThi)
+				BEGIN
+					RAISERROR(N'Ngày dự thi không tồn tại',16,1)
+					RETURN;
+				END
+			DECLARE @MLT int
 
+			SELECT @MLT=MaLichThi
+			FROM LichThi WHERE NgayThi=@NgayDuThi
+
+			IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan WHERE NgayThiMoi=@MLT)
+				BEGIN
+					RAISERROR(N'Không tìm thấy ngày dự thi hợp lệ trong phiếu gia hạn',16,1)
+					RETURN;
+				END
+
+			SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+			from LichThi AS LT1
+			JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+			JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+			WHERE PGH.NgayThiMoi=@MLT
+		END
+	ELSE IF(@CCCD!=NULL AND @NgayDuThi=NULL)
+		BEGIN
+			IF NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD=@CCCD)
+				BEGIN
+					RAISERROR(N'Thí sinh không tồn tại',16,1)
+					RETURN;
+				END
+			IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan where CCCD=@CCCD)
+				BEGIN
+					RAISERROR(N'Không tìm thấy phiếu gia hạn của thí sinh',16,1)
+					RETURN;
+				END
+			SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+			from LichThi AS LT1
+			JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+			JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+			WHERE PGH.CCCD=@CCCD
+		END
+		ELSE IF (@CCCD!=NULL AND @NgayDuThi!=NULL)
+			BEGIN
+				IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayDuThi)
+				BEGIN
+					RAISERROR(N'Ngày dự thi không tồn tại',16,1)
+					RETURN;
+				END
+				DECLARE @MLTHI int
+
+				SELECT @MLTHI=MaLichThi
+				FROM LichThi WHERE NgayThi=@NgayDuThi
+
+				IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan WHERE NgayThiMoi=@MLTHI)
+					BEGIN
+						RAISERROR(N'Không tìm thấy ngày dự thi hợp lệ trong phiếu gia hạn',16,1)
+						RETURN;
+					END
+				IF NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD=@CCCD)
+				BEGIN
+					RAISERROR(N'Thí sinh không tồn tại',16,1)
+					RETURN;
+				END
+				IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan where CCCD=@CCCD)
+					BEGIN
+						RAISERROR(N'Không tìm thấy phiếu gia hạn của thí sinh',16,1)
+						RETURN;
+					END
+				SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+				from LichThi AS LT1
+				JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+				JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+				WHERE PGH.CCCD=@CCCD AND PGH.NgayThiMoi=@MLTHI
+
+			END
 END
 GO
+
 
 CREATE PROCEDURE XoaPhieuGiaHan
     @CCCD CHAR(12),
