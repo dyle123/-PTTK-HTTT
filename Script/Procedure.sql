@@ -663,9 +663,7 @@ BEGIN
     JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
 END
 
-SELECT*FROM PhieuGiaHan
 
-DROP PROC TraCuuPhieuGiaHan
 
 CREATE PROCEDURE TraCuuPhieuGiaHan
     @CCCD char(12)=NULL,

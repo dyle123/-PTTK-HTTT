@@ -82,7 +82,7 @@ input[type="number"] {
 table {
     position: absolute;
     width: 90%;
-    top: 35vh; /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
+    top: 40vh; /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
     left: 4%; /* Căn giữa phần tử theo chiều ngang */
     margin: 20px;
     border-collapse: collapse;
