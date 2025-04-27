@@ -807,16 +807,19 @@ app.post('/api/getPhieuGiaHan', async (req, res) => {
         const pool = await sql.connect(config);
         const request = pool.request();
 
-        if (!CCCD&&!NgayDuThi) {
+        if ((CCCD == null || CCCD.trim() === '') && (NgayDuThi == null || NgayDuThi === '')) {
             const result = await request.execute('DocToanBoPhieuGiaHan');
             res.json(result.recordset);
-        }
-        else {
-            request.input('CCCD', sql.Char(12), CCCD);
-            request.input('NgayDuThi', sql.Date, NgayDuThi);
+        } else {
+            if (CCCD != null && CCCD.trim() !== '') {
+                request.input('CCCD', sql.Char(12), CCCD);
+            }
+            if (NgayDuThi != null && NgayDuThi !== '') {
+                request.input('NgayDuThi', sql.Date, NgayDuThi);
+            }
+
             const result = await request.execute('TraCuuPhieuGiaHan');
             res.json(result.recordset);
-
         }
     } catch (err) {
         console.error('Lỗi khi gọi SP TraCuuPhieuGiaHan:', err);

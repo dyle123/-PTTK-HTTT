@@ -668,11 +668,11 @@ SELECT*FROM PhieuGiaHan
 DROP PROC TraCuuPhieuGiaHan
 
 CREATE PROCEDURE TraCuuPhieuGiaHan
-    @CCCD char(12),
-	@NgayDuThi Date
+    @CCCD char(12)=NULL,
+	@NgayDuThi Date =NULL
 AS
 BEGIN
-    IF (@CCCD=NULL AND @NgayDuThi!=NULL)
+    IF ((@CCCD IS NULL or @CCCD='') AND @NgayDuThi IS NOT NULL)
 		BEGIN
 			IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayDuThi)
 				BEGIN
@@ -696,7 +696,7 @@ BEGIN
 			JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
 			WHERE PGH.NgayThiMoi=@MLT
 		END
-	ELSE IF(@CCCD!=NULL AND @NgayDuThi=NULL)
+	ELSE IF((@CCCD IS NOT NULL or @CCCD!='') AND @NgayDuThi IS NULL)
 		BEGIN
 			IF NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD=@CCCD)
 				BEGIN
@@ -714,7 +714,7 @@ BEGIN
 			JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
 			WHERE PGH.CCCD=@CCCD
 		END
-		ELSE IF (@CCCD!=NULL AND @NgayDuThi!=NULL)
+		ELSE IF ((@CCCD IS NOT NULL or @CCCD!='') AND @NgayDuThi IS NOT NULL)
 			BEGIN
 				IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayDuThi)
 				BEGIN
