@@ -11,6 +11,7 @@
     <div id="navbar-container"></div>
     <h1>Tra Cứu Phiếu Gia Hạn</h1>
     <input type="text" id="search-box" placeholder="Nhập CCCD">
+    <input type="Date" id="date-box">
     <button id="search-btn" onclick="fetchData()">🔍</button>
     <h2>Vui lòng nhập thông tin để tra cứu</h2>
     <!-- <input type="text" id="search-box" placeholder="Nhập CCCD">
@@ -46,6 +47,7 @@
         window.onload = fetchData;
         async function fetchData() {
             const cccd = document.getElementById('search-box').value.trim();
+            const date = document.getElementById("date-box").value;
             const tableBody = document.getElementById('table-body');
             tableBody.innerHTML = ''; // Xóa dữ liệu cũ
 
@@ -55,7 +57,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({CCCD: cccd}),
+                    body: JSON.stringify({CCCD: cccd, NgayDuThi:date}),
                 });
 
                 const data = await response.json();

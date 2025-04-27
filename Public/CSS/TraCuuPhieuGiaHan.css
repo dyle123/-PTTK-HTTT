@@ -38,6 +38,15 @@ h2 {
     margin-top: 22vh; /* Đặt vị trí từ trên xuống 10% chiều cao viewport */
 }
 
+#date-box {
+    width: 120px;
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 22vh; /* Đặt vị trí từ trên xuống 10% chiều cao viewport */
+}
+
 /* #search-btn {
     padding: 8px 12px;
     background-color: #F8BBD0;
@@ -105,7 +114,7 @@ tr:hover {
     border-radius: 5px;
     margin-top:85vh;
     position:absolute;
-    margin-left:10vw; 
+    margin-left:5vw;  
 }
 
 .btn_Tra_cuu_SLGH:hover
@@ -123,11 +132,10 @@ tr:hover {
     font-weight: bold;
     border-radius: 5px;
     margin-top:85vh;
-    margin-left:25vw;
+    margin-left:20vw;
     position:absolute;
 }
 
-.btn_Lap_Phieu_Gia_Han:hover
-{
+.btn_Lap_Phieu_Gia_Han:hover {
     background-color: #a0b0ff;
 }
