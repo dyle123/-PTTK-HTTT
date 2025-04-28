@@ -782,15 +782,19 @@ app.post('/api/TraCuuSoLanGiaHan', async (req, res) => {
         const pool = await sql.connect(config);
         const request = pool.request();
 
-        if (CCCD && NgayThi) {
-            // Có lọc
-            request.input('CCCD', sql.Char(12), CCCD);
-            request.input('NgayThi', sql.Date, NgayThi);
-            const result = await request.execute('TraCuuSoLanGiaHan');
-            res.json(result.recordset);
-        } else {
+        if ((CCCD == null || CCCD.trim() === '') && (NgayThi == null || NgayThi === '')) {
             // Không lọc => lấy toàn bộ dữ liệu
             const result = await request.execute('DocToanBoChiTietPhieuDangKy');
+            res.json(result.recordset);
+        } else {
+            // Có lọc
+            if (CCCD != null && CCCD.trim() !== '') {
+                request.input('CCCD', sql.Char(12), CCCD);
+            }
+            if (NgayThi != null && NgayThi !== '') {
+                request.input('NgayThi', sql.Date, NgayThi);
+            }
+            const result = await request.execute('TraCuuSoLanGiaHan');
             res.json(result.recordset);
         }
     } catch (err) {
