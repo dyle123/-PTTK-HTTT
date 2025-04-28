@@ -5,28 +5,36 @@ body {
     text-align: center;
 }
 
+h1 {
+    position: absolute;
+    top: 12%;
+    /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
+    left: 50%;
+    /* Căn giữa phần tử theo chiều ngang */
+    transform: translateX(-50%);
+    /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
+    padding: 0.8vw 1.5vw;
+    /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
+    display: inline-block;
+}
 
 .main-title {
     margin: 30px 0;
     font-size: 28px;
-
     display: inline-block;
-
 }
 
 .form-container {
     display: flex;
     flex-direction: column;
     gap: 40px;
-    /* tăng từ 40px lên 80px */
     align-items: center;
     margin-bottom: 60px;
     margin-top: 30px;
-    /* nếu muốn thêm khoảng cách phía trên */
 }
 
 .card {
-background-color: white;
+    background-color: white;
     max-width: 700px;
     width: 100%;
     padding: 30px;
@@ -42,11 +50,10 @@ background-color: white;
 }
 
 .input-group {
-display: grid;
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px 30px;
     width: 97%;
-    /* 🔥 thêm dòng này */
 }
 
 .input-group input {
@@ -56,6 +63,7 @@ display: grid;
     width: 100%;
     font-size: 14px;
 }
+
 .form-field {
     display: flex;
     flex-direction: column;
@@ -68,105 +76,81 @@ display: grid;
     margin-bottom: 5px;
     color: #2C2C2C;
 }
-.submit-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+
+.main-content {
+    margin-top: 100px;
+    padding-top: 50px;
 }
 
-.submit-btn {
-    background-color: #8860d0;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
+.info-banner {
+    background-color: #e7f3fe;
+    border-left: 6px solid #2196F3;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.info-banner p {
+    margin: 0;
     font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.submit-btn:hover {
-    background-color: #a0b0ff;
-}
-.next-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-    padding: 10 30px;
-    /* tạo khoảng cách với mép */
 }
 
 .next-btn {
-    background-color: #8860d0;
+    padding: 10px 20px;
+    background-color: #28a745;
     color: white;
-    font-weight: bold;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 16px;
 }
 
 .next-btn:hover {
-    background-color: #f1eaf9;
-    color: white;
+    background-color: #218838;
 }
 
-.main-content {
-    margin-top: 80px;
-    /* hoặc 100px tùy chiều cao navbar */
+.back-btn {
+    padding: 10px 35px;
+    background-color: #8860d0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
 }
-h1 {
+
+.back-btn:hover {
+    background-color: #a0b0ff;
+}
+
+.button-container {
     position: absolute;
-    top: 12%;
-    /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
-    left: 50%;
-    /* Căn giữa phần tử theo chiều ngang */
-    transform: translateX(-50%);
-    /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
-    padding: 0.8vw 1.5vw;
-    /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background-color: #f4f4fb;
-    /* background-m */
-    border-radius: 10px;
-    /* border-m */
-    display: inline-block;
-}
-.main-content {
-    padding-top: 50px;
-}
-/* Style cho phần chọn lịch thi */
-.card h2+.filter-container {
+    top: 125vh; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
+    left: 32%; /* Căn giữa phần tử theo chiều ngang */
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: center;
+    justify-content: center;
+    gap: 350px; /* Tạo khoảng cách giữa các nút */
+}
+
+.add-btn {
+    padding: 10px 35px;
+    background-color: #8860d0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-btn:hover {
+    background-color: #a0b0ff;
+}
+
+.add-container {
+    position: absolute;
+    top: 115vh; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
+    margin-bottom: 20px;
+    left: 45%; /* Căn giữa phần tử theo chiều ngang */
+    display: flex;
     justify-content: center;
 }
-
-.card table {
-    width: 100%;
-    margin-top: 10px;
-    border-collapse: collapse;
-    border: 1px solid #00A2FF;
-}
-
-.card table th,
-.card table td {
-    padding: 10px;
-    border: 1px solid #00A2FF;
-    text-align: center;
-}
-
-.card table th {
-    background-color: #f4f4fb;
-    font-weight: bold;
-}
-
-.card table td input[type="radio"] {
-    transform: scale(1.2);
-    cursor: pointer;
-}
-

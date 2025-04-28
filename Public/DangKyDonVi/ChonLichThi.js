@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnTaoLichThi = document.getElementById("create-btn");
 
     const tableBody = document.getElementById("table-body");
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+    const loadingMessage = document.getElementById("loading-message");
+    const errorMessage = document.getElementById("error-message");
 
     // Lấy danh sách chứng chỉ
     async function layDanhSachChungChi() {
@@ -33,7 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Lấy dữ liệu lịch thi
     async function fetchData() {
         try {
-            const url = new URL("http://localhost:3000/api/getLichThi");
+            loadingMessage.style.display = "block";
+            errorMessage.style.display = "none";
+            tableBody.innerHTML = "";
+
+            const url = new URL("/api/getLichThi", window.location.origin);
             const params = new URLSearchParams();
 
             if (maLichThiInput.value) params.append("maLichThi", maLichThiInput.value);
@@ -48,10 +53,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             url.search = params.toString();
             const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             renderTable(data);
         } catch (error) {
             console.error("Lỗi khi lấy dữ liệu:", error);
+            errorMessage.textContent = "Đã xảy ra lỗi khi tải dữ liệu.";
+            errorMessage.style.display = "block";
+        } finally {
+            loadingMessage.style.display = "none";
         }
     }
 
@@ -60,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         tableBody.innerHTML = "";
 
         if (!Array.isArray(data) || data.length === 0) {
-            tableBody.innerHTML = "<tr><td colspan='6' style='text-align: center;'>Không có dữ liệu</td></tr>";
+            tableBody.innerHTML = "<tr><td colspan='7' style='text-align: center;'>Không có dữ liệu</td></tr>";
             return;
         }
 
@@ -123,9 +133,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         const selectedMaLichThi = selected.value;
-        // Xử lý bước tiếp theo (ví dụ: chuyển trang, lưu vào localStorage, gọi API khác, ...)
-        console.log("Lịch thi đã chọn:", selectedMaLichThi);
-        window.location.href = `/DangKyDonVi/DienThongTin.html?maLichThi=${selectedMaLichThi}`;
+        const selectedLoaiChungChi = selected.getAttribute("data-loaichungchi");
+        window.location.href = `/DangKyDonVi/DienThongTin.html?maLichThi=${selectedMaLichThi}&loaiChungChi=${selectedLoaiChungChi}`;
     });
 
     // Sự kiện click nút tạo lịch thi mới
