@@ -1,7 +1,13 @@
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* căn giữa ngang */
+    justify-content: start; /* dồn từ trên xuống */
+    gap: 2vh; /* khoảng cách giữa các thành phần */
 }
 
 h1 {
@@ -15,38 +21,38 @@ h1 {
     border-radius: 10px; /* border-m */
     display: inline-block;
 }
-
-h2 {
-    position: absolute;
-    margin-top: 13%; /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
-    left: 50%; /* Căn giữa phần tử theo chiều ngang */
-    transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
-    padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    /*background: #ecc94b	; 
-    box-shadow: 0 2px 5px rgba(160, 176, 255, 0.3);*/
-    font-size:3vh;
+h2
+{
+    margin: 0;
+    padding: 1vh;
     font-weight: normal;
-    border-radius: 10px; /* border-m */
-    display: inline-block;
+    font-size:2vh;
+
 }
 
 
-#search-box {
+.search-container {
+    display: flex;
+    gap: 1vw;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 23vh;
+}
+#search-box
+{
     width: 240px;
     padding: 8px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-top: 22vh; /* Đặt vị trí từ trên xuống 10% chiều cao viewport */
 }
 
-#date-box {
+#date-box
+{
     width: 120px;
     padding: 8px;
-    margin-right: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-top: 22vh; /* Đặt vị trí từ trên xuống 10% chiều cao viewport */
 }
 
 #search-btn {
@@ -55,6 +61,7 @@ h2 {
     border-radius: 4px;
     cursor: pointer;
     background-color: #a0b0ff;
+
 }
 
 #search-btn:hover {
@@ -62,18 +69,22 @@ h2 {
     ;
 }
 
+.table-wrapper {
+    width: 90%;
+    overflow-x: auto;
+    margin-top:2.5vh
+}
+
 input[type="number"] {
     padding: 5px;
     margin-left: 10px;
 }
 
+
 table {
-    position: absolute;
-    width: 90%;
-    top: 36vh; /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
-    left: 4%; /* Căn giữa phần tử theo chiều ngang */
-    margin: 20px;
+    width: 100%;
     border-collapse: collapse;
+    margin-top: 2vh;
     border: 2px solid #a0b0ff;
 }
 
@@ -90,8 +101,13 @@ tr:hover {
     background-color: #f1eaf9;
     transition: background-color 0.2s ease;
 }
-
-.btn_Tra_cuu_PGH
+/* .button-container {
+    display: flex;
+    gap: 2vw;
+    margin-top: 3vh;
+    margin-bottom: 3vh;
+} */
+/* .btn_Tra_cuu_PGH
 {
     cursor: pointer;
     padding: 1vh 1vw;
@@ -125,4 +141,34 @@ tr:hover {
 
 .btn_Lap_Phieu_Gia_Han:hover {
     background-color: #a0b0ff;
+} */
+
+.btn_Tra_cuu_PGH,
+.btn_Lap_Phieu_Gia_Han {
+    cursor: pointer;
+    padding: 1vh 2vw;
+    border: none;
+    background-color: #8860d0;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
 }
+
+.btn_Lap_Phieu_Gia_Han 
+{
+    position:absolute;
+    margin-left: 31.5vw;
+}
+
+.btn_Tra_cuu_PGH 
+{
+    position:absolute;
+    margin-left: 15vw;
+}
+
+.btn_Tra_cuu_PGH:hover,
+.btn_Lap_Phieu_Gia_Han:hover {
+    background-color: #a0b0ff;
+}
+
+

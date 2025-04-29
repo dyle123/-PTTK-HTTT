@@ -10,36 +10,41 @@
 <body>
     <div id="navbar-container"></div>
     <h1>Tra Cứu Phiếu Gia Hạn</h1>
-    <input type="text" id="search-box" placeholder="Nhập CCCD">
-    <input type="Date" id="date-box">
-    <button id="search-btn" onclick="fetchData()">🔍</button>
+    < <div class="search-container">
+        <input type="text" id="search-box" placeholder="Nhập CCCD">
+        <input type="date" id="date-box">
+        <button id="search-btn" onclick="fetchData()">🔍</button>
+    </div>
     <h2>Vui lòng nhập CCCD và Ngày Dự Thi Chính Thức của thí sinh để tra cứu (có thể nhập 1 trong 2)</h2>
     <!-- <input type="text" id="search-box" placeholder="Nhập CCCD">
     <button id="search-btn">🔍</button> -->
-    
-    <table>
-        <thead>
-            <tr>
-                <th>CCCD</th>
-                <th>Mã Phiếu Đăng Ký</th>
-                <th>Loại Gia Hạn</th>
-                <th>Phí Gia Hạn</th>
-                <th>Lí Do Gia Hạn</th>
-                <th>Ngày Thi Cũ</th>
-                <th>Ngày Thi Mới</th>
-                <th>Hành Động</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
-        </tbody>
-    </table>
-    <button class="btn_Tra_cuu_SLGH" onclick="window.location.href='TraCuuSoLanGiaHan.html'">
-        Tra cứu số lần gia hạn
-    </button>
-    <button class="btn_Lap_Phieu_Gia_Han" onclick="window.location.href='LapPhieuGiaHan.html'">
-        Lập phiếu gia hạn
-    </button>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>CCCD</th>
+                    <th>Mã Phiếu Đăng Ký</th>
+                    <th>Loại Gia Hạn</th>
+                    <th>Phí Gia Hạn</th>
+                    <th>Lí Do Gia Hạn</th>
+                    <th>Ngày Thi Cũ</th>
+                    <th>Ngày Thi Mới</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <div class="button-container">
+        <button class="btn_Tra_cuu_SLGH" onclick="window.location.href='TraCuuSoLanGiaHan.html'">
+            Tra cứu số lần gia hạn
+        </button>
+        <button class="btn_Lap_Phieu_Gia_Han" onclick="window.location.href='LapPhieuGiaHan.html'">
+            Lập phiếu gia hạn
+        </button>
+    </div>>
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/TraCuuPhieuGiaHan.js"></script>
 </body>

@@ -10,31 +10,37 @@
 <body>
     <div id="navbar-container"></div>
     <h1>Tra Cứu Số Lần Gia Hạn</h1>
-    <input type="text" id="search-box" placeholder="Nhập CCCD">
-    <input type="Date" id="date-box">
-    <button id="search-btn" onclick="fetchData()">🔍</button>
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Nhập CCCD">
+        <input type="date" id="date-box">
+        <button id="search-btn" onclick="fetchData()">🔍</button>
+    </div>
     <h2>Vui lòng nhập CCCD và Ngày Thi trên phiếu đăng ký để tra cứu</h2>
 
     
-    <table>
-        <thead>
-            <tr>
-                <th>Mã phiếu</th>
-                <th>CCCD</th>
-                <th>Ngày Thi</th>
-                <th>Số lần gia hạn</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
-        </tbody>
-    </table>
-    <button class="btn_Tra_cuu_PGH" onclick="window.location.href='TraCuuPhieuGiaHan.html'">
-        Tra cứu phiếu gia hạn
-    </button>
-    <button class="btn_Lap_Phieu_Gia_Han" onclick="window.location.href='LapPhieuGiaHan.html'">
-        Lập phiếu gia hạn
-    </button>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã phiếu</th>
+                    <th>CCCD</th>
+                    <th>Ngày Thi</th>
+                    <th>Số lần gia hạn</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <div class="button-container">
+        <button class="btn_Tra_cuu_PGH" onclick="window.location.href='TraCuuPhieuGiaHan.html'">
+            Tra cứu phiếu gia hạn
+        </button>
+        <button class="btn_Lap_Phieu_Gia_Han" onclick="window.location.href='LapPhieuGiaHan.html'">
+            Lập phiếu gia hạn
+        </button>
+    </div>
 
     <script src="/DangNhap/Navbar.js"></script>
     <script src="/GiaHan/TraCuuSoLanGiaHan.js"></script>
