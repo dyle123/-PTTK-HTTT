@@ -594,6 +594,7 @@ BEGIN
 END;
 go
 
+drop proc DocToanBoChiTietPhieuDangKy
 CREATE PROCEDURE DocToanBoChiTietPhieuDangKy
 AS
 BEGIN
@@ -691,7 +692,7 @@ BEGIN
 END
 GO
 
-
+drop proc DocToanBoPhieuGiaHan
 CREATE PROC DocToanBoPhieuGiaHan
 AS
 BEGIN
