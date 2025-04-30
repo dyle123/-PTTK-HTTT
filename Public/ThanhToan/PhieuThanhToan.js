@@ -47,23 +47,36 @@ document.addEventListener("DOMContentLoaded", async function () {
                 return;
             }
 
-            data.forEach(phieu => {
+            for (const phieu of data) {
                 const row = document.createElement("tr");
-                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán nha mom" : "Chưa thanh toán";
+                const trangThaiHienThi = phieu.TrangThaiThanhToan ? "Đã thanh toán" : "Chưa thanh toán";
                 const trangThaiClass = phieu.TrangThaiThanhToan ? "da-thanh-toan" : "chua-thanh-toan";
+
+                // Lấy loại khách hàng trước khi tạo nút
+                const loaiKhachHang = await XuatLoaiKhachHang(phieu.MaPhieuDangKy);
             
                 // Xây dựng nội dung cột thao tác
                 let thaoTacHTML = "";
                 if (phieu.TrangThaiThanhToan == 1) {
-                    // Đã thanh toán -> Chỉ có nút "Xem hóa đơn"
                     thaoTacHTML = `<button class="xem-hoa-don">Xem hóa đơn</button>`;
                 } else if (phieu.TrangThaiThanhToan == 0) {
-                    // Chưa thanh toán -> Hiển thị "In phiếu" và "Thanh toán"
                     thaoTacHTML = `
                         <button class="in-phieu">In phiếu</button>
                         <button class="thanh-toan" data-ma-phieu="${phieu.MaPhieuThanhToan}">Thanh toán</button>
-                        <button class="chuyen-khoan" data-ma-phieu="${phieu.MaPhieuThanhToan}" data-thanh-tien="${phieu.ThanhTien}">Chuyển khoản</button>
                     `;
+                    
+                    if (loaiKhachHang === "đơn vị") {
+                        thaoTacHTML += `
+                            <button class="chuyen-khoan" data-ma-phieu="${phieu.MaPhieuThanhToan}" 
+                                data-thanh-tien="${phieu.ThanhTien}">Chuyển khoản</button>
+                        `;
+                    } else {
+                        thaoTacHTML += `
+                            <button class="chuyen-khoan" data-ma-phieu="${phieu.MaPhieuThanhToan}" 
+                                data-thanh-tien="${phieu.ThanhTien}" disabled 
+                                style="opacity: 0.6; cursor: not-allowed">Chuyển khoản</button>
+                        `;
+                    }
                 }
             
                 row.innerHTML = `
@@ -90,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
             
                 tableBody.appendChild(row);
-            });
+            }
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
         }
