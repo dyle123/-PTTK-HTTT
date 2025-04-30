@@ -112,30 +112,3 @@ tr:hover {
     transition: background-color 0.2s ease;
 }
 
-.btn_Tra_cuu_SLGH,
-.btn_Lap_Phieu_Gia_Han {
-    cursor: pointer;
-    padding: 1vh 2vw;
-    border: none;
-    background-color: #8860d0;
-    color: white;
-    font-weight: bold;
-    border-radius: 5px;
-}
-
-.btn_Lap_Phieu_Gia_Han 
-{
-    position:absolute;
-    margin-left: 31.5vw;
-}
-
-.btn_Tra_cuu_SLGH 
-{
-    position:absolute;
-    margin-left: 15vw;
-}
-
-.btn_Tra_cuu_SLGH:hover,
-.btn_Lap_Phieu_Gia_Han:hover {
-    background-color: #a0b0ff;
-}
