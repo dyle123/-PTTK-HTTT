@@ -31,40 +31,40 @@ app.use(session({
 
 
 
-// const config = {
-//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'sa',
-//     password: '1928374650Vy',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
-// async function sqlQuery(query, params = {}) {
-//     try {
-//         const pool = await sql.connect({
-//             user: 'sa',
-//             password: '12345678',
-//             database: 'PTTK',
-//             server: 'localhost',
-//             options: { encrypt: false, trustServerCertificate: true }
-//         });
+const config = {
+    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'sa',
+    password: '1928374650Vy',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
+async function sqlQuery(query, params = {}) {
+    try {
+        const pool = await sql.connect({
+            user: 'sa',
+            password: '12345678',
+            database: 'PTTK',
+            server: 'localhost',
+            options: { encrypt: false, trustServerCertificate: true }
+        });
 
-//         const request = pool.request();
-//         for (const param in params) {
-//             request.input(param, params[param]);
-//         }
+        const request = pool.request();
+        for (const param in params) {
+            request.input(param, params[param]);
+        }
 
-//         const result = await request.query(query);
-//         return result.recordset;
-//     } catch (error) {
-//         console.error("❌ Lỗi SQL:", error);
-//         throw error;
-//     }
-// }
+        const result = await request.query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error("❌ Lỗi SQL:", error);
+        throw error;
+    }
+}
 
 
 
@@ -106,19 +106,19 @@ app.use(session({
 
 
 
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.174.1',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'BENU',
-    password: 'benu123',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.174.1',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'BENU',
+//     password: 'benu123',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 
 // Cấu hình kết nối SQL Server
 // const config = {
@@ -163,20 +163,20 @@ const config = {
 //     },
 // };
 
-//Cấu hình kết nối SQL Server
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.1.5',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'dungluonghoang',
-    password: 'teuklee1983#',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// //Cấu hình kết nối SQL Server
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.1.5',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'dungluonghoang',
+//     password: 'teuklee1983#',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 
 
 
@@ -923,7 +923,9 @@ app.get('/api/getLichThi', async (req, res) => {
 
     try {
         const pool = await sql.connect(config);
-        let query = `SELECT * FROM LichThi `;
+        let query = `SELECT LichThi.*, BangGiaThi.*
+            FROM LichThi 
+            JOIN BangGiaThi ON LichThi.LoaiChungChi = BangGiaThi.MaLoaiChungChi`;
         let conditions = [];
 
         console.log('DieuKien:', dieuKien);
@@ -1451,7 +1453,7 @@ app.get('/api/GetLichThi', async (req, res) => {
 
     try {
         const pool = await sql.connect(config);
-        let query = `SELECT * FROM LichThi `;
+        let query = `SELECT * FROM LichThi JOIN BangGiaThi ON LoaiChungChi = MaLoaiChungChi`;
         let conditions = [];
 
         console.log('DieuKien:', dieuKien);
@@ -1490,6 +1492,7 @@ app.get('/api/GetLichThi', async (req, res) => {
         }
 
         const result = await request.query(query);
+        console.log('Kết quả truy vấn lich thi:', result.recordset); // Log kết quả truy vấn
 
         const formatDate = (dateString) => {
             if (!dateString) return null;

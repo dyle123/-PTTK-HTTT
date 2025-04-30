@@ -75,10 +75,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         data.forEach(lich => {
-            const currentRegistrations = lich.SoLuongDangKy || 0; // Ví dụ
-            const maxCapacity = lich.SucChua || 30; // Ví dụ
+            const currentRegistrations = lich.SoLuongDangKy || 0;
+            const maxCapacity = lich.SucChua || 30;
             const isDisabled = currentRegistrations >= maxCapacity;
-
+            console.log(lich);
+    
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${lich.MaLichThi}</td>
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${lich.GioThi}</td>
                 <td>${currentRegistrations}/${maxCapacity}</td>
                 <td>${lich.MaPhongThi}</td>
-                <td>${lich.LoaiChungChi}</td>
+                <td>${lich.TenChungChi || lich.MaChungChi}</td>
                 <td>
                     ${isDisabled
                     ? "<span style='color:gray'>Đã đầy</span>"

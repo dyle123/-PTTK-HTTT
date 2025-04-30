@@ -8,7 +8,11 @@
     <script src="/DangNhap/Navbar.js"></script>
     <link href="/CSS/DienThongTin.css" rel="stylesheet" />
 </head>
-
+<script>
+    window.onload = () => {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+    };
+</script>
 <body>
     <div id="navbar-container"></div>
     <div class="main-content">
@@ -20,7 +24,7 @@
             <span>Loại chứng chỉ ID: <strong id="info-loai-chung-chi"></strong></span>
             </div>
 
-        <div class="form-container">
+        <div  class="form-container">
             <div class="card">
                 <h2>Điền thông tin khách hàng (Người đăng ký)</h2>
                 <div class="input-group">
@@ -42,7 +46,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
+            <div id ="form-container"  class="card">
                 <h2>Điền thông tin thí sinh (Người dự thi)</h2>
                 <div class="input-group">
                     <div class="form-field">
@@ -72,14 +76,16 @@
                 </div>
             </div>
 
+            <div class="add-container">
+                <button class="add-btn" id="add-examiner-btn">Thêm thí sinh</button>
+            </div>
+
             <div class="button-container">
                 <button class="next-btn" id="save-registration-btn">Lưu đăng ký</button>
                 <button class="back-btn" id="back-choose-btn">Quay lại</button>
             </div>
 
-            <div class="add-container">
-                <button class="add-btn" id="add-examiner-btn">Thêm thí sinh</button>
-            </div>
+            
 
         </div>
     </div>
