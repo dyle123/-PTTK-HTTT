@@ -1,7 +1,13 @@
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* căn giữa ngang */
+    justify-content: start; /* dồn từ trên xuống */
+    gap: 2vh; /* khoảng cách giữa các thành phần */
 }
 
 h1 {
@@ -15,24 +21,38 @@ h1 {
     border-radius: 10px; /* border-m */
     display: inline-block;
 }
+h2
+{
+    margin: 0;
+    padding: 1vh;
+    font-weight: normal;
+    font-size:2vh;
 
-
-#search-box {
-    width: 240px;
-    padding: 8px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 22vh; /* Đặt vị trí từ trên xuống 10% chiều cao viewport */
 }
 
-#date-box {
-    width: 120px;
+
+.search-container {
+    display: flex;
+    gap: 1vw;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 23vh;
+}
+#search-box
+{
+    width: 240px;
     padding: 8px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-top: 22vh; /* Đặt vị trí từ trên xuống 10% chiều cao viewport */
+}
+
+#date-box
+{
+    width: 120px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 #search-btn {
@@ -41,6 +61,7 @@ h1 {
     border-radius: 4px;
     cursor: pointer;
     background-color: #a0b0ff;
+
 }
 
 #search-btn:hover {
@@ -48,18 +69,22 @@ h1 {
     ;
 }
 
+.table-wrapper {
+    width: 90%;
+    overflow-x: auto;
+    margin-top:2.5vh
+}
+
 input[type="number"] {
     padding: 5px;
     margin-left: 10px;
 }
 
+
 table {
-    position: absolute;
-    width: 90%;
-    top: 30vh; /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
-    left: 4%; /* Căn giữa phần tử theo chiều ngang */
-    margin: 20px;
+    width: 100%;
     border-collapse: collapse;
+    margin-top: 2vh;
     border: 2px solid #a0b0ff;
 }
 
@@ -77,38 +102,5 @@ tr:hover {
     transition: background-color 0.2s ease;
 }
 
-.btn_Tra_cuu_PGH
-{
-    cursor: pointer;
-    padding: 1vh 1vw;
-    border: none;
-    background-color: #8860d0;
-    color: white;
-    font-weight: bold;
-    border-radius: 5px;
-    margin-top:85vh;
-    position:absolute;
-    margin-left:5vw; 
-}
 
-.btn_Tra_cuu_PGH:hover {
-    background-color: #a0b0ff;
-}
 
-.btn_Lap_Phieu_Gia_Han
-{
-    cursor: pointer;
-    padding: 1vh 2vw;
-    border: none;
-    background-color: #8860d0;
-    color: white;
-    font-weight: bold;
-    border-radius: 5px;
-    margin-top:85vh;
-    margin-left:20vw;
-    position:absolute;
-}
-
-.btn_Lap_Phieu_Gia_Han:hover {
-    background-color: #a0b0ff;
-}

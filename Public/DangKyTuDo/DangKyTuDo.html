@@ -65,15 +65,15 @@
                 </div>
             </div>
 
-            <!-- Giao diện chọn lịch thi -->
             <div class="card">
                 <h2>Chọn lịch thi</h2>
                 <div class="filter-container">
-                    <label><input checked id="filter-all" name="filter" type="radio" value="all" /> Tất cả</label>
+                    <label><input checked name="filter" type="radio" value="all" /> Tất cả</label>
                     <label><input name="filter" type="radio" value="ngaythi" /> Ngày thi</label>
-                    <label><input name="filter" type="radio" value="giothi" /> Giờ thi</label>
                     <label><input name="filter" type="radio" value="loaichungchi" /> Loại chứng chỉ</label>
                     <input id="search-box" placeholder="Tìm theo mã lịch thi" type="text" />
+                    <input id="date-box" type="date" style="display:none;" />
+                    <select id="loaichungchi-box" style="display:none;"></select>
                     <button id="search-btn">🔍</button>
                 </div>
                 <table>
@@ -92,75 +92,80 @@
                 </table>
             </div>
 
-            <!-- Nút Lưu -->
             <div class="next-wrapper">
                 <button class="next-btn" onclick="submitDangKy()">Lưu đăng ký</button>
             </div>
         </div>
     </div>
 
-    <!-- Script -->
     <script>
         fetch('/DangNhap/Navbar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('navbar-container').innerHTML = data;
-                if (typeof checkLoginStatus === 'function') {
-                    checkLoginStatus();
-                }
+                if (typeof checkLoginStatus === 'function') checkLoginStatus();
             });
+        
+        function setupInputValidation() {
+                const sdtRegex = /^[0-9]{10}$/;
+                const cccdRegex = /^[0-9]{9,12}$/;
+                const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-        function submitDangKy() {
-            const selected = document.querySelector("input[name='chon-lich']:checked");
-            if (!selected) {
-                alert("⚠️ Vui lòng chọn một lịch thi!");
-                return;
+                const inputs = [
+                    { id: "khach-ho-ten", type: "required", message: "⚠️ Họ tên khách hàng không được để trống!" },
+                    { id: "khach-sdt", regex: sdtRegex, message: "⚠️ Số điện thoại khách hàng phải là dãy 10 số!" },
+                    { id: "khach-email", regex: emailRegex, message: "⚠️ Email khách hàng không hợp lệ!" },
+                    { id: "khach-dia-chi", type: "required", message: "⚠️ Địa chỉ khách hàng không được để trống!" },
+
+                    { id: "thisinh-ho-ten", type: "required", message: "⚠️ Họ tên thí sinh không được để trống!" },
+                    { id: "thisinh-cccd", regex: cccdRegex, message: "⚠️ CCCD thí sinh phải là dãy số từ 9 đến 12 số!" },
+                    { id: "thisinh-sdt", regex: sdtRegex, message: "⚠️ Số điện thoại thí sinh phải là dãy 10 số!" },
+                    { id: "thisinh-email", regex: emailRegex, message: "⚠️ Email thí sinh không hợp lệ!" },
+                    { id: "thisinh-diachi", type: "required", message: "⚠️ Địa chỉ thí sinh không được để trống!" },
+                    { id: "thisinh-ngaysinh", type: "date", message: "⚠️ Ngày sinh thí sinh phải nhỏ hơn ngày hôm nay!" }
+                ];
+
+                inputs.forEach(input => {
+                    const element = document.getElementById(input.id);
+                    if (element) {
+                        element.addEventListener("blur", () => {
+                            const value = element.value.trim();
+                            if (input.type === "required" && value === "") {
+                                alert(input.message);
+                            } else if (input.type === "date") {
+                                const today = new Date().toISOString().split('T')[0];
+                                if (value >= today) {
+                                    alert(input.message);
+                                }
+                            } else if (input.regex && !input.regex.test(value)) {
+                                alert(input.message);
+                            }
+                        });
+                    }
+                });
             }
 
-            const data = {
-                TenKH: document.getElementById("khach-ho-ten").value,
-                DiaChiKH: document.getElementById("khach-dia-chi").value,
-                SoDienThoaiKH: document.getElementById("khach-sdt").value,
-                EmailKH: document.getElementById("khach-email").value,
-                LoaiKhachHang: "tự do",
-
-                TenTS: document.getElementById("thisinh-ho-ten").value,
-                CCCDTS: document.getElementById("thisinh-cccd").value,
-                SoDienThoaiTS: document.getElementById("thisinh-sdt").value,
-                EmailTS: document.getElementById("thisinh-email").value,
-                DiaChiTS: document.getElementById("thisinh-diachi").value,
-                NgaySinh: document.getElementById("thisinh-ngaysinh").value,
-
-                LoaiChungChi: parseInt(selected.getAttribute("data-loaichungchi")),
-                MaLichThi: parseInt(selected.value)
-            };
-
-            fetch("/api/dangkyFull", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            })
-                .then(res => res.json())
-                .then(result => {
-                    if (result.message) {
-                        alert("✅ Đăng ký thành công! Mã phiếu: " + result.maPhieuDangKy);
-                        window.location.href = "/InPhieuDangKy/InPhieuDangKy.html";
-                    } else {
-                        alert("❌ Lỗi: " + result.error);
-                    }
-                })
-                .catch(err => {
-                    console.error("❌ Lỗi kết nối:", err);
-                    alert("Lỗi kết nối tới máy chủ!");
-                });
+        async function fetchLoaiChungChi() {
+            const res = await fetch('/api/getLoaiChungChi');
+            const data = await res.json();
+            const select = document.getElementById('loaichungchi-box');
+            data.forEach(loai => {
+                const option = document.createElement('option');
+                option.value = loai.MaLoaiChungChi;
+                option.textContent = loai.TenChungChi;
+                select.appendChild(option);
+            });
         }
 
-        async function fetchLichThi(filter = "all", search = "") {
-            let url = new URL("/api/getLichThi", window.location.origin);
-            if (search) {
+        async function fetchLichThi(filter = "all", search = "", ngayThi = "", loaiChungChi = "") {
+            let url = new URL("/api/GetLichThi", window.location.origin);
+
+            if (filter === "all" && search) {
                 url.searchParams.append("maLichThi", search);
-            } else if (filter !== "all") {
+            } else {
                 url.searchParams.append("dieuKien", filter);
+                if (filter === "ngaythi" && ngayThi) url.searchParams.append("ngayThi", ngayThi);
+                if (filter === "loaichungchi" && loaiChungChi) url.searchParams.append("loaiChungChi", loaiChungChi);
             }
 
             const res = await fetch(url);
@@ -188,19 +193,115 @@
                     <td>${lich.SoLuongDangKy || 0}</td>
                     <td>${lich.MaPhongThi}</td>
                     <td>${lich.LoaiChungChi}</td>
-                    <td>
-                        ${disabled
-                        ? "<span style='color:gray'>Đã đầy</span>"
-                        : `<input type="radio" name="chon-lich" value="${lich.MaLichThi}" data-loaichungchi="${lich.LoaiChungChi}">`
-                    }
+                    <td>${disabled ? "<span style='color:gray'>Đã đầy</span>" : `<input type='radio' name='chon-lich' value='${lich.MaLichThi}' data-loaichungchi='${lich.LoaiChungChi}'>`}
                     </td>
                 `;
                 tableBody.appendChild(row);
             });
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        function submitDangKy() {
+                const khachSDT = document.getElementById("khach-sdt").value.trim();
+                const thisinhSDT = document.getElementById("thisinh-sdt").value.trim();
+                const thisinhCCCD = document.getElementById("thisinh-cccd").value.trim();
+                const khachEmail = document.getElementById("khach-email").value.trim();
+                const thisinhEmail = document.getElementById("thisinh-email").value.trim();
+
+                const sdtRegex = /^[0-9]{10}$/;
+                const cccdRegex = /^[0-9]{9,12}$/;
+                const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+                if (!sdtRegex.test(khachSDT)) {
+                    alert("⚠️ Số điện thoại khách hàng phải là dãy 10 số!");
+                    return;
+                }
+
+                if (!sdtRegex.test(thisinhSDT)) {
+                    alert("⚠️ Số điện thoại thí sinh phải là dãy 10 số!");
+                    return;
+                }
+
+                if (!cccdRegex.test(thisinhCCCD)) {
+                    alert("⚠️ CCCD thí sinh phải là dãy số từ 9 đến 12 số!");
+                    return;
+                }
+
+                if (!emailRegex.test(khachEmail)) {
+                    alert("⚠️ Email khách hàng không hợp lệ!");
+                    return;
+                }
+
+                if (!emailRegex.test(thisinhEmail)) {
+                    alert("⚠️ Email thí sinh không hợp lệ!");
+                    return;
+                }
+
+                const selected = document.querySelector("input[name='chon-lich']:checked");
+                if (!selected) {
+                    alert("⚠️ Vui lòng chọn một lịch thi!");
+                    return;
+                }
+
+                const data = {
+                    TenKH: document.getElementById("khach-ho-ten").value,
+                    DiaChiKH: document.getElementById("khach-dia-chi").value,
+                    SoDienThoaiKH: khachSDT,
+                    EmailKH: khachEmail,
+                    LoaiKhachHang: "tự do",
+
+                    TenTS: document.getElementById("thisinh-ho-ten").value,
+                    CCCDTS: thisinhCCCD,
+                    SoDienThoaiTS: thisinhSDT,
+                    EmailTS: thisinhEmail,
+                    DiaChiTS: document.getElementById("thisinh-diachi").value,
+                    NgaySinh: document.getElementById("thisinh-ngaysinh").value,
+
+                    LoaiChungChi: parseInt(selected.getAttribute("data-loaichungchi")),
+                    MaLichThi: parseInt(selected.value)
+                };
+
+                fetch("/api/dangkyFull", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.message) {
+                            alert("✅ Đăng ký thành công! Mã phiếu: " + result.maPhieuDangKy);
+                            sessionStorage.setItem("maPhieuDangKy", result.maPhieuDangKy);
+                            window.location.href = "/InPhieuDangKy/InPhieuDangKy.html";
+                        } else {
+                            alert("❌ Lỗi: " + result.error);
+                        }
+                    })
+                    .catch(err => {
+                        console.error("❌ Lỗi kết nối:", err);
+                        alert("Lỗi kết nối tới máy chủ!");
+                    });
+            }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await fetchLoaiChungChi();
             fetchLichThi();
+
+            const radios = document.querySelectorAll("input[name='filter']");
+            radios.forEach(r => r.addEventListener("change", () => {
+                const value = r.value;
+                document.getElementById("search-box").style.display = value === "all" ? "inline" : "none";
+                document.getElementById("date-box").style.display = value === "ngaythi" ? "inline" : "none";
+                document.getElementById("loaichungchi-box").style.display = value === "loaichungchi" ? "inline" : "none";
+            }));
+
+            document.getElementById("search-btn").addEventListener("click", () => {
+                const selectedRadio = document.querySelector("input[name='filter']:checked");
+                const filter = selectedRadio?.value || "all";
+                const search = document.getElementById("search-box").value.trim();
+                const ngayThi = document.getElementById("date-box").value;
+                const loaiChungChi = document.getElementById("loaichungchi-box").value;
+
+                fetchLichThi(filter, search, ngayThi, loaiChungChi);
+            });
         });
     </script>
 </body>

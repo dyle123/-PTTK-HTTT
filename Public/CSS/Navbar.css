@@ -119,7 +119,7 @@ body {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Hiển thị menu con khi rê chuột */
+/* Hiển thị menu con khi rê chuột vào menu cha */
 .dropdown:hover .dropdown-menu {
     display: block;
 }
@@ -134,5 +134,38 @@ body {
     color: black;
     display: block;
     padding: 8px 12px;
+}
+
+/* Menu phụ của Đăng ký thi */
+.sub-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background: white;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Hiển thị menu phụ khi rê chuột vào mục "Đăng ký thi" */
+.dropdown-menu li:hover .sub-menu {
+    display: block;
+}
+
+/* Định dạng cho các mục trong menu phụ */
+.sub-menu li {
+    padding: 15px;
+}
+
+.sub-menu li a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    padding: 8px 12px;
+    white-space: nowrap; /* Ngăn chặn text bị xuống dòng */
+
 }
 

@@ -6,56 +6,88 @@ body {
 
 h1 {
     position: absolute;
-    top: 12%;
-    /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
-    left: 50%;
-    /* Căn giữa phần tử theo chiều ngang */
-    transform: translateX(-50%);
-    /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
-    padding: 0.8vw 1.5vw;
-    /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background: #fce4ec;
-    /* background-m */
-    border-radius: 10px;
-    /* border-m */
+    top: 12%; /* Vị trí từ trên xuống bằng 10% chiều cao của viewport */
+    left: 50%; /* Căn giữa phần tử theo chiều ngang */
+    transform: translateX(-50%); /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
+    padding: 0.8vw 1.5vw; /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
+    /*background: #ecc94b	; 
+    box-shadow: 0 2px 5px rgba(160, 176, 255, 0.3);*/
+    border-radius: 10px; /* border-m */
     display: inline-block;
 }
 
 .filter-container {
     position: absolute;
-    top: 23%;
-    /* Đặt vị trí xuống dưới để không bị che */
-    left: 50%;
+    top: 20%; /* Đặt vị trí xuống dưới tiêu đề */
+    left: 51%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: 10px;
-    /* Tạo khoảng cách giữa các thành phần */
+    justify-content: center; /* Căn giữa các phần tử trên dòng */
+    gap: 20px; /* Tăng khoảng cách giữa các phần tử */
     padding: 10px;
-    background: #f9f9f9;
-    /* Màu nền nhẹ để dễ nhìn */
-    border-radius: 5px;
+
 }
 
-#search-box {
-    width: 200px;
+.filter-container > div {
+    display: flex;
+    align-items: center;
+}
+
+.filter-container label {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.filter-container input[type="text"],
+.filter-container input[type="date"],
+.filter-container input[type="time"],
+.filter-container select {
     padding: 8px;
-    margin-right: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    min-width: 150px; /* Đặt chiều rộng tối thiểu cho các input */
+}
+
+.filter-container select {
+    appearance: none; /* Loại bỏ kiểu mặc định của select */
+    background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 5px;
+    padding-right: 20px;
 }
 
 #search-btn {
-    padding: 8px 12px;
-    background-color: #F8BBD0;
-    color: white;
+    padding: 10px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    background-color: #a0b0ff;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
 #search-btn:hover {
-    background-color: #ff6b81;
+    background-color: #8860d0;
+}
+
+/* ... các style CSS hiện tại ... */
+
+#clear-filter-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #a0b0ff; 
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#clear-filter-btn:hover {
+    background-color: #8860d0;
 }
 
 input[type="text"] {
@@ -65,71 +97,80 @@ input[type="text"] {
 
 .create-container {
     position: absolute;
-    top: 85vh;
-    /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
-    left: 50%;
-    /* Căn giữa phần tử theo chiều ngang */
-    transform: translateX(-50%);
-    /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
+    top: 22.7%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
+    left: 18%; /* Căn giữa phần tử theo chiều ngang */
+    transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
     display: flex;
     align-items: center;
-    background-color: #fce4ec;
     border-radius: 5px;
     padding: 5px 10px;
 }
 
 #create-btn {
-
+    
     padding: 8px 12px;
-    background-color: #F8BBD0;
+    background-color: #8860d0;
     color: white;
+    display: flex;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
+#create-btn:hover {
+    background-color: #a0b0ff;
+}
+
+.next-container {
+    position: absolute;
+    top: 22.7%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
+    left: 83%; /* Căn giữa phần tử theo chiều ngang */
+    transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+#next-step-btn {
+    padding: 8px 12px;
+    background-color: #8860d0;
+    color: white;
+    display: flex;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#next-step-btn:hover {
+    background-color: #a0b0ff;
+}
 
 table {
     position: absolute;
     width: 90%;
-    top: 30vh;
-    /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
-    left: 4%;
-    /* Căn giữa phần tử theo chiều ngang */
+    top: 30vh; /* Đặt vị trí từ trên xuống 30% chiều cao viewport */
+    left: 4%; /* Căn giữa phần tử theo chiều ngang */
     margin: 20px;
     border-collapse: collapse;
-    border: 2px solid #F8BBD0;
+    border: 2px solid #a0b0ff;
 }
 
-th,
-td {
-    border: 1px solid #F8BBD0;
+th, td {
+    border: 1px solid #00A2FF;
     padding: 10px;
     text-align: center;
 }
 
 th {
-    background-color: #fce4ec;
-}
-.submit-wrapper {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 20px;
+    background-color: #f4f4fb;
 }
 
-.submit-btn {
-    padding: 12px 24px;
-    font-size: 16px;
-    background-color: #ff6b81;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+/* Màu hover dòng */
+
+
+tr:hover {
+    background-color: #f1eaf9;
+    transition: background-color 0.2s ease;
 }
 
-.submit-btn:hover {
-    background-color: #ff6b81;
-}

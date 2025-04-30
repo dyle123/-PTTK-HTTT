@@ -25,63 +25,9 @@
         <input type="date" id="Input_NgayDuThiMoi">
         <label for="Input_NgayDuThiMoi" id="NgayDuThiMoi_label">Ngày dự thi mới</label>
         <button id="btn_XacNhan" onclick="LapPhieuGiaHan()">Xác nhận</button>
-        <button id="btn_InPhieu">In phiếu</button>
+        <button id="btn_InPhieu" onclick="inPhieu()">In phiếu</button>
     </div>
-
-    
-    <button class="btn_Tra_cuu_SLGH" onclick="window.location.href='TraCuuSoLanGiaHan.html'">
-        Tra cứu số lần gia hạn
-    </button>
-    <button class="btn_Tra_cuu_PGH" onclick="window.location.href='TraCuuPhieuGiaHan.html'">
-        Tra cứu phiếu gia hạn
-    </button>
-
     <script src="/DangNhap/Navbar.js"></script>
-    <script src="/GiaHan/GiaHan.js"></script>
-    <script>
-        async function lapPhieuGiaHan() {
-            const cccd = document.getElementById('Input_CCCD').value.trim();
-            const maPhieuDangKy = parseInt(document.getElementById('Input_MaPhieuDangKy').value);
-            const lyDo = document.getElementById('Input_LyDoGiaHan').value.trim();
-            const loaiGiaHan = document.getElementById('Input_LoaiGiaHan').value;
-            const ngayCu = document.getElementById('Input_NgayDuThiCu').value;
-            const ngayMoi = document.getElementById('Input_NgayDuThiMoi').value;
-
-            if (!cccd || !maPhieuDangKy || !lyDo || !ngayCu || !ngayMoi||!loaiGiaHan) {
-                alert('Vui lòng điền đầy đủ thông tin.');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/lapPhieuGiaHan', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        CCCD: cccd,
-                        MaPhieuDangKy: maPhieuDangKy,
-                        LiDoGiaHan: lyDo,
-                        LoaiGiaHan:loaiGiaHan,
-                        NgayThiCu: ngayCu,
-                        NgayThiMoi: ngayMoi
-                    })
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Lập phiếu gia hạn thành công!');
-                } else {
-                    alert('Lỗi: ' + result.error);
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Có lỗi xảy ra khi kết nối đến server.');
-            }
-        }
-
-    // 2. Gán sự kiện click sau khi DOM đã load
-    document.getElementById('btn_XacNhan').addEventListener('click', lapPhieuGiaHan);
-    </script>
+    <script src="/GiaHan/LapPhieuGiaHan.js"></script>
 </body>
 </html>

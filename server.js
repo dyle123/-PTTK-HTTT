@@ -90,35 +90,35 @@ async function sqlQuery(query, params = {}) {
 //         throw error;
 //     }
 // }
-// const config = {
-//     user: 'sa',
-//     password: '12345678',
-//     server: 'localhost',
-//     port: 1433,
-//     database: 'PTTK',
-//     options: {
-//         encrypt: false,
-//         trustServerCertificate: true,
-//         enableArithAbort: true,
-//         connectTimeout: 30000
-//     }
-// };
+//  const config = {
+//      user: 'sa',
+//      password: '12345678',
+//      server: 'localhost',
+//      port: 1433,
+//      database: 'PTTK',
+//      options: {
+//          encrypt: false,
+//          trustServerCertificate: true,
+//          enableArithAbort: true,
+//          connectTimeout: 30000
+//      }
+//  };
 
 
 
-// const config = {
-//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.174.1',
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'BENU',
-//     password: 'benu123',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
+const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.174.1',
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'BENU',
+    password: 'benu123',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 // Cấu hình kết nối SQL Server
 // const config = {
@@ -136,9 +136,22 @@ async function sqlQuery(query, params = {}) {
 // };
 
 //Cấu hình kết nối SQL Server
+//const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//    server: '192.168.1.9',
+//    port: 1433, // Cổng SQL Server
+//    database: 'PTTK',
+//    user: 'dungluonghoang',
+//    password: 'teuklee1983#',
+//    options: {
+//        encrypt: false, // Không cần mã hóa
+//        enableArithAbort: true, // Bật xử lý lỗi số học
+//        connectTimeout: 30000, // Thời gian chờ 30 giây
+//    },
+//};
 // const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-//     server: '192.168.1.5',
+//     server: '192.168.1.8',
 //     port: 1433, // Cổng SQL Server
 //     database: 'PTTK',
 //     user: 'dungluonghoang',
@@ -149,6 +162,21 @@ async function sqlQuery(query, params = {}) {
 //         connectTimeout: 30000, // Thời gian chờ 30 giây
 //     },
 // };
+
+//Cấu hình kết nối SQL Server
+const config = {
+    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+    server: '192.168.1.5',
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'dungluonghoang',
+    password: 'teuklee1983#',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
 
 
 
@@ -769,15 +797,19 @@ app.post('/api/TraCuuSoLanGiaHan', async (req, res) => {
         const pool = await sql.connect(config);
         const request = pool.request();
 
-        if (CCCD && NgayThi) {
-            // Có lọc
-            request.input('CCCD', sql.Char(12), CCCD);
-            request.input('NgayThi', sql.Date, NgayThi);
-            const result = await request.execute('TraCuuSoLanGiaHan');
-            res.json(result.recordset);
-        } else {
+        if ((CCCD == null || CCCD.trim() === '') && (NgayThi == null || NgayThi === '')) {
             // Không lọc => lấy toàn bộ dữ liệu
             const result = await request.execute('DocToanBoChiTietPhieuDangKy');
+            res.json(result.recordset);
+        } else {
+            // Có lọc
+            if (CCCD != null && CCCD.trim() !== '') {
+                request.input('CCCD', sql.Char(12), CCCD);
+            }
+            if (NgayThi != null && NgayThi !== '') {
+                request.input('NgayThi', sql.Date, NgayThi);
+            }
+            const result = await request.execute('TraCuuSoLanGiaHan');
             res.json(result.recordset);
         }
     } catch (err) {
@@ -788,18 +820,24 @@ app.post('/api/TraCuuSoLanGiaHan', async (req, res) => {
 
 //API TraCuuPhieuGiaHan
 app.post('/api/getPhieuGiaHan', async (req, res) => {
-    const { CCCD } = req.body;
+    const { CCCD, NgayDuThi } = req.body;
 
     try {
         const pool = await sql.connect(config);
         const request = pool.request();
 
-        if (CCCD) {
-            request.input('CCCD', sql.Char(12), CCCD);
-            const result = await request.execute('TraCuuPhieuGiaHan');
+        if ((CCCD == null || CCCD.trim() === '') && (NgayDuThi == null || NgayDuThi === '')) {
+            const result = await request.execute('DocToanBoPhieuGiaHan');
             res.json(result.recordset);
         } else {
-            const result = await request.execute('DocToanBoPhieuGiaHan');
+            if (CCCD != null && CCCD.trim() !== '') {
+                request.input('CCCD', sql.Char(12), CCCD);
+            }
+            if (NgayDuThi != null && NgayDuThi !== '') {
+                request.input('NgayDuThi', sql.Date, NgayDuThi);
+            }
+
+            const result = await request.execute('TraCuuPhieuGiaHan');
             res.json(result.recordset);
         }
     } catch (err) {
@@ -1249,54 +1287,103 @@ app.get('/api/getPhieuDangKyTD', async (req, res) => {
 });
 
 app.post('/api/tao-lich-thi', async (req, res) => {
+    // --- Lấy dữ liệu từ client ---
     const { ngayThi, gioThi, loaiChungChi, phongThi } = req.body;
+    console.log('Dữ liệu nhận được từ client:', { ngayThi, gioThi, loaiChungChi, phongThi });
+    // --- Kết thúc lấy dữ liệu ---
 
-    console.log('Dữ liệu nhận được từ client:', { ngayThi, gioThi, loaiChungChi, phongThi }); // Log toàn bộ dữ liệu
-
-    if (!ngayThi || !gioThi || !loaiChungChi || !phongThi) {
-        return res.status(400).json({ message: 'Thiếu thông tin bắt buộc.' });
+    // --- Validation dữ liệu đầu vào ---
+    if (!ngayThi || !gioThi || loaiChungChi == null || phongThi == null) { // Kiểm tra kỹ hơn (bao gồm cả số 0 nếu có thể)
+        console.error('Validation Error: Thiếu thông tin bắt buộc.');
+        // Cung cấp thông báo lỗi rõ ràng hơn
+        let missingFields = [];
+        if (!ngayThi) missingFields.push('Ngày thi');
+        if (!gioThi) missingFields.push('Giờ thi');
+        if (loaiChungChi == null) missingFields.push('Loại chứng chỉ'); // Dùng == null để bắt cả undefined và null
+        if (phongThi == null) missingFields.push('Phòng thi');
+        return res.status(400).json({ message: `Thiếu thông tin bắt buộc: ${missingFields.join(', ')}.` });
     }
+    // Kiểm tra định dạng giờ thi (HH:mm:ss) - Rất quan trọng khi dùng NVarChar
+    const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
+    if (!timeRegex.test(gioThi)) {
+        console.error('Validation Error: Định dạng giờ thi không hợp lệ:', gioThi);
+        return res.status(400).json({ message: 'Định dạng giờ thi không hợp lệ (cần HH:mm:ss).' });
+    }
+    // --- Kết thúc Validation ---
 
     const sqlQuery = `
         INSERT INTO LichThi (NgayThi, GioThi, MaPhongThi, LoaiChungChi)
-        VALUES (?, ?, ?, ?)
+        VALUES (@ngayThiParam, @gioThiParam, @phongThiParam, @loaiChungChiParam)
     `;
 
     let pool;
 
     try {
+        console.log('Bắt đầu kết nối DB...'); // Giữ lại log cơ bản
         pool = await sql.connect(config);
+        console.log('Kết nối DB thành công.');
 
-        console.log('Kiểu dữ liệu của các tham số trước khi input:');
-        console.log('ngayThi:', typeof ngayThi, ngayThi);
-        console.log('gioThi:', typeof gioThi, gioThi);
-        console.log('phongThi:', typeof phongThi, phongThi);
-        console.log('loaiChungChi:', typeof loaiChungChi, loaiChungChi);
+        const request = pool.request();
+        console.log('Tạo request object.');
 
-        const result = await pool.request()
-            .input(1, sql.Date, ngayThi)
-            .input(2, sql.Time, gioThi)
-            .input(3, sql.Int, phongThi)
-            .input(4, sql.Int, loaiChungChi)
-            .query(sqlQuery);
+        // Thêm input - Đảm bảo sử dụng đúng kiểu và giá trị từ req.body
+        console.log(`Input 1 (ngayThiParam): Type=sql.Date, Value=${ngayThi}`);
+        request.input('ngayThiParam', sql.Date, ngayThi); // Lấy từ req.body
 
+        // *** QUAN TRỌNG: Giữ nguyên sql.NVarChar và lấy giá trị gioThi từ req.body ***
+        console.log(`Input 2 (gioThiParam): Type=sql.NVarChar, Value=${gioThi}`);
+        request.input('gioThiParam', sql.NVarChar, gioThi); // Lấy từ req.body
+
+        console.log(`Input 3 (phongThiParam): Type=sql.Int, Value=${phongThi}`);
+        request.input('phongThiParam', sql.Int, phongThi); // Lấy từ req.body
+
+        console.log(`Input 4 (loaiChungChiParam): Type=sql.Int, Value=${loaiChungChi}`);
+        request.input('loaiChungChiParam', sql.Int, loaiChungChi); // Lấy từ req.body
+
+        console.log('Chuẩn bị thực thi query...');
+        const result = await request.query(sqlQuery);
+        console.log('Thực thi query thành công:', result);
+
+        // Phản hồi thành công về client
         res.status(201).json({ message: 'Lịch thi đã được tạo thành công.' });
 
     } catch (error) {
         console.error('Lỗi khi ghi vào cơ sở dữ liệu:', error);
-        res.status(500).json({ message: 'Lỗi khi ghi vào cơ sở dữ liệu.' });
+
+        // Kiểm tra xem có lỗi preceding nào không, và nếu có, kiểm tra thông báo lỗi đầu tiên
+        if (error.precedingErrors && error.precedingErrors.length > 0 && error.precedingErrors[0].message.includes('Không thể thêm lịch thi có ngày thi trong quá khứ hoặc cách ngày hiện tại dưới 3 ngày.')) {
+            return res.status(400).json({ message: error.precedingErrors[0].message }); // Gửi thông báo lỗi chi tiết từ trigger
+        }
+        // Kiểm tra lỗi cụ thể (ví dụ: khóa ngoại, ...)
+        if (error.number === 547) { // Lỗi vi phạm khóa ngoại (FOREIGN KEY constraint)
+             console.error('Lỗi khóa ngoại:', error.message);
+             // Phân tích thông báo lỗi để biết khóa ngoại nào bị vi phạm
+             let constraintDetails = 'không xác định';
+             if (error.message.includes('FK_LichThi_PhongThi')) {
+                 constraintDetails = `Mã phòng thi (${phongThi}) không tồn tại.`;
+             } else if (error.message.includes('FK_LichThi_BangGiaThi')) {
+                  constraintDetails = `Mã loại chứng chỉ (${loaiChungChi}) không tồn tại.`;
+             }
+             return res.status(400).json({ message: `Lỗi dữ liệu đầu vào: ${constraintDetails}` });
+        }
+         // Kiểm tra lỗi chuyển đổi từ SQL Server (ít khả năng xảy ra với NVarChar và regex đã kiểm tra)
+        if (error.message.toLowerCase().includes('converting data type')) {
+             console.error('Lỗi chuyển đổi kiểu dữ liệu từ SQL Server:', error);
+             return res.status(400).json({ message: `Lỗi chuyển đổi dữ liệu giờ thi từ chuỗi: ${error.message}` });
+        }
+        // Lỗi chung
+        res.status(500).json({ message: 'Lỗi máy chủ khi ghi vào cơ sở dữ liệu.' });
 
     } finally {
         if (pool) {
             try {
                 await pool.close();
-                console.log('Đã đóng connection pool cho API tạo lịch thi.');
+                console.log('Đã đóng connection pool.');
             } catch (err) {
                 console.error('Lỗi khi đóng connection pool:', err);
             }
         }
-
-    };
+    }
 });
 
 app.get('/api/nhanvien', async (req, res) => {
@@ -1328,4 +1415,130 @@ app.get('/api/phongthi', async (req, res) => {
         res.status(500).send('Lỗi khi lấy phòng thi');
     }
 });
+app.get('/api/getPhieuDangKyMoiNhat', async (req, res) => {
+    const { maPhieuDangKy } = req.query;
+
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuDangKy', sql.Int, maPhieuDangKy)
+            .query(`
+                SELECT 
+                    P.MaPhieuDangKy, 
+                    P.NgayDangKy,
+                    P.TrangThaiThanhToan,
+                    P.LoaiChungChi,
+                    L.NgayThi,
+                    L.GioThi
+                FROM PhieuDangKy P
+                LEFT JOIN LichThi L ON P.LichThi = L.MaLichThi
+                WHERE P.MaPhieuDangKy = @MaPhieuDangKy
+            `);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy phiếu đăng ký' });
+        }
+
+        res.json(result.recordset[0]);
+    } catch (err) {
+        console.error('Lỗi khi lấy phiếu:', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+app.get('/api/GetLichThi', async (req, res) => {
+    const { dieuKien, maLichThi, ngayThi, gioThi, loaiChungChi, thangThi } = req.query;
+
+    try {
+        const pool = await sql.connect(config);
+        let query = `SELECT * FROM LichThi `;
+        let conditions = [];
+
+        console.log('DieuKien:', dieuKien);
+
+        if (dieuKien === "ngaythi" && ngayThi) {
+            conditions.push(`NgayThi = @NgayThi`);
+        }
+        if (dieuKien === "thangthi" && thangThi) {
+            conditions.push(`YEAR(NgayThi) = @Year AND MONTH(NgayThi) = @Month`);
+        }
+        if (dieuKien === "giothi" && gioThi) {
+            conditions.push(`GioThi = @GioThi`);
+        }
+        if (dieuKien === "loaichungchi" && loaiChungChi) {
+            conditions.push(`LoaiChungChi = @LoaiChungChi`);
+        }
+        if (maLichThi) {
+            conditions.push(`MaLichThi = @MaLichThi`);
+        }
+
+        if (conditions.length > 0) {
+            query += ` WHERE ` + conditions.join(" AND ");
+        }
+
+        const request = pool.request();
+
+        if (maLichThi) request.input('MaLichThi', sql.Int, maLichThi);
+        if (ngayThi) request.input('NgayThi', sql.Date, ngayThi);
+        if (gioThi) request.input('GioThi', sql.Time, gioThi);
+        if (loaiChungChi) request.input('LoaiChungChi', sql.NVarChar, loaiChungChi);
+
+        if (thangThi) {
+            const [year, month] = thangThi.split('-'); // Parse '2025-06'
+            request.input('Year', sql.Int, parseInt(year));
+            request.input('Month', sql.Int, parseInt(month));
+        }
+
+        const result = await request.query(query);
+
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            return new Date(dateString).toISOString().split('T')[0];
+        };
+
+        const formatTime = (timeValue) => {
+            if (!timeValue) return null;
+            return timeValue.toISOString().split('T')[1].slice(0, 8);
+        };
+
+        const formattedData = result.recordset.map(row => ({
+            ...row,
+            NgayThi: formatDate(row.NgayThi),
+            GioThi: formatTime(row.GioThi)
+        }));
+
+        res.json(formattedData);
+    } catch (err) {
+        console.error('❌ Lỗi getLichThi:', err);
+        res.status(500).json({ error: 'Lỗi khi lấy lịch thi' });
+    }
+});
+app.get('/api/getPhieuDangKyById', async (req, res) => {
+    const { maPhieu } = req.query;
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('maPhieu', sql.Int, maPhieu)
+            .query(`
+                SELECT 
+                    PD.MaPhieuDangKy, 
+                    PD.NgayDangKy, 
+                    L.NgayThi, 
+                    PD.LoaiChungChi,
+                    KH.TenKhachHang, KH.Email, KH.SoDienThoai, KH.DiaChi,
+                    TS.HoVaTen AS TenThiSinh, TS.NgaySinh, TS.Email AS EmailThiSinh, TS.SoDienThoai AS SDTThiSinh, TS.CCCD
+                FROM PhieuDangKy PD
+                JOIN KhachHang KH ON PD.MaKhachHang = KH.MaKhachHang
+                JOIN ChiTietPhieuDangKy CTP ON PD.MaPhieuDangKy = CTP.MaPhieuDangKy
+                JOIN ThiSinh TS ON TS.CCCD = CTP.CCCD
+                JOIN LichThi L ON PD.LichThi = L.MaLichThi
+                WHERE PD.MaPhieuDangKy = @maPhieu
+            `);
+        res.json(result.recordset);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Lỗi khi lấy thông tin phiếu đăng ký" });
+    }
+});
+
 

@@ -10,76 +10,30 @@
 <body>
     <div id="navbar-container"></div>
     <h1>Tra Cứu Số Lần Gia Hạn</h1>
-    <input type="text" id="search-box" placeholder="Nhập CCCD">
-    <input type="Date" id="date-box">
-    <button id="search-btn" onclick="fetchData()">🔍</button>
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Nhập CCCD">
+        <input type="date" id="date-box">
+        <button id="search-btn" onclick="fetchData()">🔍</button>
+    </div>
+    <h2>Vui lòng nhập CCCD và Ngày Thi trên phiếu đăng ký để tra cứu</h2>
 
     
-    <table>
-        <thead>
-            <tr>
-                <th>Mã phiếu</th>
-                <th>CCCD</th>
-                <th>Ngày Thi</th>
-                <th>Số lần gia hạn</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
-        </tbody>
-    </table>
-    <button class="btn_Tra_cuu_PGH" onclick="window.location.href='TraCuuPhieuGiaHan.html'">
-        Tra cứu phiếu gia hạn
-    </button>
-    <button class="btn_Lap_Phieu_Gia_Han" onclick="window.location.href='LapPhieuGiaHan.html'">
-        Lập phiếu gia hạn
-    </button>
-
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã phiếu</th>
+                    <th>CCCD</th>
+                    <th>Ngày Thi</th>
+                    <th>Số lần gia hạn</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+            </tbody>
+        </table>
+    </div>
     <script src="/DangNhap/Navbar.js"></script>
-    <script src="/GiaHan/GiaHan.js"></script>
-    <script>
-        window.onload = fetchData;
-        async function fetchData() {
-            const cccd = document.getElementById("search-box").value.trim();
-            const date = document.getElementById("date-box").value;
-
-            try {
-                const response = await fetch('/api/TraCuuSoLanGiaHan', {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ CCCD: cccd, NgayThi: date })
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    alert("Lỗi: " + result.error);
-                    return;
-                }
-
-                const tableBody = document.getElementById("table-body");
-                tableBody.innerHTML = "";
-
-                if (result.length === 0) {
-                    tableBody.innerHTML = "<tr><td colspan='4'>Không tìm thấy dữ liệu.</td></tr>";
-                    return;
-                }
-
-                result.forEach(row => {
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td>${row.MaPhieuDangKy}</td>
-                            <td>${row.CCCD}</td>
-                            <td>${new Date(row.NgayThi).toLocaleDateString('vi-VN')}</td>
-                            <td>${row.SoLanGiaHan}</td>
-                        </tr>
-                    `;
-                });
-
-            } catch (error) {
-                alert("Lỗi hệ thống: " + error.message);
-            }
-        }
-    </script>
+    <script src="/GiaHan/TraCuuSoLanGiaHan.js"></script>
 </body>
 </html>
