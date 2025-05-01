@@ -199,7 +199,13 @@ UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
  delete from PhieuDuThi
  drop table PhieuDuThi
 
- select GioThi From LichThi
+ select * From LichThi
+
+ select * from PhieuDangKy
+
+    select * from ChiTietPhieuDangKy
+
+    select * from ThiSinh
 
  select* from PhieuDuThi
  set NgayDangKy = '2025-03-26' where MaPhieuDangKy = 1

@@ -702,6 +702,7 @@ BEGIN
     JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
 END
 
+go
 
 
 CREATE PROCEDURE TraCuuPhieuGiaHan
@@ -893,6 +894,79 @@ BEGIN
 END;
 GO
 
+CREATE PROCEDURE sp_DangKyDonVi
+    @TenKH NVARCHAR(50),
+    @EmailKH VARCHAR(60),
+    @SoDienThoaiKH CHAR(10),
+    @DiaChiKH NVARCHAR(255),
+    @LoaiKhachHang NVARCHAR(20),
+    @LoaiChungChi INT,
+    @MaLichThi INT,
+    @ThiSinhList NVARCHAR(MAX) -- JSON dạng chuỗi
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @MaKH INT, @MaPhieu INT;
+
+    BEGIN TRANSACTION;
+
+    BEGIN TRY
+        -- 1. Thêm Khách Hàng
+        INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
+        VALUES (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang);
+
+        SET @MaKH = SCOPE_IDENTITY();
+
+        -- 2. Tạo Phiếu Đăng Ký
+        INSERT INTO PhieuDangKy (LoaiChungChi, MaKhachHang, NgayDangKy, LichThi)
+        VALUES (@LoaiChungChi, @MaKH, GETDATE(), @MaLichThi);
+
+        SET @MaPhieu = SCOPE_IDENTITY();
+
+        -- 3. Duyệt và thêm thí sinh từ JSON
+        DECLARE @json NVARCHAR(MAX) = @ThiSinhList;
+
+        INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+        SELECT
+            ts.value('CCCD', 'CHAR(12)'),
+            ts.value('TenTS', 'NVARCHAR(50)'),
+            ts.value('NgaySinh', 'DATE'),
+            ts.value('EmailTS', 'VARCHAR(60)'),
+            ts.value('SoDienThoaiTS', 'CHAR(10)'),
+            ts.value('DiaChiTS', 'NVARCHAR(255)')
+        FROM OPENJSON(@json)
+        WITH (
+            CCCD CHAR(12),
+            TenTS NVARCHAR(50),
+            NgaySinh DATE,
+            EmailTS VARCHAR(60),
+            SoDienThoaiTS CHAR(10),
+            DiaChiTS NVARCHAR(255)
+        ) AS ts
+        WHERE NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD = ts.value('CCCD', 'CHAR(12)'));
+
+        -- 4. Ghi vào ChiTietPhieuDangKy
+        INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
+        SELECT @MaPhieu, ts.value('CCCD', 'CHAR(12)')
+        FROM OPENJSON(@json)
+        WITH (CCCD CHAR(12)) AS ts;
+
+        -- 5. Cập nhật số lượng đăng ký
+        UPDATE LichThi
+        SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + (
+            SELECT COUNT(*) FROM OPENJSON(@json)
+        )
+        WHERE MaLichThi = @MaLichThi;
+
+        COMMIT;
+        SELECT @MaPhieu AS MaPhieuDangKy;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END
+GO
 
 
 drop proc TraCuuSoLanGiaHan
