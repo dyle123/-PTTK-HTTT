@@ -1,7 +1,7 @@
 ﻿USE PTTK
 GO
 
-
+select*from PhieuDangKy
 
 CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
 AS
@@ -904,3 +904,51 @@ BEGIN
 END
 GO
 
+<<<<<<< Updated upstream
+=======
+CREATE PROC CapNhatPhieuDangKy
+	@MaPhieu INT,
+    @LoaiChungChi NVARCHAR(50),
+    @NgayDangKy DATE,
+    @ThoiGianThiDangKy DATE,
+    @MaKhachHang int
+AS
+BEGIN
+	IF NOT EXISTS(SELECT 1 FROM PhieuDangKy where MaPhieuDangKy=@MaPhieu)
+		BEGIN
+			RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
+			RETURN
+		END
+	IF NOT EXISTS (SELECT 1 FROM BangGiaThi WHERE TenChungChi=@LoaiChungChi)
+		BEGIN
+			RAISERROR(N'Loại chứng chỉ không tồn tại',16,1)
+			RETURN;
+		END
+	IF NOT EXISTS (SELECT 1 FROM LichThi where NgayThi=@ThoiGianThiDangKy)
+		BEGIN
+			RAISERROR(N'Thời gian đăng ký thi không tồn tại',16,1)
+			RETURN;
+		END
+	IF NOT EXISTS (SELECT 1 FROM KhachHang WHERE MaKhachHang=@MaKhachHang)
+		BEGIN
+			RAISERROR(N'Mã khách hàng không tồn tại',16,1)
+			RETURN;
+		END
+
+	DECLARE @MLT INT, @LCC INT
+
+	SELECT @LCC=MaLoaiChungChi
+	FROM BangGiaThi WHERE TenChungChi=@LoaiChungChi
+
+	SELECT @MLT=MaLichThi
+	FROM LichThi WHERE NgayThi=@ThoiGianThiDangKy
+
+	UPDATE PhieuDangKy
+	SET LoaiChungChi=@LCC, LichThi=@MLT, MaKhachHang=@MaKhachHang, NgayDangKy=@NgayDangKy
+	WHERE MaPhieuDangKy=@MaPhieu
+
+END
+
+drop proc CapNhatPhieuDangKy
+select *from PhieuDangKy
+>>>>>>> Stashed changes

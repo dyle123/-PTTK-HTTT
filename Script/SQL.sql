@@ -101,6 +101,7 @@ Create table PhieuDangKy
 	PaymentLink text
 );
 
+select*from PhieuDangKy
 
 create table ChiTietPhieuDangKy
 (
