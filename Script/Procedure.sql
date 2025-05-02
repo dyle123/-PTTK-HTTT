@@ -229,6 +229,80 @@ BEGIN
 END;
 GO
 
+
+CREATE OR ALTER PROCEDURE Back
+    @TenKH NVARCHAR(50),
+    @EmailKH NVARCHAR(100),
+    @SoDienThoaiKH CHAR(10),
+    @DiaChiKH NVARCHAR(255),
+    @LoaiKhachHang NVARCHAR(20),
+    @LoaiChungChi INT,
+    @ThoiGianThi DATE,
+    @TenTS NVARCHAR(50),
+    @CCCDTS CHAR(12),
+    @NgaySinh DATE,
+    @EmailTS NVARCHAR(100),
+    @SoDienThoaiTS CHAR(10),
+    @DiaChiTS NVARCHAR(255)
+AS
+BEGIN
+    DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
+
+    -- Bắt đầu giao dịch
+    BEGIN TRANSACTION;
+
+    BEGIN TRY
+        -- Kiểm tra hoặc tạo khách hàng
+        EXEC KIEMTRAKHACHHANG @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, @MaKhachHang OUTPUT;
+
+        -- Nếu không tìm thấy hoặc tạo được khách hàng thì báo lỗi
+        IF @MaKhachHang IS NULL 
+        BEGIN
+        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo khách hàng!', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END;
+
+        -- Kiểm tra hoặc tạo thí sinh trước khi tạo phiếu đăng ký
+        EXEC KIEMTRATHISINH @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
+
+        -- Nếu có lỗi trong KIEMTRATHISINH, dừng lại
+        IF @@ERROR <> 0 
+        BEGIN
+        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END;
+
+        -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
+        INSERT INTO PhieuDangKy
+        (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
+    VALUES
+        (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
+
+        -- Lấy ID mới của phiếu đăng ký
+        SET @MaPhieuDangKy = SCOPE_IDENTITY();
+
+        -- Thêm vào bảng ChiTietPhieuDangKy
+        INSERT INTO ChiTietPhieuDangKy
+        (MaPhieuDangKy, CCCD)
+    VALUES
+        (@MaPhieuDangKy, @CCCDTS);
+
+        -- Nếu không có lỗi, commit transaction
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        -- Nếu có lỗi ở bất kỳ bước nào, rollback lại toàn bộ giao dịch
+        ROLLBACK TRANSACTION;
+        
+        -- Hiển thị lỗi chi tiết
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+GO
+
 CREATE OR ALTER PROCEDURE TaoPhieuDangKy
     @TenKH NVARCHAR(50),
     @EmailKH NVARCHAR(100),
@@ -385,8 +459,14 @@ BEGIN
 END;
 GO
 
+select*from PhieuGiaHan
+delete from PhieuGiaHan where CCCD='987654321098'
 
-create or alter procedure LapPhieuGiaHan
+select*from ChiTietPhieuDangKy
+update ChiTietPhieuDangKy set SoLanGiaHan=0 where CCCD='987654321098'
+drop proc LapPhieuGiaHan
+
+Create procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
 	@PhiGiaHan int,
@@ -504,14 +584,24 @@ BEGIN
             UPDATE PhieuDangKy
 					SET LichThi=@NgayMoi
 					WHERE MaPhieuDangKy=@MaPhieuDangKy
+			UPDATE LichThi
+				SET SoLuongDangKy=SoLuongDangKy-1
+				WHERE MaLichThi=@NgayCu
+			UPDATE LichThi
+				SET SoLuongDangKy=SoLuongDangKy+1
+				WHERE MaLichThi=@NgayMoi
         END
     END
 END
 go
 
+select*from LichThi
 
+select*from ChiTietPhieuDangKy
 
-CREATE or alter TRIGGER trg_KiemTraMaPhieuDangKy
+update ChiTietPhieuDangKy set SoLanGiaHan=0 where CCCD='987654321098'
+
+CREATE TRIGGER trg_KiemTraMaPhieuDangKy
 ON PhieuGiaHan
 AFTER INSERT
 AS
@@ -530,7 +620,8 @@ BEGIN
 END;
 go
 
-create or alter procedure DocToanBoChiTietPhieuDangKy
+drop proc DocToanBoChiTietPhieuDangKy
+CREATE PROCEDURE DocToanBoChiTietPhieuDangKy
 AS
 BEGIN
 	SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
@@ -540,8 +631,9 @@ BEGIN
 END
 GO
 
+DROP PROC TraCuuSoLanGiaHan
 
-create or alter procedure TraCuuSoLanGiaHan
+CREATE PROCEDURE TraCuuSoLanGiaHan
     @CCCD char(12)=NULL,
     @NgayThi Date=NULL
 AS
@@ -626,10 +718,8 @@ BEGIN
 END
 GO
 
-
-
-
-create or alter proc DocToanBoPhieuGiaHan
+drop proc DocToanBoPhieuGiaHan
+CREATE PROC DocToanBoPhieuGiaHan
 AS
 BEGIN
 	SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
@@ -641,7 +731,7 @@ END
 go
 
 
-create or alter procedure TraCuuPhieuGiaHan
+CREATE PROCEDURE TraCuuPhieuGiaHan
     @CCCD char(12)=NULL,
 	@NgayDuThi Date =NULL
 AS
@@ -726,7 +816,7 @@ END
 GO
 
 
-create or alter procedure XoaPhieuGiaHan
+CREATE PROCEDURE XoaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy int
 AS
@@ -743,7 +833,7 @@ BEGIN
 END
 go
 
-create or alter procedure SuaPhieuGiaHan
+CREATE PROCEDURE SuaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy INT,
     @LoaiGiaHan NVARCHAR(12),
@@ -810,7 +900,7 @@ END
 GO
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi
-CREATE or alter TRIGGER  TG_KiemTraNgayThi
+CREATE TRIGGER TG_KiemTraNgayThi
 ON LichThi
 FOR INSERT
 AS
@@ -830,7 +920,7 @@ BEGIN
 END;
 GO
 
-create or alter procedure sp_DangKyDonVi
+CREATE PROCEDURE sp_DangKyDonVi
     @TenKH NVARCHAR(50),
     @EmailKH VARCHAR(60),
     @SoDienThoaiKH CHAR(10),
@@ -904,51 +994,4 @@ BEGIN
 END
 GO
 
-<<<<<<< Updated upstream
-=======
-CREATE PROC CapNhatPhieuDangKy
-	@MaPhieu INT,
-    @LoaiChungChi NVARCHAR(50),
-    @NgayDangKy DATE,
-    @ThoiGianThiDangKy DATE,
-    @MaKhachHang int
-AS
-BEGIN
-	IF NOT EXISTS(SELECT 1 FROM PhieuDangKy where MaPhieuDangKy=@MaPhieu)
-		BEGIN
-			RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
-			RETURN
-		END
-	IF NOT EXISTS (SELECT 1 FROM BangGiaThi WHERE TenChungChi=@LoaiChungChi)
-		BEGIN
-			RAISERROR(N'Loại chứng chỉ không tồn tại',16,1)
-			RETURN;
-		END
-	IF NOT EXISTS (SELECT 1 FROM LichThi where NgayThi=@ThoiGianThiDangKy)
-		BEGIN
-			RAISERROR(N'Thời gian đăng ký thi không tồn tại',16,1)
-			RETURN;
-		END
-	IF NOT EXISTS (SELECT 1 FROM KhachHang WHERE MaKhachHang=@MaKhachHang)
-		BEGIN
-			RAISERROR(N'Mã khách hàng không tồn tại',16,1)
-			RETURN;
-		END
-
-	DECLARE @MLT INT, @LCC INT
-
-	SELECT @LCC=MaLoaiChungChi
-	FROM BangGiaThi WHERE TenChungChi=@LoaiChungChi
-
-	SELECT @MLT=MaLichThi
-	FROM LichThi WHERE NgayThi=@ThoiGianThiDangKy
-
-	UPDATE PhieuDangKy
-	SET LoaiChungChi=@LCC, LichThi=@MLT, MaKhachHang=@MaKhachHang, NgayDangKy=@NgayDangKy
-	WHERE MaPhieuDangKy=@MaPhieu
-
-END
-
 drop proc CapNhatPhieuDangKy
-select *from PhieuDangKy
->>>>>>> Stashed changes
