@@ -244,3 +244,8 @@ select* from LichThi
 select*from PhieuGiaHan
 
 delete from PhieuGiaHan where CCCD='987654321098'
+
+SELECT * FROM ChiTietPhieuDangKy WHERE MaPhieuDangKy = 5;
+SELECT * FROM ThiSinh WHERE CCCD IN (
+    SELECT CCCD FROM ChiTietPhieuDangKy WHERE MaPhieuDangKy = 5
+);
