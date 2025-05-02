@@ -2,13 +2,14 @@ let daXacNhan=false;
         async function lapPhieuGiaHan() {
             const cccd = document.getElementById('Input_CCCD').value.trim();
             const maPhieuDangKy = parseInt(document.getElementById('Input_MaPhieuDangKy').value);
+            const phiGiaHan = parseInt(document.getElementById('Input_PhiGiaHan').value);
             const lyDo = document.getElementById('Input_LyDoGiaHan').value.trim();
             const loaiGiaHan = document.getElementById('Input_LoaiGiaHan').value;
             const ngayCu = document.getElementById('Input_NgayDuThiCu').value;
             const ngayMoi = document.getElementById('Input_NgayDuThiMoi').value;
 
-            if (!cccd || !maPhieuDangKy || !lyDo || !ngayCu || !ngayMoi||!loaiGiaHan) {
-                alert('Vui lòng điền đầy đủ thông tin.');
+            if (!cccd || !maPhieuDangKy || !lyDo || !ngayCu || !ngayMoi||!loaiGiaHan||phiGiaHan<0) {
+                alert('Vui lòng điền đầy đủ thông tin (hoặc phí gia hạn phải >=0)');
                 return;
             }
 
@@ -24,7 +25,8 @@ let daXacNhan=false;
                         LiDoGiaHan: lyDo,
                         LoaiGiaHan:loaiGiaHan,
                         NgayThiCu: ngayCu,
-                        NgayThiMoi: ngayMoi
+                        NgayThiMoi: ngayMoi,
+                        PhiGiaHan: phiGiaHan
                     })
                 });
 

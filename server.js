@@ -849,13 +849,14 @@ app.put('/api/updatePhieuGiaHan', async (req, res) => {
 });
 
 app.post('/api/lapPhieuGiaHan', async (req, res) => {
-    const { CCCD, MaPhieuDangKy, LiDoGiaHan, LoaiGiaHan, NgayThiCu, NgayThiMoi } = req.body;
+    const { CCCD, MaPhieuDangKy, LiDoGiaHan, LoaiGiaHan, NgayThiCu, NgayThiMoi, PhiGiaHan } = req.body;
 
     try {
         const pool = await sql.connect(config);
         const result = await pool.request()
             .input('CCCD', sql.Char(12), CCCD)
             .input('MaPhieuDangKy', sql.Int, MaPhieuDangKy)
+            .input('PhiGiaHan', sql.Int, PhiGiaHan)
             .input('LiDoGiaHan', sql.NVarChar(255), LiDoGiaHan)
             .input('LoaiGiaHan', sql.NVarChar(12), LoaiGiaHan)
             .input('NgayThiCu', sql.Date, NgayThiCu)       // Là MaLichThi
