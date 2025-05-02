@@ -1,5 +1,9 @@
 /* Toàn bộ CSS */
 body {
+   background-image: url('../Image/study.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-color: #F7F5F2;
     /* Màu nền sáng */
     font-family: 'Rubik', sans-serif;
@@ -13,6 +17,7 @@ body {
     justify-content: center;
     height: 100vh;
     margin: 0;
+
   }
   
   .modern-clickable {
@@ -55,7 +60,9 @@ body {
   
   /* Khung chứa form đăng nhập */
   .signup-container {
-    background-color: #f4f4fb;
+    background-color: rgba(244, 244, 251, 0.3); /* Giảm opacity xuống 0.75 */
+    -webkit-backdrop-filter: blur(20px); /* Tăng độ blur và đặt trước */
+    backdrop-filter: blur(10px); /* Tăng độ blur */
     /* Màu đỏ đậm */
     color: white;
     border-radius: 12px;
@@ -63,7 +70,7 @@ body {
     /* Hiệu ứng bóng */
     padding: 30px 40px;
     /* Khoảng cách nội dung trong khung */
-    max-width: 380px;
+    max-width: 500px;
     /* Chiều rộng tối đa */
     text-align: center;
   }
@@ -73,14 +80,14 @@ body {
   .signup-title {
     font-size: 2rem; /* Kích thước chữ */
     font-weight: bold; /* Chữ đậm */
-    color: #333; /* Màu chữ tối */
+    color: #1a1a1a; /* Màu chữ tối */
     text-align: center; /* Căn giữa chữ */
     margin: 20px 0; /* Khoảng cách trên dưới */
   }
   /* Ô nhập liệu */
   .signup-container input {
     width: 90%;
-    background-color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.9);
     /* Màu nền trắng */
     border: 1px solid #a0b0ff;
     /* Viền đỏ đậm */
