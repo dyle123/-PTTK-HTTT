@@ -469,6 +469,7 @@ drop proc LapPhieuGiaHan
 Create procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
+	@PhiGiaHan int,
     @LiDoGiaHan nvarchar(255),
 	@LoaiGiaHan nvarchar(12),
     @NgayThiCu Date,
@@ -496,6 +497,8 @@ BEGIN
         return;
     END
 
+	
+
     IF NOT EXISTS (SELECT 1
     FROM THISINH
     WHERE CCCD=@CCCD)
@@ -508,6 +511,21 @@ BEGIN
 		BEGIN
 			RAISERROR(N'Loại gia hạn không hợp lệ',16,1)
 			return;
+		END
+	IF(@PhiGiaHan<0)
+		BEGIN
+			RAISERROR(N'Phí gia hạn phải >=0',16,1)
+			RETURN;
+		END
+	IF(@LoaiGiaHan=N'Hợp lệ' and @PhiGiaHan>0)
+		BEGIN
+			RAISERROR(N'Lí do gia hạn hợp lệ nên không có phí gia hạn',16,1)
+			RETURN;
+		END
+	IF(@LoaiGiaHan=N'Không hợp lệ' and @PhiGiaHan<=0)
+		BEGIN
+			RAISERROR(N'Lí do gia hạn không hợp lệ nên phải có phí gia hạn',16,1)
+			RETURN;
 		END
 
     IF NOT EXISTS (SELECT 1
@@ -983,3 +1001,5 @@ from LichThi
 
 select*
 from PhieuGiaHan
+
+delete from ChiTietPhieuDangKy

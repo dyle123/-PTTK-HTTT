@@ -141,6 +141,8 @@ INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD, SoLanGiaHan) VALUES
 (9, '999999999999', 1),
 (10,'000000000000', 2);
 
+delete from ChiTietPhieuDangKy
+
 
 INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi)
 VALUES
@@ -153,7 +155,7 @@ VALUES
 ('777777777777', 9, N'Hợp lệ', 150000, N'Lý do 7', 7, 8),
 ('888888888888', 10, N'Hợp lệ', 200000, N'Lý do 8', 8, 9)
 
-
+delete from PhieuGiaHan
 INSERT INTO PhieuDuThi (SoBaoDanh, CCCD, TrangThai, LichThi) VALUES
 ('SBD00000001', '111111111111', 0, 1),
 ('SBD00000002', '222222222222', 1, 2),

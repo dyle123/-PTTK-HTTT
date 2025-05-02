@@ -104,11 +104,13 @@ Create table PhieuDangKy
 
 create table ChiTietPhieuDangKy
 (
-	MaPhieuDangKy int ,--f
+	MaPhieuDangKy int unique ,--f
 	CCCD char(12) ,--f
 	SoLanGiaHan int default 0,
 	CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
 );
+
+
 
 create table ChungChi
 (
