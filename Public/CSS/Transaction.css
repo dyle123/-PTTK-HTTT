@@ -7,7 +7,7 @@ body {
 }
 
 body.fade-in {
-    opacity: 1;
+    opacity: 2;
 }
 
 body.fade-out {
