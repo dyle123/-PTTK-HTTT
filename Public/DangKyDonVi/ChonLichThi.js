@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         data.forEach(lich => {
             const currentRegistrations = lich.SoLuongDangKy || 0;
-            const maxCapacity = lich.SucChua || 30;
+            const maxCapacity = lich.SucChuaToiDa;
             const isDisabled = currentRegistrations >= maxCapacity;
             console.log(lich);
     
