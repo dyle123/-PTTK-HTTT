@@ -31,78 +31,78 @@ app.use(session({
 
 
 
-// const config = {
-//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'sa',
-//     password: '1928374650Vy',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
-// async function sqlQuery(query, params = {}) {
-//     try {
-//         const pool = await sql.connect({
-//             user: 'sa',
-//             password: '12345678',
-//             database: 'PTTK',
-//             server: 'localhost',
-//             options: { encrypt: false, trustServerCertificate: true }
-//         });
+const config = {
+    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'sa',
+    password: '1928374650Vy',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
+async function sqlQuery(query, params = {}) {
+    try {
+        const pool = await sql.connect({
+            user: 'sa',
+            password: '12345678',
+            database: 'PTTK',
+            server: 'localhost',
+            options: { encrypt: false, trustServerCertificate: true }
+        });
 
-//         const request = pool.request();
-//         for (const param in params) {
-//             request.input(param, params[param]);
-//         }
+        const request = pool.request();
+        for (const param in params) {
+            request.input(param, params[param]);
+        }
 
-//         const result = await request.query(query);
-//         return result.recordset;
-//     } catch (error) {
-//         console.error("❌ Lỗi SQL:", error);
-//         throw error;
-//     }
-// }
+        const result = await request.query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error("❌ Lỗi SQL:", error);
+        throw error;
+    }
+}
 
 
 
-// async function sqlQuery(query, params = {}) {
-//     try {
-//         const pool = await sql.connect({
-//             user: 'sa',
-//             password: '12345678',
-//             database: 'PTTK',
-//             server: 'localhost',
-//             options: { encrypt: false, trustServerCertificate: true }
-//         });
+async function sqlQuery(query, params = {}) {
+    try {
+        const pool = await sql.connect({
+            user: 'sa',
+            password: '12345678',
+            database: 'PTTK',
+            server: 'localhost',
+            options: { encrypt: false, trustServerCertificate: true }
+        });
 
-//         const request = pool.request();
-//         for (const param in params) {
-//             request.input(param, params[param]);
-//         }
+        const request = pool.request();
+        for (const param in params) {
+            request.input(param, params[param]);
+        }
 
-//         const result = await request.query(query);
-//         return result.recordset;
-//     } catch (error) {
-//         console.error("❌ Lỗi SQL:", error);
-//         throw error;
-//     }
-// }
-//  const config = {
-//      user: 'sa',
-//      password: '12345678',
-//      server: 'localhost',
-//      port: 1433,
-//      database: 'PTTK',
-//      options: {
-//          encrypt: false,
-//          trustServerCertificate: true,
-//          enableArithAbort: true,
-//          connectTimeout: 30000
-//      }
-//  };
+        const result = await request.query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error("❌ Lỗi SQL:", error);
+        throw error;
+    }
+}
+ const config = {
+     user: 'sa',
+     password: '12345678',
+     server: 'localhost',
+     port: 1433,
+     database: 'PTTK',
+     options: {
+         encrypt: false,
+         trustServerCertificate: true,
+         enableArithAbort: true,
+         connectTimeout: 30000
+     }
+ };
 
 
 
@@ -149,19 +149,19 @@ app.use(session({
 //        connectTimeout: 30000, // Thời gian chờ 30 giây
 //    },
 //};
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.1.8',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'dungluonghoang',
-    password: 'teuklee1983#',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.1.8',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'dungluonghoang',
+//     password: 'teuklee1983#',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 
 // Hàm kiểm tra kết nối
 async function testDatabaseConnection() {
