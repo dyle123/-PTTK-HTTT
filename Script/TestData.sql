@@ -200,7 +200,7 @@ UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
  update PhieuDangKy
  delete from PhieuDuThi
  drop table PhieuDuThi
-
+ select* from PhongThi
  select * From LichThi
 
  select * from PhieuDangKy
@@ -232,9 +232,9 @@ VALUES
 
 INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi)
 VALUES
-('2025-04-20', '08:00:00', 10, 1, 1), -- TOEIC tại phòng 1
-('2025-04-21', '13:30:00', 0, 2, 2),  -- Tin học tại phòng 2
-('2025-04-22', '09:00:00', 5, 1, 1);  -- TOEIC tại phòng 1
+('2025-05-30', '08:00:00', 10, 1, 1), -- TOEIC tại phòng 1
+('2025-05-21', '13:30:00', 0, 2, 2),  -- Tin học tại phòng 2
+('2025-06-22', '09:00:00', 5, 1, 1);  -- TOEIC tại phòng 1
 
 delete from PhieuGiaHan
 WHERE CCCD='123456789012'
@@ -246,3 +246,8 @@ select* from LichThi
 select*from PhieuGiaHan
 
 delete from PhieuGiaHan where CCCD='987654321098'
+
+SELECT LichThi.*, BangGiaThi.*, PhongThi.*
+            FROM LichThi 
+            JOIN BangGiaThi ON LichThi.LoaiChungChi = BangGiaThi.MaLoaiChungChi
+            JOIN PhongThi ON LichThi.MaPhongThi = PhongThi.MaPhongThi

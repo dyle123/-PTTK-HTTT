@@ -229,80 +229,6 @@ BEGIN
 END;
 GO
 
-
-CREATE OR ALTER PROCEDURE Back
-    @TenKH NVARCHAR(50),
-    @EmailKH NVARCHAR(100),
-    @SoDienThoaiKH CHAR(10),
-    @DiaChiKH NVARCHAR(255),
-    @LoaiKhachHang NVARCHAR(20),
-    @LoaiChungChi INT,
-    @ThoiGianThi DATE,
-    @TenTS NVARCHAR(50),
-    @CCCDTS CHAR(12),
-    @NgaySinh DATE,
-    @EmailTS NVARCHAR(100),
-    @SoDienThoaiTS CHAR(10),
-    @DiaChiTS NVARCHAR(255)
-AS
-BEGIN
-    DECLARE @MaKhachHang INT, @MaPhieuDangKy INT;
-
-    -- Bắt đầu giao dịch
-    BEGIN TRANSACTION;
-
-    BEGIN TRY
-        -- Kiểm tra hoặc tạo khách hàng
-        EXEC KIEMTRAKHACHHANG @TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang, @MaKhachHang OUTPUT;
-
-        -- Nếu không tìm thấy hoặc tạo được khách hàng thì báo lỗi
-        IF @MaKhachHang IS NULL 
-        BEGIN
-        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo khách hàng!', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END;
-
-        -- Kiểm tra hoặc tạo thí sinh trước khi tạo phiếu đăng ký
-        EXEC KIEMTRATHISINH @TenTS, @CCCDTS, @NgaySinh, @EmailTS, @SoDienThoaiTS, @DiaChiTS;
-
-        -- Nếu có lỗi trong KIEMTRATHISINH, dừng lại
-        IF @@ERROR <> 0 
-        BEGIN
-        RAISERROR (N'Lỗi khi kiểm tra hoặc tạo thí sinh!', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END;
-
-        -- Tạo phiếu đăng ký (chỉ tạo nếu không có lỗi thí sinh)
-        INSERT INTO PhieuDangKy
-        (LoaiChungChi, NgayDangKy, ThoiGianMongMuonThi, MaKhachHang)
-    VALUES
-        (@LoaiChungChi, GETDATE(), @ThoiGianThi, @MaKhachHang);
-
-        -- Lấy ID mới của phiếu đăng ký
-        SET @MaPhieuDangKy = SCOPE_IDENTITY();
-
-        -- Thêm vào bảng ChiTietPhieuDangKy
-        INSERT INTO ChiTietPhieuDangKy
-        (MaPhieuDangKy, CCCD)
-    VALUES
-        (@MaPhieuDangKy, @CCCDTS);
-
-        -- Nếu không có lỗi, commit transaction
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        -- Nếu có lỗi ở bất kỳ bước nào, rollback lại toàn bộ giao dịch
-        ROLLBACK TRANSACTION;
-        
-        -- Hiển thị lỗi chi tiết
-        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
-        RAISERROR(@ErrorMessage, 16, 1);
-    END CATCH
-END;
-GO
-
 CREATE OR ALTER PROCEDURE TaoPhieuDangKy
     @TenKH NVARCHAR(50),
     @EmailKH NVARCHAR(100),
@@ -459,14 +385,8 @@ BEGIN
 END;
 GO
 
-select*from PhieuGiaHan
-delete from PhieuGiaHan where CCCD='987654321098'
 
-select*from ChiTietPhieuDangKy
-update ChiTietPhieuDangKy set SoLanGiaHan=0 where CCCD='987654321098'
-drop proc LapPhieuGiaHan
-
-Create procedure LapPhieuGiaHan
+create or alter procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
 	@PhiGiaHan int,
@@ -589,11 +509,9 @@ BEGIN
 END
 go
 
-select*from ChiTietPhieuDangKy
 
-update ChiTietPhieuDangKy set SoLanGiaHan=0 where CCCD='987654321098'
 
-CREATE TRIGGER trg_KiemTraMaPhieuDangKy
+CREATE or alter TRIGGER trg_KiemTraMaPhieuDangKy
 ON PhieuGiaHan
 AFTER INSERT
 AS
@@ -612,8 +530,7 @@ BEGIN
 END;
 go
 
-drop proc DocToanBoChiTietPhieuDangKy
-CREATE PROCEDURE DocToanBoChiTietPhieuDangKy
+create or alter procedure DocToanBoChiTietPhieuDangKy
 AS
 BEGIN
 	SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
@@ -623,9 +540,8 @@ BEGIN
 END
 GO
 
-DROP PROC TraCuuSoLanGiaHan
 
-CREATE PROCEDURE TraCuuSoLanGiaHan
+create or alter procedure TraCuuSoLanGiaHan
     @CCCD char(12)=NULL,
     @NgayThi Date=NULL
 AS
@@ -710,8 +626,10 @@ BEGIN
 END
 GO
 
-drop proc DocToanBoPhieuGiaHan
-CREATE PROC DocToanBoPhieuGiaHan
+
+
+
+create or alter proc DocToanBoPhieuGiaHan
 AS
 BEGIN
 	SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
@@ -723,7 +641,7 @@ END
 go
 
 
-CREATE PROCEDURE TraCuuPhieuGiaHan
+create or alter procedure TraCuuPhieuGiaHan
     @CCCD char(12)=NULL,
 	@NgayDuThi Date =NULL
 AS
@@ -808,7 +726,7 @@ END
 GO
 
 
-CREATE PROCEDURE XoaPhieuGiaHan
+create or alter procedure XoaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy int
 AS
@@ -825,7 +743,7 @@ BEGIN
 END
 go
 
-CREATE PROCEDURE SuaPhieuGiaHan
+create or alter procedure SuaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy INT,
     @LoaiGiaHan NVARCHAR(12),
@@ -892,7 +810,7 @@ END
 GO
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi
-CREATE TRIGGER TG_KiemTraNgayThi
+CREATE or alter TRIGGER  TG_KiemTraNgayThi
 ON LichThi
 FOR INSERT
 AS
@@ -912,7 +830,7 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE sp_DangKyDonVi
+create or alter procedure sp_DangKyDonVi
     @TenKH NVARCHAR(50),
     @EmailKH VARCHAR(60),
     @SoDienThoaiKH CHAR(10),
@@ -986,20 +904,3 @@ BEGIN
 END
 GO
 
-
-drop proc TraCuuSoLanGiaHan
-drop proc TraCuuPhieuGiaHan
-
-SELECT*
-FROM ChiTietPhieuDangKy
-
-select *
-from PhieuDuThi
-
-select*
-from LichThi
-
-select*
-from PhieuGiaHan
-
-delete from ChiTietPhieuDangKy

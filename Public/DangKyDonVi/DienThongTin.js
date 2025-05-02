@@ -163,7 +163,8 @@ function validateThiSinhList() {
       return false;
     }
   
-    for (const form of thiSinhForms) {
+    for (const form of thiSinhForms) {  
+       console.log(form);
       const required = ['thisinh-ho-ten', 'thisinh-cccd', 'thisinh-sdt', 'thisinh-email', 'thisinh-diachi', 'thisinh-ngaysinh'];
       for (const name of required) {
         const input = form.querySelector(`[name="${name}"]`);
