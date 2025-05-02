@@ -1272,6 +1272,22 @@ app.get('/api/getPhieuDangKyTD', async (req, res) => {
     }
 });
 
+
+app.post('/api/updatePhieuDangKy', async (req, res) => {
+    const { MaPhieu, LoaiChungChi, NgayDangKy, ThoiGianThiDangKy, MaKhachHang } = req.body;
+    try {
+        await sql.query`EXEC CapNhatPhieuDangKy 
+            @MaPhieu=${MaPhieu},
+            @LoaiChungChi=${LoaiChungChi},
+            @NgayDangKy=${NgayDangKy},
+            @ThoiGianThiDangKy=${ThoiGianThiDangKy},
+            @MaKhachHang=${MaKhachHang}`;
+        res.send({ success: true });
+    } catch (err) {
+        res.status(400).send({ error: err.message });
+    }
+});
+
 app.post('/api/tao-lich-thi', async (req, res) => {
     // --- Lấy dữ liệu từ client ---
     const { ngayThi, gioThi, loaiChungChi, phongThi } = req.body;
@@ -1512,6 +1528,7 @@ app.get('/api/getPhieuDangKyById', async (req, res) => {
                     PD.NgayDangKy, 
                     L.NgayThi, 
                     PD.LoaiChungChi,
+                    PD.MaKhachHang,
                     KH.TenKhachHang, KH.Email AS EmailKH, KH.SoDienThoai AS SDTKH, KH.DiaChi,
                     TS.HoVaTen AS TenThiSinh, TS.NgaySinh, TS.Email AS EmailThiSinh, TS.SoDienThoai AS SDTThiSinh, TS.CCCD
                 FROM PhieuDangKy PD

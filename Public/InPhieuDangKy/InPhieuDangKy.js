@@ -53,7 +53,43 @@ document.addEventListener("DOMContentLoaded", function () {
                 generatePDF(maPhieu);
             });
         });
-    }
+        document.querySelectorAll(".edit-phieu").forEach(button => {
+            button.addEventListener("click", async function () {
+                const maPhieu = this.getAttribute("data-ma-phieu");
+        
+                try {
+                    const response = await fetch(`/api/getPhieuDangKyById?maPhieu=${maPhieu}`);
+                    const data = await response.json();
+        
+                    if (!data) {
+                        alert("Không tìm thấy phiếu!");
+                        return;
+                    }
+        
+                    const tr = this.closest("tr");
+                    tr.innerHTML = `
+                    <td>${data.MaPhieuDangKy}</td>
+                    <td>
+                        <select id="edit-loai-chung-chi">
+                            <option value="Toeic" ${data.LoaiChungChi == 1 ? 'selected' : ''}>Toeic</option>
+                            <option value="Ielts" ${data.LoaiChungChi == 2 ? 'selected' : ''}>Ielts</option>
+                        </select>
+                    </td>
+                    <td><input type="date" id="edit-ngay-dang-ky" value="${data.NgayDangKy?.split('T')[0] || ''}"/></td>
+                    <td><input type="date" id="edit-ngay-thi" value="${data.NgayThi?.split('T')[0] || ''}"/></td>
+                    <td>
+                        <input type="number" id="edit-ma-khach-hang" 
+                            value="${data.MaKhachHang ?? data.maKhachHang ?? ''}" />
+                    </td>
+                `;
+                } catch (err) {
+                    console.error("Lỗi khi tải phiếu:", err);
+                }
+            });
+        });
+}
+
+    
 
     function formatDate(dateStr) {
         if (!dateStr) return '';
@@ -128,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
             searchBtn.click();
         }
     });
-
+    
     const maPhieuDangKy = sessionStorage.getItem("maPhieuDangKy");
     if (maPhieuDangKy) {
         fetchData(maPhieuDangKy);
@@ -137,3 +173,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchData();
     }
 });
+
+
+
+
+
