@@ -31,40 +31,40 @@ app.use(session({
 
 
 
-// const config = {
-//     server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
-//     port: 1433, // Cổng SQL Server
-//     database: 'PTTK',
-//     user: 'sa',
-//     password: '1928374650Vy',
-//     options: {
-//         encrypt: false, // Không cần mã hóa
-//         enableArithAbort: true, // Bật xử lý lỗi số học
-//         connectTimeout: 30000, // Thời gian chờ 30 giây
-//     },
-// };
-// async function sqlQuery(query, params = {}) {
-//     try {
-//         const pool = await sql.connect({
-//             user: 'sa',
-//             password: '12345678',
-//             database: 'PTTK',
-//             server: 'localhost',
-//             options: { encrypt: false, trustServerCertificate: true }
-//         });
+const config = {
+    server: '192.168.102.1', // Địa chỉ IP của máy chủ SQL Server
+    port: 1433, // Cổng SQL Server
+    database: 'PTTK',
+    user: 'sa',
+    password: '1928374650Vy',
+    options: {
+        encrypt: false, // Không cần mã hóa
+        enableArithAbort: true, // Bật xử lý lỗi số học
+        connectTimeout: 30000, // Thời gian chờ 30 giây
+    },
+};
+async function sqlQuery(query, params = {}) {
+    try {
+        const pool = await sql.connect({
+            user: 'sa',
+            password: '12345678',
+            database: 'PTTK',
+            server: 'localhost',
+            options: { encrypt: false, trustServerCertificate: true }
+        });
 
-//         const request = pool.request();
-//         for (const param in params) {
-//             request.input(param, params[param]);
-//         }
+        const request = pool.request();
+        for (const param in params) {
+            request.input(param, params[param]);
+        }
 
-//         const result = await request.query(query);
-//         return result.recordset;
-//     } catch (error) {
-//         console.error("❌ Lỗi SQL:", error);
-//         throw error;
-//     }
-// }
+        const result = await request.query(query);
+        return result.recordset;
+    } catch (error) {
+        console.error("❌ Lỗi SQL:", error);
+        throw error;
+    }
+}
 
 
 
@@ -106,19 +106,19 @@ app.use(session({
 
 
 
-const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.174.1',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'BENU',
-    password: 'benu123',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+// const config = {
+//     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+//     server: '192.168.174.1',
+//     port: 1433, // Cổng SQL Server
+//     database: 'PTTK',
+//     user: 'BENU',
+//     password: 'benu123',
+//     options: {
+//         encrypt: false, // Không cần mã hóa
+//         enableArithAbort: true, // Bật xử lý lỗi số học
+//         connectTimeout: 30000, // Thời gian chờ 30 giây
+//     },
+// };
 
 
 // Cấu hình kết nối SQL Server
@@ -718,13 +718,12 @@ app.get('/api/getLoaiKhachHang', async (req, res) => {
 
         const pool = await sql.connect(config);
         const result = await pool.request()
-            .input('MaPhieuThanhToan', sql.VarChar, maPhieu)
+            .input('MaPhieuDangKy', sql.VarChar, maPhieu)
             .query(`
                 SELECT LoaiKhachHang 
                 FROM KhachHang K 
                 JOIN PhieuDangKy P ON K.MaKhachHang = P.MaKhachHang
-                JOIN PhieuThanhToan T ON T.MaPhieuDangKy = P.MaPhieuDangKy
-                WHERE T.MaPhieuThanhToan = @MaPhieuThanhToan
+                WHERE P.MaPhieuDangKy = @MaPhieuDangKy
             `);
 
         if (result.recordset.length === 0) {

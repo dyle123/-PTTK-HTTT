@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 // Lấy loại khách hàng trước khi tạo nút
                 const loaiKhachHang = await XuatLoaiKhachHang(phieu.MaPhieuDangKy);
+                console.log("Loại khách hàng:", loaiKhachHang); // Debug
             
                 // Xây dựng nội dung cột thao tác
                 let thaoTacHTML = "";
@@ -130,27 +131,30 @@ document.addEventListener("DOMContentLoaded", async function () {
      // Hàm in phiếu thanh toán
      async function InPhieuThanhToan(phieu) {
         try {
-            // 🔹 Gọi API tạo payment link trên PayOS
-            const response = await fetch("http://localhost:3000/create-payment-link", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    Amount: phieu.ThanhTien,
-                    MaPhieuDangKy: phieu.MaPhieuDangKy
-                })
-            });
-    
-            const data = await response.json();
-    
-            // 🔹 Sử dụng `qrCode` thay vì `data.url`
-            if (!data.qrCode) {
-                throw new Error("Không nhận được dữ liệu QR Code từ API.");
+            // Kiểm tra loại khách hàng
+            const loaiKhachHang = await XuatLoaiKhachHang(phieu.MaPhieuDangKy);
+            let qrCode = "";
+
+            // Chỉ tạo QR code nếu là khách hàng đơn vị
+            if (loaiKhachHang === "đơn vị") {
+                // Gọi API tạo payment link trên PayOS
+                const response = await fetch("http://localhost:3000/create-payment-link", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        Amount: phieu.ThanhTien,
+                        MaPhieuDangKy: phieu.MaPhieuDangKy
+                    })
+                });
+        
+                const data = await response.json();
+        
+                if (data.qrCode) {
+                    const qrResponse = await fetch(`http://localhost:3000/generate-qr?data=${encodeURIComponent(data.qrCode)}`);
+                    const qrData = await qrResponse.json();
+                    qrCode = qrData.qrImage || "";
+                }
             }
-            
-            // 🔹 Gọi API để tạo hình ảnh QR từ `qrCode`
-            const qrResponse = await fetch(`http://localhost:3000/generate-qr?data=${encodeURIComponent(data.qrCode)}`);
-            const qrData = await qrResponse.json();
-            const qrCode = qrData.qrImage || "";
     
             // 🔹 Mở cửa sổ in và hiển thị phiếu thanh toán
             const printWindow = window.open("", "_blank");
@@ -212,7 +216,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         maGiaoDich.disabled = true;
     
         // Kiểm tra loại khách hàng
-        if (loaiKhachHang === "Đơn vị") {
+        if (loaiKhachHang === "đơn vị") {
             radioTienMat.checked = true;
             radioChuyenKhoan.disabled = true;
             maGiaoDich.disabled = true;

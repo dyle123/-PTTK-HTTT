@@ -29,6 +29,7 @@ BEGIN
         JOIN LichThi L ON PD.LichThi = L.MaLichThi
     WHERE PD.MaPhieuDangKy = @maPhieu
 END
+GO
 
 CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
 AS
@@ -324,6 +325,9 @@ BEGIN
         RAISERROR(@Err, 16, 1);
     END CATCH
 END;
+GO 
+
+
 
 CREATE OR ALTER PROC PHATHANHPHIEUDUTHI
     @MaPhieuDangKy INT
@@ -791,7 +795,6 @@ BEGIN
 END
 go
 
-drop proc SuaPhieuGiaHan
 
 CREATE or alter PROCEDURE SuaPhieuGiaHan
     @CCCD CHAR(12),
