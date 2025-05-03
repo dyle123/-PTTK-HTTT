@@ -417,7 +417,6 @@ GO
 
 
 
-
 Create or alter  procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
@@ -441,34 +440,12 @@ BEGIN
         return;
     END
 
-
     IF NOT EXISTS (SELECT 1
     FROM THISINH
     WHERE CCCD=@CCCD)
 		BEGIN
         RAISERROR(N'Căn cước công dân không tồn tại.', 16, 1);
         return
-    END
-
-    IF(@LoaiGiaHan!=N'Hợp lệ' and @LoaiGiaHan!=N'Không hợp lệ')
-		BEGIN
-        RAISERROR(N'Loại gia hạn không hợp lệ',16,1)
-        return;
-    END
-    IF(@PhiGiaHan<0)
-		BEGIN
-        RAISERROR(N'Phí gia hạn phải >=0',16,1)
-        RETURN;
-    END
-    IF(@LoaiGiaHan=N'Hợp lệ' and @PhiGiaHan>0)
-		BEGIN
-        RAISERROR(N'Lí do gia hạn hợp lệ nên không có phí gia hạn',16,1)
-        RETURN;
-    END
-    IF(@LoaiGiaHan=N'Không hợp lệ' and @PhiGiaHan<=0)
-		BEGIN
-        RAISERROR(N'Lí do gia hạn không hợp lệ nên phải có phí gia hạn',16,1)
-        RETURN;
     END
 
     IF NOT EXISTS (SELECT 1
@@ -478,6 +455,7 @@ BEGIN
         RAISERROR(N'Ngày thi cũ bạn nhập không tồn tại',16,1)
         return;
     END
+
     IF NOT EXISTS (SELECT 1
     FROM LichThi
     WHERE NgayThi=@NgayThiMoi)
@@ -485,6 +463,7 @@ BEGIN
         RAISERROR(N'Ngày thi mới bạn nhập không tồn tại',16,1)
         return;
     END
+
     IF NOT EXISTS (SELECT 1
     FROM PhieuDangKy
     WHERE MaPhieuDangKy=@MaPhieuDangKy)
@@ -509,15 +488,17 @@ BEGIN
             RAISERROR(N'Ngày thi mới phải khác ngày thi cũ',16,1)
             return;
         END
+
 		IF EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
 			BEGIN
 				UPDATE PhieuGiaHan
 				SET NgayThiCu=@NgayCu, NgayThiMoi=@NgayMoi, PhiGiaHan=@PhiGiaHan, LiDoGiaHan=@LiDoGiaHan, LoaiGiaHan=@LoaiGiaHan
 				WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
 			END
+
 		IF NOT EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
 			BEGIN
-				INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy,LiDoGiaHan, LoaiGiaHan ,NgayThiCu, NgayThiMoi) VALUES(@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan, @NgayCu, @NgayMoi);
+				INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LiDoGiaHan, LoaiGiaHan, NgayThiCu, NgayThiMoi, PhiGiaHan) VALUES (@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan, @NgayCu, @NgayMoi, @PhiGiaHan);
 			END
             UPDATE PhieuDuThi
 					SET LichThi=@NgayMoi
@@ -792,6 +773,10 @@ BEGIN
     END
     DELETE FROM PhieuGiaHan
 	WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
+
+	UPDATE ChiTietPhieuDangKy
+	set SoLanGiaHan=0
+	where CCCD=@CCCD and MaPhieuDangKy=@MaPhieuDangKy
 END
 go
 
@@ -961,10 +946,6 @@ BEGIN
 END;
 GO
 
-select*from LichThi
-select*from PhieuDangKy
-
-update PhieuDangKy set LichThi=3
 
 
 
