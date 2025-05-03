@@ -117,7 +117,7 @@ const BUS = {
     if (result.message) {
       alert("✅ Đăng ký thành công! Mã phiếu: " + result.maPhieuDangKy);
       sessionStorage.setItem("maPhieuDangKy", result.maPhieuDangKy);
-      window.location.href = "/InPhieuDangKy/InPhieuDangKy.html";
+      window.location.href = "/InPhieuDangKy/ui/InPhieuDangKyUI.html";
     } else {
       alert("❌ Lỗi: " + result.error);
     }
