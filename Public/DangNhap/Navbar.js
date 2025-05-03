@@ -34,6 +34,7 @@ async function KiemTraTrangThaiDangNhap() {
             // Nếu không phải kế toán, chặn nút thanh toán
             if (data.role !== "ketoan") {
                 KhoaThanhToan();
+                KhoaLapPhieuGiaHan();
             } 
             else if(data.role !== "tiepnhan") {
                 KhoaDangKy();
@@ -106,6 +107,21 @@ function KhoaDangKy() {
         inPhieuDangKyLink.style.cursor = "not-allowed";
         inPhieuDangKyLink.style.opacity = "0.6";
         console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa.");
+    }
+}
+
+function KhoaLapPhieuGiaHan()
+{
+    const LapPhieuGiaHanLink = document.querySelector("a[href='/GiaHan/LapPhieuGiaHan.html']");
+    if (LapPhieuGiaHanLink) {
+        LapPhieuGiaHanLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn truy cập
+            HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
+        });
+
+        LapPhieuGiaHanLink.style.cursor = "not-allowed";
+        LapPhieuGiaHanLink.style.opacity = "0.6";
+        console.log("🔒 Nút lập phiếu gia hạn đã bị vô hiệu hóa");
     }
 }
 
