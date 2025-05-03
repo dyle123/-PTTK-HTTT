@@ -34,7 +34,7 @@ async function fetchData() {
                 <td>${item.LoaiGiaHan}</td>
                 <td>${item.PhiGiaHan}</td>
                 <td>${item.LiDoGiaHan}</td>
-                <td>${new Date(item.NTC).toLocaleDateString('vi-VN')}</td>
+                <td>${new Date(item.NTC).toLocaleDateString('vi-VN')}</td> 
                 <td>${new Date(item.NTM).toLocaleDateString('vi-VN')}</td>
                 <td>
                     <button class="edit-btn" onclick="editRow('${item.CCCD}', ${item.MaPhieuDangKy})">Sửa</button>
@@ -156,3 +156,11 @@ function formatDateForInput(dateStr) {
     const [day, month, year] = dateStr.split('/');
     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }
+
+const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${mm}/${dd}/${yyyy}`;
+};
