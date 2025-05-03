@@ -1,4 +1,4 @@
-import * as DAO from './dao/InPhieuDangKyDAO.js';
+import * as DAO from './InPhieuDangKyDAO.js';
 
 export async function fetchData(maPhieu = "") {
     try {
