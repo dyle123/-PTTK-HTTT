@@ -99,19 +99,6 @@ Create table PhieuDangKy
 	PaymentLink text
 );
 
-
-
-create table ChiTietPhieuDangKy
-(
-	MaPhieuDangKy int unique ,--f
-	CCCD char(12) ,--f
-	SoLanGiaHan int default 0,
-	CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
-);
-
-select * from ChiTietPhieuDangKy
-
-
 create table ChiTietPhieuDangKy
 (
   MaPhieuDangKy int , -- Không còn 'unique' ở đây
