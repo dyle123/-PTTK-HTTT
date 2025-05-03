@@ -38,7 +38,6 @@ async function KiemTraTrangThaiDangNhap() {
             } 
             else if(data.role !== "tiepnhan") {
                 KhoaDangKy();
-                KhoaGiaHan();
             
             }
         } else {
