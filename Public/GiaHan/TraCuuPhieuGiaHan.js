@@ -34,8 +34,8 @@ async function fetchData() {
                 <td>${item.LoaiGiaHan}</td>
                 <td>${item.PhiGiaHan}</td>
                 <td>${item.LiDoGiaHan}</td>
-                <td>${formatDate(item.NTC)}</td>
-                <td>${formatDate(item.NTM)}</td>
+                <td>${new Date(item.NTC).toLocaleDateString('vi-VN')}</td> 
+                <td>${new Date(item.NTM).toLocaleDateString('vi-VN')}</td>
                 <td>
                     <button class="edit-btn" onclick="editRow('${item.CCCD}', ${item.MaPhieuDangKy})">Sửa</button>
                     <button class="delete-btn" onclick="deleteRow('${item.CCCD}', ${item.MaPhieuDangKy})">Xóa</button>
