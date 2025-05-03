@@ -1,107 +1,59 @@
+document.querySelector("#login-form").addEventListener("submit", async function (event) {
+    event.preventDefault(); // Ngăn trình duyệt reload trang
 
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-// Kiểm tra trạng thái đăng nhập và hiển thị nút Login/Logout phù hợp
-async function initializeButtons() {
+    if (!username || !password) {
+      showModal("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    console.log("Thông tin đăng nhập:", { username, password }); // Kiểm tra dữ liệu
+    
     try {
-        const response = await fetch('/check-login', { method: 'GET' });
-        const data = await response.json();
+      // Gửi thông tin đăng nhập tới server
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+        
+      });
+      const data = await response.json();
+      if (response.ok) {
+        await fetch('/api/capNhatPhieuQuaHan', { method: 'GET' })
+          .then(res => res.json())
+          .then(data => console.log("Cập nhật phiếu quá hạn:", data))
+          .catch(err => console.error("Lỗi cập nhật phiếu quá hạn:", err));
+        
 
-        if (response.ok && data.loggedIn) {
-            // Nếu đã đăng nhập
-            document.getElementById('logout').style.display = 'block';
-            document.getElementById('login').style.display = 'none';
-            // Lựa chọn tất cả phần tử có id="registerButton"
-            const registerButtons = document.querySelectorAll('#registerButton');
-            
-            // Lặp qua các phần tử và kiểm tra phần tử nào trong Hero (nằm trong .hero)
-            registerButtons.forEach(button => {
-                if (button.closest('.hero')) {
-                    // Nếu phần tử này nằm trong Hero, ẩn nó
-                    button.style.display = 'none';
-                }
-            });
+        // Chuyển hướng dựa trên vai trò
+        if (data.role === 'ketoan' || data.role === 'tiepnhan') {
+            window.location.href = '/'; // Trang quản trị chi nhánh
         } else {
-            // Nếu chưa đăng nhập
-            document.getElementById('login').style.display = 'block';
-            document.getElementById('logout').style.display = 'none';
+            showModal("Vai trò không xác định, vui lòng liên hệ quản trị viên!");
         }
+      } else {
+          showModal(data.error || "Đăng nhập thất bại!");
+      }
+ 
     } catch (err) {
-        console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', err);
+      console.error('Lỗi khi gửi yêu cầu đăng nhập:', err);
+      showModal('Lỗi server, vui lòng thử lại sau!');
     }
-}
-// Xử lý sự kiện Logout
-async function handleLogout(event) {
-    event.preventDefault(); // Ngăn chặn chuyển hướng mặc định
+  });
 
-    try {
-        const response = await fetch('/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (response.ok) {
-            showModal('Bạn đã đăng xuất thành công nè!');
-            window.location.href = '/DangNhap/Home.html'; // Chuyển hướng về trang đăng nhập
-        } else {
-            const error = await response.json();
-            showModal(error.error || 'Đăng xuất thất bại!');
-        }
-    } catch (err) {
-        console.error('Lỗi khi đăng xuất:', err);
-        showModal('Có lỗi xảy ra, vui lòng thử lại!');
-    }
-}
-
-// Khởi tạo các sự kiện
-function initializeEvents() {
-    // Gắn sự kiện cho nút Logout
-    const logoutLink = document.getElementById('logout');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', handleLogout);
-    }
-
-    // Kiểm tra trạng thái đăng nhập và hiển thị nút phù hợp
-    initializeButtons();
-}
-function showModal(message) {
-    let modal = document.getElementById("customModal");
-    let modalText = document.getElementById("modalText");
-
-    modalText.innerText = message;
-    modal.style.display = "block";
-
-    // Ẩn modal sau 2 giây
-    setTimeout(() => {
-        modal.style.display = "none";
-    }, 2000);
-}
-
-// Kiểm tra trạng thái đăng nhập và mở modal nếu chưa đăng nhập
-async function checkLoginStatus(action) {
-    try {
-        const response = await fetch('/check-login', { method: 'GET' });
-        const data = await response.json();
-
-        if (response.ok && data.loggedIn) {
-            // Nếu đã đăng nhập, chuyển hướng đến trang tương ứng
-            if (action === 'orderOnline') {
-                window.location.href = '/KhachHang/Order/menu.html';
-            } else if (action === 'reservation') {
-                window.location.href = '/KhachHang/PreOrder/Reservation.html';
-            } else if(action === 'listOrder')
-                window.location.href = '/KhachHang/Order/DonHang.html';
-        } else {
-            // Nếu chưa đăng nhập, mở modal yêu cầu đăng nhập
-            alert('May chua dang nhap')
-        }
-    } catch (err) {
-        console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', err);
-    }
-}
-
-
-
-// Tự động khởi tạo khi tải trang
-window.onload = initializeEvents;
+  function showModal(message) {
+          let modal = document.getElementById("customModal");
+          let modalText = document.getElementById("modalText");
+      
+          modalText.innerText = message;
+          modal.style.display = "block";
+      
+          // Ẩn modal sau 2 giây
+          setTimeout(() => {
+              modal.style.display = "none";
+          }, 2000);
+      }
