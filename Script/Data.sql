@@ -2,11 +2,8 @@ USE PTTK
 GO
 
 INSERT INTO BangGiaThi VALUES
-(1, N'Chứng chỉ A', 500000),
-(2, N'Chứng chỉ B', 700000),
-(3, N'Chứng chỉ C', 900000);
-
-
+(1, N'Toeic', 500000),
+(2, N'Ielts', 700000)
 
 INSERT INTO KhachHang VALUES
 (N'Nguyễn Văn A', 'a@gmail.com', '0123456789', N'Hà Nội', N'tự do'),
