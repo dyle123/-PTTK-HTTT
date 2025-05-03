@@ -120,6 +120,7 @@ app.use(session({
 //     },
 // };
 
+
 // Cấu hình kết nối SQL Server
 // const config = {
 //     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
@@ -149,19 +150,20 @@ app.use(session({
 //        connectTimeout: 30000, // Thời gian chờ 30 giây
 //    },
 //};
-const config = {
+//const config = {
+
     // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
-    server: '192.168.1.8',
-    port: 1433, // Cổng SQL Server
-    database: 'PTTK',
-    user: 'dungluonghoang',
-    password: 'teuklee1983#',
-    options: {
-        encrypt: false, // Không cần mã hóa
-        enableArithAbort: true, // Bật xử lý lỗi số học
-        connectTimeout: 30000, // Thời gian chờ 30 giây
-    },
-};
+ //   server: '192.168.1.8',
+ //   port: 1433, // Cổng SQL Server
+ //   database: 'PTTK',
+ //   user: 'dungluonghoang',
+ //   password: 'teuklee1983#',
+ //   options: {
+//        encrypt: false, // Không cần mã hóa
+ //       enableArithAbort: true, // Bật xử lý lỗi số học
+ //       connectTimeout: 30000, // Thời gian chờ 30 giây
+ //   },
+//};
 
 // Hàm kiểm tra kết nối
 async function testDatabaseConnection() {
@@ -1522,22 +1524,7 @@ app.get('/api/getPhieuDangKyById', async (req, res) => {
         const pool = await sql.connect(config);
         const result = await pool.request()
             .input('maPhieu', sql.Int, maPhieu)
-            .query(`
-                SELECT 
-                    PD.MaPhieuDangKy, 
-                    PD.NgayDangKy, 
-                    L.NgayThi, 
-                    PD.LoaiChungChi,
-                    PD.MaKhachHang,
-                    KH.TenKhachHang, KH.Email AS EmailKH, KH.SoDienThoai AS SDTKH, KH.DiaChi,
-                    TS.HoVaTen AS TenThiSinh, TS.NgaySinh, TS.Email AS EmailThiSinh, TS.SoDienThoai AS SDTThiSinh, TS.CCCD
-                FROM PhieuDangKy PD
-                JOIN KhachHang KH ON PD.MaKhachHang = KH.MaKhachHang
-                JOIN ChiTietPhieuDangKy CTP ON PD.MaPhieuDangKy = CTP.MaPhieuDangKy
-                JOIN ThiSinh TS ON TS.CCCD = CTP.CCCD
-                JOIN LichThi L ON PD.LichThi = L.MaLichThi
-                WHERE PD.MaPhieuDangKy = @maPhieu
-            `);
+            .execute('sp_GetPhieuDangKyById');
 
         const rows = result.recordset;
         if (rows.length === 0) return res.status(404).json({ error: 'Không tìm thấy phiếu' });
@@ -1567,6 +1554,7 @@ app.get('/api/getPhieuDangKyById', async (req, res) => {
         res.status(500).json({ error: "Lỗi khi lấy thông tin phiếu đăng ký" });
     }
 });
+
 
 
 
