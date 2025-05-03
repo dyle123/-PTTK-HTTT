@@ -1,6 +1,33 @@
 ﻿USE PTTK
 GO
 
+CREATE PROCEDURE sp_GetPhieuDangKyById
+    @maPhieu INT
+AS
+BEGIN
+    SELECT 
+        PD.MaPhieuDangKy, 
+        PD.NgayDangKy, 
+        L.NgayThi, 
+        PD.LoaiChungChi,
+        PD.MaKhachHang,
+        KH.TenKhachHang, 
+        KH.Email AS EmailKH, 
+        KH.SoDienThoai AS SDTKH, 
+        KH.DiaChi,
+        TS.HoVaTen AS TenThiSinh, 
+        TS.NgaySinh, 
+        TS.Email AS EmailThiSinh, 
+        TS.SoDienThoai AS SDTThiSinh, 
+        TS.CCCD
+    FROM PhieuDangKy PD
+    JOIN KhachHang KH ON PD.MaKhachHang = KH.MaKhachHang
+    JOIN ChiTietPhieuDangKy CTP ON PD.MaPhieuDangKy = CTP.MaPhieuDangKy
+    JOIN ThiSinh TS ON TS.CCCD = CTP.CCCD
+    JOIN LichThi L ON PD.LichThi = L.MaLichThi
+    WHERE PD.MaPhieuDangKy = @maPhieu
+END
+
 CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
 AS
 BEGIN
