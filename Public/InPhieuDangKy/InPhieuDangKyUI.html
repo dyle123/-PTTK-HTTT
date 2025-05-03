@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/InPhieuDangKy.css">
+    <title>In Phiếu Đăng Ký</title>
+    <link rel="stylesheet" href="/CSS/Transaction.css">
+    <script src="/DangNhap/Transaction.js"></script>
+    <script src="/DangNhap/Navbar.js"></script>
+    <script src="/InPhieuDangKy/InPhieuDangKy.js" defer></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <h1>Danh Sách Phiếu Đăng Ký</h1>
+
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Tìm theo mã phiếu">
+        <button id="search-btn">🔍</button>
+    </div>
+
+    <!-- Bảng danh sách phiếu đăng ký -->
+    <table>
+        <thead>
+            <tr>
+                <th>Mã phiếu</th>
+                <th>Loại chứng chỉ</th>
+                <th>Ngày đăng ký</th>
+                <th>Thời gian thi đăng ký</th>
+                <th>Mã khách hàng</th>
+                <th>In phiếu</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
+        </tbody>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ghi nhận thông tin đăng ký</title>
+    <link rel="stylesheet" href="/CSS/Navbar.css" />
+    <link rel="stylesheet" href="/CSS/DangKyTuDo.css" />
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div class="main-content">
+        <h1>Ghi nhận thông tin đăng ký</h1>
+        <div class="form-container">
+            <div class="card">
+                <h2>Điền thông tin khách hàng</h2>
+                <div class="input-group">
+                    <div class="form-field">
+                        <label for="khach-ho-ten">Họ tên</label>
+                        <input id="khach-ho-ten" placeholder="Họ tên đầy đủ của khách hàng" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-dia-chi">Địa chỉ</label>
+                        <input id="khach-dia-chi" placeholder="Địa chỉ" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-sdt">Số điện thoại</label>
+                        <input id="khach-sdt" placeholder="Số điện thoại" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="khach-email">Email</label>
+                        <input id="khach-email" placeholder="Email" type="email" />
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Điền thông tin thí sinh</h2>
+                <div class="input-group">
+                    <div class="form-field">
+                        <label for="thisinh-ho-ten">Họ tên</label>
+                        <input id="thisinh-ho-ten" placeholder="Họ tên thí sinh" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-cccd">Số căn cước công dân</label>
+                        <input id="thisinh-cccd" placeholder="Số căn cước công dân" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-sdt">Số điện thoại</label>
+                        <input id="thisinh-sdt" placeholder="Số điện thoại" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-email">Email</label>
+                        <input id="thisinh-email" placeholder="Email" type="email" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-diachi">Địa chỉ</label>
+                        <input id="thisinh-diachi" placeholder="Địa chỉ" type="text" />
+                    </div>
+                    <div class="form-field">
+                        <label for="thisinh-ngaysinh">Ngày sinh</label>
+                        <input id="thisinh-ngaysinh" type="date" />
+                    </div>
+                </div>
+            </div>
+        
+            <div class="card">
+                <h2>Chọn lịch thi</h2>
+                <div class="filter-container">
+                    <label><input checked name="filter" type="radio" value="all" /> Tất cả</label>
+                    <label><input name="filter" type="radio" value="ngaythi" /> Ngày thi</label>
+                    <label><input name="filter" type="radio" value="loaichungchi" /> Loại chứng chỉ</label>
+                    <input id="search-box" placeholder="Tìm theo mã lịch thi" type="text" />
+                    <input id="date-box" type="date" style="display:none;" />
+                    <select id="loaichungchi-box" style="display:none;"></select>
+                    <button id="search-btn">🔍</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã lịch thi</th>
+                            <th>Ngày thi</th>
+                            <th>Giờ thi</th>
+                            <th>Số thí sinh</th>
+                            <th>Mã phòng</th>
+                            <th>Chứng chỉ</th>
+                            <th>Chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        <div class="next-wrapper">
+            <button class="next-btn" onclick="BUS.submitDangKy()">Lưu đăng ký</button>
+        </div>
+    </div>
+
+    <!-- Import script theo thứ tự: DAO → BUS → UI setup -->
+    <script src="../dao/DangKyTuDoDAO.js"></script>
+    <script src="../bus/DangKyTuDoBUS.js"></script>
+    <script src="/DangNhap/Navbar.js"></script>
+    <script>
+        DAO.fetchNavbar();
+        BUS.initPage();
+    </script>
+</body>
+
+</html>

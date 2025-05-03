@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const url = new URL("http://localhost:3000/api/getLichThi");
             const params = new URLSearchParams();
-
+    
             if (maLichThiInput.value) {
                 params.append("maLichThi", maLichThiInput.value);
             }
@@ -44,22 +44,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 params.append("dieuKien", "ngaythi");
                 params.append("ngayThi", ngayThiInput.value);
             }
-
             if (loaiChungChiInput.value) {
                 params.append("dieuKien", "loaichungchi");
                 params.append("loaiChungChi", loaiChungChiInput.value);
             }
-
+    
             url.search = params.toString();
-
+    
             const response = await fetch(url);
             const data = await response.json();
-
+    
+            if (data.message) {
+                // Hiển thị thông báo không có dữ liệu
+                const tableBody = document.getElementById("table-body");
+                tableBody.innerHTML = "<tr><td colspan='6' style='text-align: center;'>" + data.message + "</td></tr>";
+                return;
+            }
+    
             renderTable(data);
         } catch (error) {
             console.error("Lỗi khi lấy dữ liệu:", error);
         }
     }
+    
 
     // Hiển thị dữ liệu lên bảng
     function renderTable(data) {
@@ -72,12 +79,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         data.forEach(lich => {
+            const currentRegistrations = lich.SoLuongDangKy || 0;
+            const maxCapacity = lich.SucChuaToiDa;
+            const isDisabled = currentRegistrations >= maxCapacity;
+            console.log(lich);
+    
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${lich.MaLichThi}</td>
                 <td>${lich.NgayThi}</td>
                 <td>${lich.GioThi}</td>
-                <td>${lich.SoLuongDangKy || "0"}</td>
+                <td>${currentRegistrations}/${maxCapacity}</td>
                 <td>${lich.MaPhongThi}</td>
                 <td>${lich.LoaiChungChi}</td>
             `;

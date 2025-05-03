@@ -62,53 +62,74 @@ function collectThiSinhData() {
 }
 
 function submitDangKy() {
-    if (!validateInputs()) return;
-  
-    // Kiểm tra danh sách thí sinh
-    if (!validateThiSinhList()) return;
-  
-    if (!selectedMaLichThi || !selectedLoaiChungChi) {
-      alert("❌ Lỗi: Thiếu thông tin lịch thi.");
-      return;
-    }
-  
-    const data = {
-      TenKH: document.getElementById("khach-ho-ten").value.trim(),
-      DiaChiKH: document.getElementById("khach-dia-chi").value.trim(),
-      SoDienThoaiKH: document.getElementById("khach-sdt").value.trim(),
-      EmailKH: document.getElementById("khach-email").value.trim(),
-      LoaiKhachHang: "đơn vị",
-      MaLichThi: parseInt(selectedMaLichThi),
-      LoaiChungChi: parseInt(selectedLoaiChungChi),
-      ThiSinhList: collectThiSinhData()
-    };
-  
-    const btn = document.getElementById('save-registration-btn');
-    btn.disabled = true;
-    btn.textContent = "Đang lưu...";
-  
-    fetch("/api/luuDangKyDonVi", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    })
-      .then(res => res.json().then(body => ({ status: res.status, body })))
-      .then(({ status, body }) => {
-        if (status === 200 && body.maPhieuDangKy) {
-          alert("✅ Đăng ký thành công! Mã phiếu: " + body.maPhieuDangKy);
-          window.location.href = "/InPhieuDangKy/InPhieuDangKy.html";
-        } else {
-          throw new Error(body.error || "Lỗi không xác định.");
-        }
-      })
-      .catch(err => {
-        console.error("❌ Lỗi đăng ký:", err);
-        alert("❌ Đăng ký thất bại: " + err.message);
-        btn.disabled = false;
-        btn.textContent = "Lưu đăng ký";
-      });
+  if (!validateInputs()) return;
+
+  // Kiểm tra danh sách thí sinh
+  if (!validateThiSinhList()) return;
+
+  if (!selectedMaLichThi || !selectedLoaiChungChi) {
+    alert("❌ Lỗi: Thiếu thông tin lịch thi.");
+    return;
   }
-  
+
+  const data = {
+    TenKH: document.getElementById("khach-ho-ten").value.trim(),
+    DiaChiKH: document.getElementById("khach-dia-chi").value.trim(),
+    SoDienThoaiKH: document.getElementById("khach-sdt").value.trim(),
+    EmailKH: document.getElementById("khach-email").value.trim(),
+    LoaiKhachHang: "đơn vị",
+    MaLichThi: parseInt(selectedMaLichThi),
+    LoaiChungChi: parseInt(selectedLoaiChungChi),
+    ThiSinhList: collectThiSinhData()
+  };
+
+  const btn = document.getElementById('save-registration-btn');
+  btn.disabled = true;
+  btn.textContent = "Đang lưu...";
+
+  fetch("/api/luuDangKyDonVi", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+    .then(res => res.json().then(body => ({ status: res.status, body })))
+    .then(({ status, body }) => {
+      if (status === 200 && body.maPhieuDangKy) {
+        alert("✅ Đăng ký thành công! Mã phiếu: " + body.maPhieuDangKy);
+        window.location.href = "/InPhieuDangKy/InPhieuDangKy.html";
+      } else {
+        throw new Error(body.error || "Lỗi không xác định.");
+      }
+    })
+    .catch(err => {
+      console.error("❌ Lỗi đăng ký:", err);
+      alert("❌ Đăng ký thất bại: " + err.message);
+      btn.disabled = false;
+      btn.textContent = "Lưu đăng ký";
+    });
+}
+
+function validateThiSinhList() {
+  const thiSinhForms = document.querySelectorAll('.thisinh-form');
+  if (thiSinhForms.length === 0) {
+    alert("⚠️ Phải thêm ít nhất 1 thí sinh.");
+    return false;
+  }
+
+  for (const form of thiSinhForms) {
+    const required = ['thisinh-ho-ten', 'thisinh-cccd', 'thisinh-sdt', 'thisinh-email', 'thisinh-diachi', 'thisinh-ngaysinh'];
+    for (const name of required) {
+      const input = form.querySelector(`[name="${name}"]`);
+      if (!input || !input.value.trim()) {
+        alert(`⚠️ Vui lòng điền đầy đủ thông tin: ${name}`);
+        input.focus();
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 
 // --- DOM Ready ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -155,26 +176,3 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "/DangKyDonVi/ChonLichThi.html";
   });
 });
-
-function validateThiSinhList() {
-    const thiSinhForms = document.querySelectorAll('.thisinh-form');
-    if (thiSinhForms.length === 0) {
-      alert("⚠️ Phải thêm ít nhất 1 thí sinh.");
-      return false;
-    }
-  
-    for (const form of thiSinhForms) {  
-       console.log(form);
-      const required = ['thisinh-ho-ten', 'thisinh-cccd', 'thisinh-sdt', 'thisinh-email', 'thisinh-diachi', 'thisinh-ngaysinh'];
-      for (const name of required) {
-        const input = form.querySelector(`[name="${name}"]`);
-        if (!input || !input.value.trim()) {
-          alert(`⚠️ Vui lòng điền đầy đủ thông tin: ${name}`);
-          input.focus();
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-  

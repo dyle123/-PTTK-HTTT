@@ -46,20 +46,20 @@ async function layDanhSachPhongThi() {
 
 async function layDanhSachNhanVien() {
     try {
-        const response = await fetch('/api/nhanvien'); // **CẦN THAY THẾ BẰNG URL API THỰC TẾ**
+        const response = await fetch('/api/nhanvienGac'); 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        const selectNhanVien = document.getElementById('nhanVien');
+        const selectNhanVien = document.getElementById('nhanVienGac');
 
         // Xóa các option cũ (nếu có)
         selectNhanVien.innerHTML = '<option value="">Chọn nhân viên</option>';
 
-        data.forEach(nhanVien => {
+        data.forEach(nhanVienGac => {
             const option = document.createElement('option');
-            option.value = nhanVien.MaNhanVien;
-            option.textContent = nhanVien.HoTen;
+            option.value = nhanVienGac.MaNhanVien;
+            option.textContent = nhanVienGac.HoTen;
             selectNhanVien.appendChild(option);
         });
     } catch (error) {
@@ -91,14 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const loaiChungChi = parseInt(document.getElementById('loaiChungChi').value);
         const phongThi = parseInt(document.getElementById('phongThi').value);
+        const nhanVienGac = document.getElementById('nhanVienGac').value; // Lấy giá trị từ dropdown nhân viên
+
 
         console.log('ngayThi:', ngayThi);
         console.log('gioThi (đã xử lý):', gioThi);
         console.log('loaiChungChi:', loaiChungChi);
         console.log('phongThi:', phongThi);
+        console.log('nhanVienGac:', nhanVienGac);
 
-        if (!ngayThi || !gioThi || isNaN(loaiChungChi) || isNaN(phongThi)) {
-            alert("Vui lòng điền đầy đủ thông tin ngày thi, giờ thi, loại chứng chỉ và phòng thi.");
+
+        if (!ngayThi || !gioThi || isNaN(loaiChungChi) || isNaN(phongThi) || !nhanVienGac) {
+            alert("Vui lòng điền đầy đủ thông tin ngày thi, giờ thi, loại chứng chỉ và phòng thi và nhân viên gác thi.");
             return;
         }
 
@@ -107,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gioThi: gioThi,
             loaiChungChi: loaiChungChi,
             phongThi: phongThi,
+            nhanVienGac: nhanVienGac, 
             SoLuongDangKy: 0
         };
 
@@ -124,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('Tạo lịch thi thành công!');
-                location.reload();
+                window.location.href = '/QuanLyLichThi/QuanLyLichThi.html';
             } else {
                 alert(`Lỗi: ${result.message}`);
             }
