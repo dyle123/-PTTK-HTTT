@@ -437,15 +437,6 @@ BEGIN
         return;
     END
 
-    IF EXISTS (SELECT 1
-    FROM PhieuGiaHan
-    WHERE MaPhieuDangKy=@MaPhieuDangKy AND CCCD!=@CCCD)
-		BEGIN
-        RAISERROR(N'Mã phiếu đăng ký đã bị trùng với thí sinh khác',16,1)
-        return;
-    END
-
-
 
     IF NOT EXISTS (SELECT 1
     FROM THISINH
@@ -514,13 +505,16 @@ BEGIN
             RAISERROR(N'Ngày thi mới phải khác ngày thi cũ',16,1)
             return;
         END
-			ELSE			
-				BEGIN
-            INSERT INTO PhieuGiaHan
-                (CCCD, MaPhieuDangKy,LiDoGiaHan, LoaiGiaHan ,NgayThiCu, NgayThiMoi)
-            VALUES
-                (@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan, @NgayCu, @NgayMoi);
-
+		IF EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
+			BEGIN
+				UPDATE PhieuGiaHan
+				SET NgayThiCu=@NgayCu, NgayThiMoi=@NgayMoi
+				WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
+			END
+		IF NOT EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
+			BEGIN
+				INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy,LiDoGiaHan, LoaiGiaHan ,NgayThiCu, NgayThiMoi) VALUES(@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan, @NgayCu, @NgayMoi);
+			END
             UPDATE PhieuDuThi
 					SET LichThi=@NgayMoi
 					WHERE CCCD=@CCCD AND LichThi=@NgayCu
@@ -533,12 +527,16 @@ BEGIN
 					SET LichThi=@NgayMoi
 					WHERE MaPhieuDangKy=@MaPhieuDangKy
             UPDATE LichThi
-				SET SoLuongDangKy=SoLuongDangKy-1
-				WHERE MaLichThi=@NgayCu
+			SET SoLuongDangKy = CASE 
+                WHEN SoLuongDangKy - 1 < 0 THEN 0 
+                ELSE SoLuongDangKy - 1 
+             END
+			WHERE MaLichThi = @NgayCu;
+
             UPDATE LichThi
 				SET SoLuongDangKy=SoLuongDangKy+1
 				WHERE MaLichThi=@NgayMoi
-        END
+        
     END
 END
 go
@@ -546,24 +544,7 @@ go
 
 
 
-CREATE or alter  TRIGGER trg_KiemTraMaPhieuDangKy
-ON PhieuGiaHan
-AFTER INSERT
-AS
-BEGIN
-    IF EXISTS (
-        SELECT 1
-    FROM INSERTED i
-        JOIN PhieuGiaHan p
-        ON i.MaPhieuDangKy = p.MaPhieuDangKy
-            AND i.CCCD <> p.CCCD
-    )
-    BEGIN
-        RAISERROR (N'Mỗi CCCD khác nhau phải có MaPhieuDangKy khác nhau.', 16, 1)
-        ROLLBACK TRANSACTION
-    END
-END;
-go
+
 
 
 
@@ -876,7 +857,6 @@ BEGIN
         NgayThiMoi = @NgayMoi
     WHERE CCCD = @CCCD AND MaPhieuDangKy = @MaPhieuDangKy;
 END
-
 GO
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi

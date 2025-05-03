@@ -1,3 +1,6 @@
+USE PTTK
+GO
+
 INSERT INTO BangGiaThi VALUES
 (1, N'Chứng chỉ A', 500000),
 (2, N'Chứng chỉ B', 700000),
@@ -20,12 +23,13 @@ INSERT INTO PhongThi VALUES
 (40, 0),
 (50, 0);
 
-select*from PhongThi
+
+
 
 INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi) VALUES
-('2025-06-01', '08:00', 0, 11, 1),
-('2025-06-02', '08:00', 0, 12, 2),
-('2025-06-03', '08:00', 0, 13, 3);
+('2025-06-01', '08:00', 0, 4, 1),
+('2025-06-02', '08:00', 0, 5, 2),
+('2025-06-03', '08:00', 0, 6, 3);
 
 INSERT INTO NhanVien VALUES
 ('NV000014', N'Trịnh Văn Long', '1985-05-05', '0988111222', '10000000', N'Kế toán'),
@@ -38,20 +42,21 @@ values ('NV000014', '123','ketoan');
 values ('NV000013', '123','tiepnhan');
 
 INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, LichThi, MaKhachHang, PaymentLink) VALUES
-(1, '2025-05-01', 0, 12, 3, null),
-(2, '2025-05-02', 0, 13, 4, null),
-(3, '2025-05-03', 0, 14, 5, null);
+(1, '2025-05-01', 0, 3, 4, null),
+(2, '2025-05-02', 0, 4, 5, null),
+(3, '2025-05-03', 0, 5, 6, null);
+
 
 
 INSERT INTO ChiTietPhieuDangKy VALUES
-(14, '123456789001', 0),
-(15, '123456789002', 0),
-(16, '123456789003', 0);
+(4, '123456789001', 0),
+(5, '123456789002', 0),
+(6, '123456789003', 0);
 
 INSERT INTO PhieuThanhToan (TamTinh, PhanTramGiamGia, ThanhTien, TrangThaiThanhToan, MaPhieuDangKy, NhanVienThucHien) VALUES
-(500000, 0, 500000, 0, 1, 'NV000014'),
-(700000, 10, 630000, 1, 2, 'NV000014'),
-(900000, 5, 855000, 2, 3, 'NV000014');
+(500000, 0, 500000, 0, 4, 'NV000014'),
+(700000, 10, 630000, 1, 5, 'NV000014'),
+(900000, 5, 855000, 2, 6, 'NV000014');
 
 INSERT INTO HoaDonThanhToan (TongTien, HinhThucThanhToan, NgayThanhToan, MaPhieuThanhToan, MaGiaoDich) VALUES
 (500000, N'tiền mặt', '2025-05-05', 3, 'GD001'),
@@ -59,10 +64,9 @@ INSERT INTO HoaDonThanhToan (TongTien, HinhThucThanhToan, NgayThanhToan, MaPhieu
 (855000, N'tiền mặt', '2025-05-07', 5, 'GD003');
 
 INSERT INTO PhieuDuThi VALUES
-('SBD00000001', '123456789001', 0, 12),
-('SBD00000002', '123456789002', 0, 13),
-('SBD00000003', '123456789003', 0, 14);
-
+('SBD00000001', '123456789001', 0, 3),
+('SBD00000002', '123456789002', 0, 4),
+('SBD00000003', '123456789003', 0, 5);
 
 
 INSERT INTO BaiThi (SoBaoDanh, DangBaiThi, ThoiGianNopBai) VALUES
@@ -76,18 +80,21 @@ INSERT INTO ChungChi (NgayCap, NgayHetHan, LoaiChungChi, TrangThai, CCCD) VALUES
 ('2025-06-17', '2027-06-17', 3, N'Cấp phát', '123456789003');
 
 INSERT INTO KetQuaThi (MaBaiThi, DiemTong, NgayCongBo, MaChungChi) VALUES
-(1, 85, '2025-06-10', 1),
-(2, 90, '2025-06-11', 2),
-(3, 75, '2025-06-12', 3);
+(2, 85, '2025-06-10', 4),
+(3, 90, '2025-06-11', 5),
+(4, 75, '2025-06-12', 6);
+
 
 INSERT INTO GacThi VALUES
-(1, 'NV000013'),
-(2, 'NV000014'),
-(3, 'NV000015');
+(3, 'NV000013'),
+(4, 'NV000014'),
+(5, 'NV000015');
+
 
 INSERT INTO PhieuGiaHan VALUES
-('123456789001', 14, N'Hợp lệ', 100000, N'Lý do cá nhân', 12, 13),
-('123456789002', 15, N'Không hợp lệ', 100000, N'Trễ giờ', 12, 13),
-('123456789003', 16, N'Hợp lệ', 150000, N'Ốm', 13, 14);
+('123456789001', 4, N'Hợp lệ', 100000, N'Lý do cá nhân', 3, 4),
+('123456789002', 5, N'Không hợp lệ', 100000, N'Trễ giờ', 4, 5),
+('123456789003', 6, N'Hợp lệ', 150000, N'Ốm', 3, 4);
+
 
 
