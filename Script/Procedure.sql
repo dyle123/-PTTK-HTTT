@@ -680,6 +680,8 @@ BEGIN
 END
 GO
 
+
+
 CREATE or alter  PROC DocToanBoPhieuGiaHan
 AS
 BEGIN
@@ -897,6 +899,7 @@ BEGIN
     END;
 END;
 GO
+
 
 
 
