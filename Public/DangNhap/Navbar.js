@@ -30,10 +30,11 @@ async function KiemTraTrangThaiDangNhap() {
         if (response.ok && data.loggedIn) {
             loginBtn.style.display = 'none';
             logoutBtn.style.display = 'block';
-
+            setupdropdown(true);
             // Nếu không phải kế toán, chặn nút thanh toán
             if (data.role !== "ketoan") {
                 KhoaThanhToan();
+                KhoaLapPhieuGiaHan();
             } 
             else if(data.role !== "tiepnhan") {
                 KhoaDangKy();
@@ -43,6 +44,7 @@ async function KiemTraTrangThaiDangNhap() {
             logoutBtn.style.display = 'none';
             // Nếu chưa đăng nhập, chặn tất cả các nút cần bảo vệ
             KhoaChucNang();
+            setupdropdown(false);
         }
     } catch (error) {
         console.error('Lỗi kiểm tra đăng nhập:', error);
@@ -105,6 +107,21 @@ function KhoaDangKy() {
         inPhieuDangKyLink.style.cursor = "not-allowed";
         inPhieuDangKyLink.style.opacity = "0.6";
         console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa.");
+    }
+}
+
+function KhoaLapPhieuGiaHan()
+{
+    const LapPhieuGiaHanLink = document.querySelector("a[href='/GiaHan/LapPhieuGiaHan.html']");
+    if (LapPhieuGiaHanLink) {
+        LapPhieuGiaHanLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn truy cập
+            HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
+        });
+
+        LapPhieuGiaHanLink.style.cursor = "not-allowed";
+        LapPhieuGiaHanLink.style.opacity = "0.6";
+        console.log("🔒 Nút lập phiếu gia hạn đã bị vô hiệu hóa");
     }
 }
 
@@ -188,5 +205,32 @@ function setupDropdown() {
         });
     } else {
         console.warn("⚠️ Không tìm thấy phần tử Đăng ký.");
+    }
+}
+
+function setupdropdown(isLoggedIn) {
+    const registerItem = document.getElementById("register");
+    const dropdownMenu = document.querySelector("#register .dropdown-menu");
+
+    if (!registerItem || !dropdownMenu) return;
+
+    if (isLoggedIn) {
+        registerItem.addEventListener("mouseenter", () => {
+            dropdownMenu.style.display = "block";
+        });
+
+        registerItem.addEventListener("mouseleave", () => {
+            dropdownMenu.style.display = "none";
+        });
+
+        // reset style nếu từng bị ẩn
+        dropdownMenu.style.display = "none";
+        registerItem.style.cursor = "pointer";
+        registerItem.style.opacity = "1";
+    } else {
+        // không cho hover nếu chưa đăng nhập
+        dropdownMenu.style.display = "none";
+        registerItem.style.cursor = "not-allowed";
+        registerItem.style.opacity = "0.6";
     }
 }
