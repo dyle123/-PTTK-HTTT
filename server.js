@@ -1451,23 +1451,15 @@ app.get('/api/getPhieuDangKyMoiNhat', async (req, res) => {
 });
 
 app.get('/api/GetLichThi', async (req, res) => {
-    const { dieuKien, maLichThi, ngayThi, gioThi, loaiChungChi, thangThi } = req.query;
+    const { dieuKien, maLichThi, ngayThi, loaiChungChi } = req.query;
 
     try {
         const pool = await sql.connect(config);
         let query = `SELECT * FROM LichThi JOIN BangGiaThi ON LoaiChungChi = MaLoaiChungChi`;
         let conditions = [];
 
-        console.log('DieuKien:', dieuKien);
-
         if (dieuKien === "ngaythi" && ngayThi) {
             conditions.push(`NgayThi = @NgayThi`);
-        }
-        if (dieuKien === "thangthi" && thangThi) {
-            conditions.push(`YEAR(NgayThi) = @Year AND MONTH(NgayThi) = @Month`);
-        }
-        if (dieuKien === "giothi" && gioThi) {
-            conditions.push(`GioThi = @GioThi`);
         }
         if (dieuKien === "loaichungchi" && loaiChungChi) {
             conditions.push(`LoaiChungChi = @LoaiChungChi`);
@@ -1484,32 +1476,24 @@ app.get('/api/GetLichThi', async (req, res) => {
 
         if (maLichThi) request.input('MaLichThi', sql.Int, maLichThi);
         if (ngayThi) request.input('NgayThi', sql.Date, ngayThi);
-        if (gioThi) request.input('GioThi', sql.Time, gioThi);
         if (loaiChungChi) request.input('LoaiChungChi', sql.NVarChar, loaiChungChi);
 
-        if (thangThi) {
-            const [year, month] = thangThi.split('-'); // Parse '2025-06'
-            request.input('Year', sql.Int, parseInt(year));
-            request.input('Month', sql.Int, parseInt(month));
-        }
-
         const result = await request.query(query);
-        console.log('Kết quả truy vấn lich thi:', result.recordset); // Log kết quả truy vấn
+
+        // Kiểm tra nếu không có dữ liệu
+        if (result.recordset.length === 0) {
+            res.json({ message: 'Không có dữ liệu' });
+            return;
+        }
 
         const formatDate = (dateString) => {
             if (!dateString) return null;
             return new Date(dateString).toISOString().split('T')[0];
         };
 
-        const formatTime = (timeValue) => {
-            if (!timeValue) return null;
-            return timeValue.toISOString().split('T')[1].slice(0, 8);
-        };
-
         const formattedData = result.recordset.map(row => ({
             ...row,
-            NgayThi: formatDate(row.NgayThi),
-            GioThi: formatTime(row.GioThi)
+            NgayThi: formatDate(row.NgayThi)
         }));
 
         res.json(formattedData);
@@ -1518,6 +1502,8 @@ app.get('/api/GetLichThi', async (req, res) => {
         res.status(500).json({ error: 'Lỗi khi lấy lịch thi' });
     }
 });
+
+
 app.get('/api/getPhieuDangKyById', async (req, res) => {
     const { maPhieu } = req.query;
     try {
