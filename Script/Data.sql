@@ -95,3 +95,9 @@ INSERT INTO PhieuGiaHan VALUES
 
 
 
+select*from PhieuGiaHan
+
+update ChiTietPhieuDangKy set SoLanGiaHan=0
+
+delete from PhieuGiaHan where MaPhieuDangKy=4
+select*from LichThi
