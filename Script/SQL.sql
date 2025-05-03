@@ -10,8 +10,6 @@ GO
 USE PTTK
 GO
 
-
-
 CREATE TABLE KhachHang
 (
 	MaKhachHang int IDENTITY(1,1) Primary Key,
@@ -142,6 +140,8 @@ CREATE TABLE LichThi
 	LoaiChungChi INT--f
 )
 
+ALTER TABLE LichThi
+ADD CONSTRAINT DF_SoLuongDangKy DEFAULT 0 FOR SoLuongDangKy;
 
 CREATE TABLE Users
 (
@@ -165,9 +165,6 @@ CREATE TABLE BangGiaThi
 	TenChungChi nvarchar(50),
 	LePhiThi int
 )
-
-
-
 
 CREATE TABLE ThongTinTruyCap
 (
@@ -202,10 +199,6 @@ CREATE TABLE PhieuGiaHan
 	NgayThiMoi Int,
 	CONSTRAINT PK_PhieuGiaHan PRIMARY KEY (CCCD, MaPhieuDangKy)
 )
-
-
-
-
 
 -- Khóa ngoại ở đây
 ALTER TABLE PhieuThanhToan 
@@ -260,13 +253,7 @@ ADD CONSTRAINT FK_PhieuGiaHan_ThiSinh FOREIGN KEY(CCCD) REFERENCES ThiSinh(CCCD)
 	CONSTRAINT FK_PhieuGiaHan_LichThi FOREIGN KEY (NgayThiCu) REFERENCES LichThi(MaLichThi),
 	CONSTRAINT FK_PhieuGiaHan2_LichThi FOREIGN KEY (NgayThiMoi) REFERENCES LichThi(MaLichThi)
 
-select*
-from PhieuGiaHan
-Select*
-from ChungChi
 
-ALTER TABLE LichThi
-ADD CONSTRAINT DF_SoLuongDangKy DEFAULT 0 FOR SoLuongDangKy;
 
 
 

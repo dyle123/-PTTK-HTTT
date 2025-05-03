@@ -1,8 +1,6 @@
 ﻿USE PTTK
 GO
 
-
-
 CREATE PROCEDURE sp_GetPhieuDangKyById
     @maPhieu INT
 AS
@@ -29,6 +27,7 @@ BEGIN
         JOIN LichThi L ON PD.LichThi = L.MaLichThi
     WHERE PD.MaPhieuDangKy = @maPhieu
 END
+go
 
 CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
 AS
@@ -38,8 +37,6 @@ BEGIN
     WHERE DATEDIFF(DAY, NgayDangKy, GETDATE()) >= 3 AND TrangThaiThanhToan = 0;
 END;
 GO
-
-
 
 CREATE OR ALTER PROC TaoPhieuThanhToan
     @MaPhieuDangKy int,
@@ -61,8 +58,6 @@ BEGIN
     WHERE MaPhieuDangKy = @MaPhieuDangKy
 	)
 	BEGIN
-
-
         DECLARE @SOLUONG INT
         DECLARE @GIAMGIA INT
         DECLARE @TAMTINH INT
@@ -116,9 +111,6 @@ BEGIN
 END
 GO
 
-
-
-
 CREATE OR ALTER PROC TaoHoaDon
     @MaPhieuThanhToan int,
     @HinhThucThanhToan nvarchar(20) = null,
@@ -145,7 +137,6 @@ BEGIN
         RAISERROR (N'Phiếu đã được thanh toán trước đó.', 16, 1);
         RETURN;
     END
-
 
     DECLARE @TongTien INT
     SET @TongTien = (SELECT ThanhTien
@@ -174,7 +165,6 @@ BEGIN
 
 END
 GO
-
 
 CREATE OR ALTER PROCEDURE KIEMTRAKHACHHANG
     @TenKH NVARCHAR(50),
@@ -218,7 +208,6 @@ BEGIN
 END;
 GO
 
-
 CREATE OR ALTER PROCEDURE KIEMTRATHISINH
     @TenTS NVARCHAR(50),
     @CCCDTS CHAR(12),
@@ -255,8 +244,6 @@ BEGIN
     END
 END;
 GO
-
-
 
 CREATE OR ALTER PROCEDURE TaoPhieuDangKy
     @TenKH NVARCHAR(50),
@@ -414,9 +401,6 @@ BEGIN
 END;
 GO
 
-
-
-
 Create or alter  procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
@@ -447,8 +431,6 @@ BEGIN
         RAISERROR(N'Mã phiếu đăng ký đã bị trùng với thí sinh khác',16,1)
         return;
     END
-
-
 
     IF NOT EXISTS (SELECT 1
     FROM THISINH
@@ -546,9 +528,6 @@ BEGIN
 END
 go
 
-
-
-
 CREATE or alter  TRIGGER trg_KiemTraMaPhieuDangKy
 ON PhieuGiaHan
 AFTER INSERT
@@ -567,8 +546,6 @@ BEGIN
     END
 END;
 go
-
-
 
 CREATE or alter  PROCEDURE DocToanBoChiTietPhieuDangKy
 AS
@@ -691,9 +668,7 @@ BEGIN
         JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
         JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
 END
-
 go
-
 
 CREATE or alter  PROCEDURE TraCuuPhieuGiaHan
     @CCCD char(12)=NULL,
@@ -797,7 +772,6 @@ BEGIN
 END
 GO
 
-
 CREATE or alter PROCEDURE XoaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy int
@@ -878,7 +852,6 @@ BEGIN
         NgayThiMoi = @NgayMoi
     WHERE CCCD = @CCCD AND MaPhieuDangKy = @MaPhieuDangKy;
 END
-
 GO
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi
@@ -977,9 +950,6 @@ BEGIN
 END
 GO
 
-
-
-DROP PROCEDURE IF EXISTS sp_DangKyDonVi;
 
 
 

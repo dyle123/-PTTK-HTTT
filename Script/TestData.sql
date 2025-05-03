@@ -196,20 +196,13 @@ UPDATE PhieuGiaHan SET MaPhieuDangKy=3 WHERE CCCD='987654321098'
  select* from Users
  select* from HoaDonThanhToan
  select* from Payments
- update PhieuDangKy
- delete from PhieuDuThi
- drop table PhieuDuThi
- select* from PhongThi
- select * From LichThi
 
  select * from PhieuDangKy
 
     select * from ChiTietPhieuDangKy
 
     select * from ThiSinh
-
- select* from PhieuDuThi
- set NgayDangKy = '2025-03-26' where MaPhieuDangKy = 1
+    
  delete from Payments where MaPhieuDangKy = 2
 SET IDENTITY_INSERT PhongThi ON;
 INSERT INTO PhongThi (MaPhongThi, SucChuaToiDa, SoLuongHienTai)
