@@ -839,7 +839,13 @@ BEGIN
         return;
     END
 
-    DECLARE @NgayCu int, @NgayMoi int, @NgayMoiMoi int
+	IF (@NgayThiCu>@NgayThiMoi)
+		BEGIN
+			RAISERROR(N'Ngày thi cũ phải trước ngày thi mới',16,1)
+			RETURN;
+		END
+
+    DECLARE @NgayCu int, @NgayMoi int, @NgayMoiMoi int, @NgayCuCu int
 
     SELECT @NgayCu=MaLichThi
     FROM LichThi
@@ -849,9 +855,15 @@ BEGIN
     FROM LichThi
     WHERE NgayThi=@NgayThiMoi
 
-	SELECT @NgayMoiMoi=NgayThiMoi
+	SELECT @NgayMoiMoi=NgayThiMoi, @NgayCuCu=NgayThiCu
 	FROM PhieuGiaHan 
 	where MaPhieuDangKy=@MaPhieuDangKy AND CCCD= @CCCD
+
+	IF(@NgayCuCu>@NgayMoi)
+		BEGIN
+			RAISERROR(N'Ngày thi mới mà bạn cập nhật không hợp lệ',16,1)
+			RETURN;
+		END
 
 	IF(@NgayMoiMoi!=@NgayMoi)
 		BEGIN

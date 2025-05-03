@@ -1,4 +1,4 @@
-import * as BUS from './bus/InPhieuDangKyBUS.js';
+import * as BUS from './InPhieuDangKyBUS.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchBox = document.getElementById("search-box");
