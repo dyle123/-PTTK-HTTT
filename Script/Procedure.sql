@@ -916,6 +916,13 @@ BEGIN
     SET NOCOUNT ON;
     DECLARE @MaKH INT, @MaPhieu INT;
 
+    -- Kiểm tra tính hợp lệ của dữ liệu JSON
+    IF ISJSON(@ThiSinhList) = 0
+    BEGIN
+        RAISERROR('Dữ liệu JSON không hợp lệ', 16, 1);
+        RETURN;
+    END
+
     BEGIN TRANSACTION;
 
     BEGIN TRY
@@ -932,38 +939,27 @@ BEGIN
         SET @MaPhieu = SCOPE_IDENTITY();
 
         -- 3. Duyệt và thêm thí sinh từ JSON
-        DECLARE @json NVARCHAR(MAX) = @ThiSinhList;
-
-        -- Mở và duyệt dữ liệu JSON
-        INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
-        SELECT
-            ts.CCCD,
-            ts.TenTS,
-            ts.NgaySinh,
-            ts.EmailTS,
-            ts.SoDienThoaiTS,
-            ts.DiaChiTS
-        FROM OPENJSON(@json)
-        WITH (
-            CCCD CHAR(12),
-            TenTS NVARCHAR(50),
-            NgaySinh DATE,
-            EmailTS VARCHAR(60),
-            SoDienThoaiTS CHAR(10),
-            DiaChiTS NVARCHAR(255)
-        ) AS ts
-        WHERE NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD = ts.CCCD);
+        MERGE INTO ThiSinh AS target
+        USING (SELECT CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi
+               FROM OPENJSON(@ThiSinhList)
+               WITH (CCCD CHAR(12), HoVaTen NVARCHAR(50), NgaySinh DATE, 
+                     Email CHAR(60), SoDienThoai CHAR(10), DiaChi NVARCHAR(255))) AS source
+        ON target.CCCD = source.CCCD
+        WHEN NOT MATCHED BY TARGET THEN
+            INSERT (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+            VALUES (source.CCCD, source.HoVaTen, source.NgaySinh, source.Email, 
+                    source.SoDienThoai, source.DiaChi);
 
         -- 4. Ghi vào ChiTietPhieuDangKy
         INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
         SELECT @MaPhieu, ts.CCCD
-        FROM OPENJSON(@json)
+        FROM OPENJSON(@ThiSinhList)
         WITH (CCCD CHAR(12)) AS ts;
 
         -- 5. Cập nhật số lượng đăng ký
         UPDATE LichThi
         SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + (
-            SELECT COUNT(*) FROM OPENJSON(@json)
+            SELECT COUNT(*) FROM OPENJSON(@ThiSinhList)
         )
         WHERE MaLichThi = @MaLichThi;
 
@@ -971,12 +967,15 @@ BEGIN
         SELECT @MaPhieu AS MaPhieuDangKy;
     END TRY
     BEGIN CATCH
+        -- Ghi lỗi vào log hoặc ném lại thông báo lỗi
         ROLLBACK;
-        THROW;
+        DECLARE @ErrorMessage NVARCHAR(MAX);
+        SET @ErrorMessage = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1); -- Truyền thông báo lỗi vào RAISERROR
+        RETURN;
     END CATCH
 END
 GO
-
 
 
 
