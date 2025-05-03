@@ -249,6 +249,12 @@ delete from PhieuGiaHan where CCCD='987654321098'
 
 select * from GacThi
 
+select * from PhieuDangKy
+
+
+select * from ThiSinh
+select *from ChiTietPhieuDangKy
+
 select * from NhanVien
 
 SELECT LichThi.*, BangGiaThi.*, PhongThi.*

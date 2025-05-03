@@ -5,26 +5,26 @@ CREATE PROCEDURE sp_GetPhieuDangKyById
     @maPhieu INT
 AS
 BEGIN
-    SELECT 
-        PD.MaPhieuDangKy, 
-        PD.NgayDangKy, 
-        L.NgayThi, 
+    SELECT
+        PD.MaPhieuDangKy,
+        PD.NgayDangKy,
+        L.NgayThi,
         PD.LoaiChungChi,
         PD.MaKhachHang,
-        KH.TenKhachHang, 
-        KH.Email AS EmailKH, 
-        KH.SoDienThoai AS SDTKH, 
+        KH.TenKhachHang,
+        KH.Email AS EmailKH,
+        KH.SoDienThoai AS SDTKH,
         KH.DiaChi,
-        TS.HoVaTen AS TenThiSinh, 
-        TS.NgaySinh, 
-        TS.Email AS EmailThiSinh, 
-        TS.SoDienThoai AS SDTThiSinh, 
+        TS.HoVaTen AS TenThiSinh,
+        TS.NgaySinh,
+        TS.Email AS EmailThiSinh,
+        TS.SoDienThoai AS SDTThiSinh,
         TS.CCCD
     FROM PhieuDangKy PD
-    JOIN KhachHang KH ON PD.MaKhachHang = KH.MaKhachHang
-    JOIN ChiTietPhieuDangKy CTP ON PD.MaPhieuDangKy = CTP.MaPhieuDangKy
-    JOIN ThiSinh TS ON TS.CCCD = CTP.CCCD
-    JOIN LichThi L ON PD.LichThi = L.MaLichThi
+        JOIN KhachHang KH ON PD.MaKhachHang = KH.MaKhachHang
+        JOIN ChiTietPhieuDangKy CTP ON PD.MaPhieuDangKy = CTP.MaPhieuDangKy
+        JOIN ThiSinh TS ON TS.CCCD = CTP.CCCD
+        JOIN LichThi L ON PD.LichThi = L.MaLichThi
     WHERE PD.MaPhieuDangKy = @maPhieu
 END
 
@@ -418,9 +418,9 @@ GO
 Create or alter  procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
-	@PhiGiaHan int,
+    @PhiGiaHan int,
     @LiDoGiaHan nvarchar(255),
-	@LoaiGiaHan nvarchar(12),
+    @LoaiGiaHan nvarchar(12),
     @NgayThiCu Date,
     @NgayThiMoi Date
 
@@ -446,7 +446,7 @@ BEGIN
         return;
     END
 
-	
+
 
     IF NOT EXISTS (SELECT 1
     FROM THISINH
@@ -455,27 +455,27 @@ BEGIN
         RAISERROR(N'Căn cước công dân không tồn tại.', 16, 1);
         return
     END
-	
-	IF(@LoaiGiaHan!=N'Hợp lệ' and @LoaiGiaHan!=N'Không hợp lệ')
+
+    IF(@LoaiGiaHan!=N'Hợp lệ' and @LoaiGiaHan!=N'Không hợp lệ')
 		BEGIN
-			RAISERROR(N'Loại gia hạn không hợp lệ',16,1)
-			return;
-		END
-	IF(@PhiGiaHan<0)
+        RAISERROR(N'Loại gia hạn không hợp lệ',16,1)
+        return;
+    END
+    IF(@PhiGiaHan<0)
 		BEGIN
-			RAISERROR(N'Phí gia hạn phải >=0',16,1)
-			RETURN;
-		END
-	IF(@LoaiGiaHan=N'Hợp lệ' and @PhiGiaHan>0)
+        RAISERROR(N'Phí gia hạn phải >=0',16,1)
+        RETURN;
+    END
+    IF(@LoaiGiaHan=N'Hợp lệ' and @PhiGiaHan>0)
 		BEGIN
-			RAISERROR(N'Lí do gia hạn hợp lệ nên không có phí gia hạn',16,1)
-			RETURN;
-		END
-	IF(@LoaiGiaHan=N'Không hợp lệ' and @PhiGiaHan<=0)
+        RAISERROR(N'Lí do gia hạn hợp lệ nên không có phí gia hạn',16,1)
+        RETURN;
+    END
+    IF(@LoaiGiaHan=N'Không hợp lệ' and @PhiGiaHan<=0)
 		BEGIN
-			RAISERROR(N'Lí do gia hạn không hợp lệ nên phải có phí gia hạn',16,1)
-			RETURN;
-		END
+        RAISERROR(N'Lí do gia hạn không hợp lệ nên phải có phí gia hạn',16,1)
+        RETURN;
+    END
 
     IF NOT EXISTS (SELECT 1
     FROM LichThi
@@ -520,7 +520,7 @@ BEGIN
             INSERT INTO PhieuGiaHan
                 (CCCD, MaPhieuDangKy,LiDoGiaHan, LoaiGiaHan ,NgayThiCu, NgayThiMoi)
             VALUES
-                (@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan,@NgayCu, @NgayMoi);
+                (@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan, @NgayCu, @NgayMoi);
 
             UPDATE PhieuDuThi
 					SET LichThi=@NgayMoi
@@ -533,10 +533,10 @@ BEGIN
             UPDATE PhieuDangKy
 					SET LichThi=@NgayMoi
 					WHERE MaPhieuDangKy=@MaPhieuDangKy
-			UPDATE LichThi
+            UPDATE LichThi
 				SET SoLuongDangKy=SoLuongDangKy-1
 				WHERE MaLichThi=@NgayCu
-			UPDATE LichThi
+            UPDATE LichThi
 				SET SoLuongDangKy=SoLuongDangKy+1
 				WHERE MaLichThi=@NgayMoi
         END
@@ -571,10 +571,10 @@ go
 CREATE or alter  PROCEDURE DocToanBoChiTietPhieuDangKy
 AS
 BEGIN
-	SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
+    SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
     FROM ChiTietPhieuDangKy as CT
-    JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-    JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+        JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
+        JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
 END
 GO
 
@@ -585,91 +585,109 @@ AS
 BEGIN
     IF((@CCCD IS NOT NULL OR @CCCD!='') AND(@NgayThi IS NULL))
 		BEGIN
-			IF NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD=@CCCD)
+        IF NOT EXISTS (SELECT 1
+        FROM ThiSinh
+        WHERE CCCD=@CCCD)
 				BEGIN
-					RAISERROR(N'Thí sinh không tồn tại',16,1)
-					RETURN;
-				END
-			IF NOT EXISTS (SELECT 1 FROM ChiTietPhieuDangKy WHERE CCCD=@CCCD)
+            RAISERROR(N'Thí sinh không tồn tại',16,1)
+            RETURN;
+        END
+        IF NOT EXISTS (SELECT 1
+        FROM ChiTietPhieuDangKy
+        WHERE CCCD=@CCCD)
 				BEGIN
-					RAISERROR(N'Không tìm thấy phiếu đăng ký của thí sinh',16,1)
-					RETURN;
-				END
-			SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
-			FROM ChiTietPhieuDangKy as CT
-				JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-				JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
-			WHERE CT.CCCD=@CCCD
-		END
+            RAISERROR(N'Không tìm thấy phiếu đăng ký của thí sinh',16,1)
+            RETURN;
+        END
+        SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
+        FROM ChiTietPhieuDangKy as CT
+            JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
+            JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+        WHERE CT.CCCD=@CCCD
+    END
 	ELSE IF((@CCCD IS NULL OR @CCCD='') AND (@NgayThi IS NOT NULL))
 		BEGIN
-			IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayThi)
+        IF NOT EXISTS(SELECT 1
+        FROM LichThi
+        WHERE NgayThi=@NgayThi)
 				BEGIN
-					RAISERROR(N'Ngày thi không tồn tại',16,1)
-					RETURN;
-				END
+            RAISERROR(N'Ngày thi không tồn tại',16,1)
+            RETURN;
+        END
 
-				DECLARE @MLT INT
-				
-				SELECT @MLT=MaLichThi
-				FROM LichThi WHERE NgayThi=@NgayThi
+        DECLARE @MLT INT
 
-				IF NOT EXISTS (SELECT 1 FROM PhieuDangKy WHERE LichThi=@MLT)
+        SELECT @MLT=MaLichThi
+        FROM LichThi
+        WHERE NgayThi=@NgayThi
+
+        IF NOT EXISTS (SELECT 1
+        FROM PhieuDangKy
+        WHERE LichThi=@MLT)
 					BEGIN
-						RAISERROR(N'Không tìm thấy ngày thi phù hợp',16,1)
-						RETURN;
-					END
-				SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
-				FROM ChiTietPhieuDangKy as CT
-					JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-					JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
-				WHERE LT.NgayThi=@NgayThi
-		END
+            RAISERROR(N'Không tìm thấy ngày thi phù hợp',16,1)
+            RETURN;
+        END
+        SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
+        FROM ChiTietPhieuDangKy as CT
+            JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
+            JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+        WHERE LT.NgayThi=@NgayThi
+    END
 	ELSE
 		BEGIN
-			IF NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD=@CCCD)
+        IF NOT EXISTS (SELECT 1
+        FROM ThiSinh
+        WHERE CCCD=@CCCD)
 				BEGIN
-					RAISERROR(N'Thí sinh không tồn tại',16,1)
-					RETURN;
-				END
-			IF NOT EXISTS (SELECT 1 FROM ChiTietPhieuDangKy WHERE CCCD=@CCCD)
+            RAISERROR(N'Thí sinh không tồn tại',16,1)
+            RETURN;
+        END
+        IF NOT EXISTS (SELECT 1
+        FROM ChiTietPhieuDangKy
+        WHERE CCCD=@CCCD)
 				BEGIN
-					RAISERROR(N'Không tìm thấy phiếu đăng ký của thí sinh',16,1)
-					RETURN;
-				END
-			IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayThi)
+            RAISERROR(N'Không tìm thấy phiếu đăng ký của thí sinh',16,1)
+            RETURN;
+        END
+        IF NOT EXISTS(SELECT 1
+        FROM LichThi
+        WHERE NgayThi=@NgayThi)
 				BEGIN
-					RAISERROR(N'Ngày thi không tồn tại',16,1)
-					RETURN;
-				END
+            RAISERROR(N'Ngày thi không tồn tại',16,1)
+            RETURN;
+        END
 
-				DECLARE @MLTHI INT
-				
-				SELECT @MLTHI=MaLichThi
-				FROM LichThi WHERE NgayThi=@NgayThi
+        DECLARE @MLTHI INT
 
-				IF NOT EXISTS (SELECT 1 FROM PhieuDangKy WHERE LichThi=@MLTHI)
+        SELECT @MLTHI=MaLichThi
+        FROM LichThi
+        WHERE NgayThi=@NgayThi
+
+        IF NOT EXISTS (SELECT 1
+        FROM PhieuDangKy
+        WHERE LichThi=@MLTHI)
 					BEGIN
-						RAISERROR(N'Không tìm thấy ngày thi phù hợp',16,1)
-						RETURN;
-					END
+            RAISERROR(N'Không tìm thấy ngày thi phù hợp',16,1)
+            RETURN;
+        END
 
-				 SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
-				FROM ChiTietPhieuDangKy as CT
-					JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-					JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
-				WHERE CT.CCCD=@CCCD AND LT.NgayThi=@NgayThi
-		END
+        SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
+        FROM ChiTietPhieuDangKy as CT
+            JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
+            JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+        WHERE CT.CCCD=@CCCD AND LT.NgayThi=@NgayThi
+    END
 END
 GO
 
 CREATE or alter  PROC DocToanBoPhieuGiaHan
 AS
 BEGIN
-	SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+    SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
     from LichThi AS LT1
-	JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
-    JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+        JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+        JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
 END
 
 go
@@ -677,85 +695,103 @@ go
 
 CREATE or alter  PROCEDURE TraCuuPhieuGiaHan
     @CCCD char(12)=NULL,
-	@NgayDuThi Date =NULL
+    @NgayDuThi Date =NULL
 AS
 BEGIN
     IF ((@CCCD IS NULL or @CCCD='') AND @NgayDuThi IS NOT NULL)
 		BEGIN
-			IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayDuThi)
+        IF NOT EXISTS(SELECT 1
+        FROM LichThi
+        WHERE NgayThi=@NgayDuThi)
 				BEGIN
-					RAISERROR(N'Ngày dự thi không tồn tại',16,1)
-					RETURN;
-				END
-			DECLARE @MLT int
+            RAISERROR(N'Ngày dự thi không tồn tại',16,1)
+            RETURN;
+        END
+        DECLARE @MLT int
 
-			SELECT @MLT=MaLichThi
-			FROM LichThi WHERE NgayThi=@NgayDuThi
+        SELECT @MLT=MaLichThi
+        FROM LichThi
+        WHERE NgayThi=@NgayDuThi
 
-			IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan WHERE NgayThiMoi=@MLT)
+        IF NOT EXISTS (SELECT 1
+        FROM PhieuGiaHan
+        WHERE NgayThiMoi=@MLT)
 				BEGIN
-					RAISERROR(N'Không tìm thấy ngày dự thi hợp lệ trong phiếu gia hạn',16,1)
-					RETURN;
-				END
+            RAISERROR(N'Không tìm thấy ngày dự thi hợp lệ trong phiếu gia hạn',16,1)
+            RETURN;
+        END
 
-			SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
-			from LichThi AS LT1
-			JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
-			JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
-			WHERE PGH.NgayThiMoi=@MLT
-		END
+        SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+        from LichThi AS LT1
+            JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+            JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+        WHERE PGH.NgayThiMoi=@MLT
+    END
 	ELSE IF((@CCCD IS NOT NULL or @CCCD!='') AND @NgayDuThi IS NULL)
 		BEGIN
-			IF NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD=@CCCD)
+        IF NOT EXISTS (SELECT 1
+        FROM ThiSinh
+        WHERE CCCD=@CCCD)
 				BEGIN
-					RAISERROR(N'Thí sinh không tồn tại',16,1)
-					RETURN;
-				END
-			IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan where CCCD=@CCCD)
+            RAISERROR(N'Thí sinh không tồn tại',16,1)
+            RETURN;
+        END
+        IF NOT EXISTS (SELECT 1
+        FROM PhieuGiaHan
+        where CCCD=@CCCD)
 				BEGIN
-					RAISERROR(N'Không tìm thấy phiếu gia hạn của thí sinh',16,1)
-					RETURN;
-				END
-			SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
-			from LichThi AS LT1
-			JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
-			JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
-			WHERE PGH.CCCD=@CCCD
-		END
+            RAISERROR(N'Không tìm thấy phiếu gia hạn của thí sinh',16,1)
+            RETURN;
+        END
+        SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+        from LichThi AS LT1
+            JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+            JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+        WHERE PGH.CCCD=@CCCD
+    END
 		ELSE IF ((@CCCD IS NOT NULL or @CCCD!='') AND @NgayDuThi IS NOT NULL)
 			BEGIN
-				IF NOT EXISTS(SELECT 1 FROM LichThi WHERE NgayThi=@NgayDuThi)
+        IF NOT EXISTS(SELECT 1
+        FROM LichThi
+        WHERE NgayThi=@NgayDuThi)
 				BEGIN
-					RAISERROR(N'Ngày dự thi không tồn tại',16,1)
-					RETURN;
-				END
-				DECLARE @MLTHI int
+            RAISERROR(N'Ngày dự thi không tồn tại',16,1)
+            RETURN;
+        END
+        DECLARE @MLTHI int
 
-				SELECT @MLTHI=MaLichThi
-				FROM LichThi WHERE NgayThi=@NgayDuThi
+        SELECT @MLTHI=MaLichThi
+        FROM LichThi
+        WHERE NgayThi=@NgayDuThi
 
-				IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan WHERE NgayThiMoi=@MLTHI)
+        IF NOT EXISTS (SELECT 1
+        FROM PhieuGiaHan
+        WHERE NgayThiMoi=@MLTHI)
 					BEGIN
-						RAISERROR(N'Không tìm thấy ngày dự thi hợp lệ trong phiếu gia hạn',16,1)
-						RETURN;
-					END
-				IF NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD=@CCCD)
+            RAISERROR(N'Không tìm thấy ngày dự thi hợp lệ trong phiếu gia hạn',16,1)
+            RETURN;
+        END
+        IF NOT EXISTS (SELECT 1
+        FROM ThiSinh
+        WHERE CCCD=@CCCD)
 				BEGIN
-					RAISERROR(N'Thí sinh không tồn tại',16,1)
-					RETURN;
-				END
-				IF NOT EXISTS (SELECT 1 FROM PhieuGiaHan where CCCD=@CCCD)
+            RAISERROR(N'Thí sinh không tồn tại',16,1)
+            RETURN;
+        END
+        IF NOT EXISTS (SELECT 1
+        FROM PhieuGiaHan
+        where CCCD=@CCCD)
 					BEGIN
-						RAISERROR(N'Không tìm thấy phiếu gia hạn của thí sinh',16,1)
-						RETURN;
-					END
-				SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
-				from LichThi AS LT1
-				JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
-				JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
-				WHERE PGH.CCCD=@CCCD AND PGH.NgayThiMoi=@MLTHI
+            RAISERROR(N'Không tìm thấy phiếu gia hạn của thí sinh',16,1)
+            RETURN;
+        END
+        SELECT PGH.CCCD, PGH.MaPhieuDangKy, PGH.LoaiGiaHan, PGH.PhiGiaHan, PGH.LiDoGiaHan, LT1.NgayThi AS NTC, LT2.NgayThi AS NTM
+        from LichThi AS LT1
+            JOIN PhieuGiaHan AS PGH ON PGH.NgayThiCu=LT1.MaLichThi
+            JOIN LichThi AS LT2 ON PGH.NgayThiMoi=LT2.MaLichThi
+        WHERE PGH.CCCD=@CCCD AND PGH.NgayThiMoi=@MLTHI
 
-			END
+    END
 END
 GO
 
@@ -852,8 +888,8 @@ BEGIN
     -- Kiểm tra xem có bản ghi nào được chèn vào có ngày thi không hợp lệ hay không
     IF EXISTS (
         SELECT 1
-        FROM inserted
-        WHERE NgayThi <= DATEADD(day, 2, GETDATE())
+    FROM inserted
+    WHERE NgayThi <= DATEADD(day, 2, GETDATE())
     )
     BEGIN
         -- Nếu có, ngăn chặn thao tác INSERT và thông báo lỗi
@@ -864,7 +900,7 @@ BEGIN
 END;
 GO
 
-CREATE or alter PROCEDURE sp_DangKyDonVi
+CREATE OR ALTER PROCEDURE sp_DangKyDonVi
     @TenKH NVARCHAR(50),
     @EmailKH VARCHAR(60),
     @SoDienThoaiKH CHAR(10),
@@ -896,14 +932,15 @@ BEGIN
         -- 3. Duyệt và thêm thí sinh từ JSON
         DECLARE @json NVARCHAR(MAX) = @ThiSinhList;
 
+        -- Mở và duyệt dữ liệu JSON
         INSERT INTO ThiSinh (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
         SELECT
-            ts.value('CCCD', 'CHAR(12)'),
-            ts.value('TenTS', 'NVARCHAR(50)'),
-            ts.value('NgaySinh', 'DATE'),
-            ts.value('EmailTS', 'VARCHAR(60)'),
-            ts.value('SoDienThoaiTS', 'CHAR(10)'),
-            ts.value('DiaChiTS', 'NVARCHAR(255)')
+            ts.CCCD,
+            ts.TenTS,
+            ts.NgaySinh,
+            ts.EmailTS,
+            ts.SoDienThoaiTS,
+            ts.DiaChiTS
         FROM OPENJSON(@json)
         WITH (
             CCCD CHAR(12),
@@ -913,11 +950,11 @@ BEGIN
             SoDienThoaiTS CHAR(10),
             DiaChiTS NVARCHAR(255)
         ) AS ts
-        WHERE NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD = ts.value('CCCD', 'CHAR(12)'));
+        WHERE NOT EXISTS (SELECT 1 FROM ThiSinh WHERE CCCD = ts.CCCD);
 
         -- 4. Ghi vào ChiTietPhieuDangKy
         INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
-        SELECT @MaPhieu, ts.value('CCCD', 'CHAR(12)')
+        SELECT @MaPhieu, ts.CCCD
         FROM OPENJSON(@json)
         WITH (CCCD CHAR(12)) AS ts;
 
@@ -937,3 +974,13 @@ BEGIN
     END CATCH
 END
 GO
+
+
+DROP PROCEDURE IF EXISTS sp_DangKyDonVi;
+
+
+
+
+
+
+
