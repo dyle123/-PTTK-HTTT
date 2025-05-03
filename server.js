@@ -137,7 +137,7 @@ app.use(session({
 
 //Cấu hình kết nối SQL Server
 //const config = {
-    // server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
+// server: '127.0.0.1', // Địa chỉ IP của máy chủ SQL Server
 //    server: '192.168.1.9',
 //    port: 1433, // Cổng SQL Server
 //    database: 'PTTK',
@@ -909,7 +909,7 @@ app.get('/api/getLichThi', async (req, res) => {
         let query = `SELECT LichThi.*, BangGiaThi.*, PhongThi.SoLuongHienTai, PhongThi.SucChuaToiDa
             FROM LichThi 
             JOIN BangGiaThi ON LichThi.LoaiChungChi = BangGiaThi.MaLoaiChungChi
-            JOIN PhongThi ON LichThi.MaPhongThi = PhongThi.MaPhongThi`;   
+            JOIN PhongThi ON LichThi.MaPhongThi = PhongThi.MaPhongThi`;
         let conditions = [];
 
         console.log('DieuKien:', dieuKien);
@@ -1289,15 +1289,16 @@ app.post('/api/updatePhieuDangKy', async (req, res) => {
 });
 
 app.post('/api/tao-lich-thi', async (req, res) => {
-    const { ngayThi, gioThi, loaiChungChi, phongThi } = req.body;
+    const { ngayThi, gioThi, loaiChungChi, phongThi, nhanVienGac } = req.body;
 
     // --- Validation dữ liệu đầu vào ---
-    if (!ngayThi || !gioThi || loaiChungChi == null || phongThi == null) {
+    if (!ngayThi || !gioThi || loaiChungChi == null || phongThi == null || !nhanVienGac) {
         let missingFields = [];
         if (!ngayThi) missingFields.push('Ngày thi');
         if (!gioThi) missingFields.push('Giờ thi');
         if (loaiChungChi == null) missingFields.push('Loại chứng chỉ');
         if (phongThi == null) missingFields.push('Phòng thi');
+        if (!nhanVienGac) missingFields.push('Nhân viên gác thi');
         return res.status(400).json({ message: `Thiếu thông tin bắt buộc: ${missingFields.join(', ')}.` });
     }
 
@@ -1348,6 +1349,7 @@ app.post('/api/tao-lich-thi', async (req, res) => {
         const sqlQuery = `
             INSERT INTO LichThi (NgayThi, GioThi, MaPhongThi, LoaiChungChi)
             VALUES (@ngayThiParam, @gioThiParam, @phongThiParam, @loaiChungChiParam)
+            SELECT SCOPE_IDENTITY() AS MaLichThi
         `;
         const insertRequest = pool.request();
         insertRequest.input('ngayThiParam', sql.Date, ngayThi);
@@ -1355,7 +1357,19 @@ app.post('/api/tao-lich-thi', async (req, res) => {
         insertRequest.input('phongThiParam', sql.Int, phongThi);
         insertRequest.input('loaiChungChiParam', sql.Int, loaiChungChi);
 
-        await insertRequest.query(sqlQuery);
+        const resultInsert = await insertRequest.query(sqlQuery);
+        const MaLichThi = resultInsert.recordset[0].MaLichThi; // Lấy MaLichThi vừa tạo
+
+        // --- Thêm nhân viên gác thi ---
+        const insertGacThiQuery = `
+        INSERT INTO GacThi (MaLichThi, MaNhanVienGac)
+        VALUES (@maLichThi, @maNhanVienGac)
+    `;
+        const insertGacThiRequest = pool.request();
+        insertGacThiRequest.input('maLichThi', sql.Int, MaLichThi);
+        insertGacThiRequest.input('maNhanVienGac', sql.Char(8), nhanVienGac);
+
+        await insertGacThiRequest.query(insertGacThiQuery);
 
         // Thực thi thành công
         res.status(201).json({ message: 'Lịch thi đã được tạo thành công.' });
@@ -1374,7 +1388,7 @@ app.post('/api/tao-lich-thi', async (req, res) => {
 });
 
 
-app.get('/api/nhanvien', async (req, res) => {
+app.get('/api/nhanvienGac', async (req, res) => {
     const { query } = req.query;
     try {
         let sqlQuery = `SELECT MaNhanVien, HoTen FROM NhanVien`;
