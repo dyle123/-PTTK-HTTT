@@ -247,6 +247,8 @@ select*from PhieuGiaHan
 
 delete from PhieuGiaHan where CCCD='987654321098'
 
+select * from GacThi
+
 SELECT LichThi.*, BangGiaThi.*, PhongThi.*
             FROM LichThi 
             JOIN BangGiaThi ON LichThi.LoaiChungChi = BangGiaThi.MaLoaiChungChi

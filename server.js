@@ -1289,104 +1289,90 @@ app.post('/api/updatePhieuDangKy', async (req, res) => {
 });
 
 app.post('/api/tao-lich-thi', async (req, res) => {
-    // --- Lấy dữ liệu từ client ---
     const { ngayThi, gioThi, loaiChungChi, phongThi } = req.body;
-    console.log('Dữ liệu nhận được từ client:', { ngayThi, gioThi, loaiChungChi, phongThi });
-    // --- Kết thúc lấy dữ liệu ---
 
     // --- Validation dữ liệu đầu vào ---
-    if (!ngayThi || !gioThi || loaiChungChi == null || phongThi == null) { // Kiểm tra kỹ hơn (bao gồm cả số 0 nếu có thể)
-        console.error('Validation Error: Thiếu thông tin bắt buộc.');
-        // Cung cấp thông báo lỗi rõ ràng hơn
+    if (!ngayThi || !gioThi || loaiChungChi == null || phongThi == null) {
         let missingFields = [];
         if (!ngayThi) missingFields.push('Ngày thi');
         if (!gioThi) missingFields.push('Giờ thi');
-        if (loaiChungChi == null) missingFields.push('Loại chứng chỉ'); // Dùng == null để bắt cả undefined và null
+        if (loaiChungChi == null) missingFields.push('Loại chứng chỉ');
         if (phongThi == null) missingFields.push('Phòng thi');
         return res.status(400).json({ message: `Thiếu thông tin bắt buộc: ${missingFields.join(', ')}.` });
     }
-    // Kiểm tra định dạng giờ thi (HH:mm:ss) - Rất quan trọng khi dùng NVarChar
+
+    // Kiểm tra định dạng giờ thi (HH:mm:ss)
     const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
     if (!timeRegex.test(gioThi)) {
-        console.error('Validation Error: Định dạng giờ thi không hợp lệ:', gioThi);
         return res.status(400).json({ message: 'Định dạng giờ thi không hợp lệ (cần HH:mm:ss).' });
     }
-    // --- Kết thúc Validation ---
-
-    const sqlQuery = `
-        INSERT INTO LichThi (NgayThi, GioThi, MaPhongThi, LoaiChungChi)
-        VALUES (@ngayThiParam, @gioThiParam, @phongThiParam, @loaiChungChiParam)
-    `;
 
     let pool;
-
     try {
-        console.log('Bắt đầu kết nối DB...'); // Giữ lại log cơ bản
         pool = await sql.connect(config);
-        console.log('Kết nối DB thành công.');
 
-        const request = pool.request();
-        console.log('Tạo request object.');
+        // --- Kiểm tra trùng phòng thi và giờ thi ---
+        const checkQuery = `
+            SELECT COUNT(*) AS Count
+            FROM LichThi
+            WHERE NgayThi = @ngayThiParam AND GioThi = @gioThiParam AND MaPhongThi = @phongThiParam
+        `;
+        const checkRequest = pool.request();
+        checkRequest.input('ngayThiParam', sql.Date, ngayThi);
+        checkRequest.input('gioThiParam', sql.NVarChar, gioThi);
+        checkRequest.input('phongThiParam', sql.Int, phongThi);
 
-        // Thêm input - Đảm bảo sử dụng đúng kiểu và giá trị từ req.body
-        console.log(`Input 1 (ngayThiParam): Type=sql.Date, Value=${ngayThi}`);
-        request.input('ngayThiParam', sql.Date, ngayThi); // Lấy từ req.body
+        const checkResult = await checkRequest.query(checkQuery);
+        if (checkResult.recordset[0].Count > 0) {
+            return res.status(400).json({ message: 'Lịch thi trùng với phòng thi và giờ thi đã có.' });
+        }
 
-        // *** QUAN TRỌNG: Giữ nguyên sql.NVarChar và lấy giá trị gioThi từ req.body ***
-        console.log(`Input 2 (gioThiParam): Type=sql.NVarChar, Value=${gioThi}`);
-        request.input('gioThiParam', sql.NVarChar, gioThi); // Lấy từ req.body
+        // --- Kiểm tra trùng nhân viên gác thi ---
+        const checkGacThiQuery = `
+            SELECT COUNT(*) AS Count
+            FROM GacThi
+            JOIN LichThi ON LichThi.MaLichThi = GacThi.MaLichThi
+            WHERE LichThi.NgayThi = @ngayThiParam AND LichThi.GioThi = @gioThiParam 
+        `;
+        const checkGacThiRequest = pool.request();
+        checkGacThiRequest.input('ngayThiParam', sql.Date, ngayThi);
+        checkGacThiRequest.input('gioThiParam', sql.NVarChar, gioThi);
+        checkGacThiRequest.input('phongThiParam', sql.Int, phongThi);
 
-        console.log(`Input 3 (phongThiParam): Type=sql.Int, Value=${phongThi}`);
-        request.input('phongThiParam', sql.Int, phongThi); // Lấy từ req.body
+        const checkGacThiResult = await checkGacThiRequest.query(checkGacThiQuery);
+        if (checkGacThiResult.recordset[0].Count > 0) {
+            return res.status(400).json({ message: 'Nhân viên đã được phân công gác thi cho phòng thi và giờ thi này.' });
+        }
 
-        console.log(`Input 4 (loaiChungChiParam): Type=sql.Int, Value=${loaiChungChi}`);
-        request.input('loaiChungChiParam', sql.Int, loaiChungChi); // Lấy từ req.body
+        // --- Thêm lịch thi ---
+        const sqlQuery = `
+            INSERT INTO LichThi (NgayThi, GioThi, MaPhongThi, LoaiChungChi)
+            VALUES (@ngayThiParam, @gioThiParam, @phongThiParam, @loaiChungChiParam)
+        `;
+        const insertRequest = pool.request();
+        insertRequest.input('ngayThiParam', sql.Date, ngayThi);
+        insertRequest.input('gioThiParam', sql.NVarChar, gioThi);
+        insertRequest.input('phongThiParam', sql.Int, phongThi);
+        insertRequest.input('loaiChungChiParam', sql.Int, loaiChungChi);
 
-        console.log('Chuẩn bị thực thi query...');
-        const result = await request.query(sqlQuery);
-        console.log('Thực thi query thành công:', result);
+        await insertRequest.query(sqlQuery);
 
-        // Phản hồi thành công về client
+        // Thực thi thành công
         res.status(201).json({ message: 'Lịch thi đã được tạo thành công.' });
-
     } catch (error) {
         console.error('Lỗi khi ghi vào cơ sở dữ liệu:', error);
-
-        // Kiểm tra xem có lỗi preceding nào không, và nếu có, kiểm tra thông báo lỗi đầu tiên
-        if (error.precedingErrors && error.precedingErrors.length > 0 && error.precedingErrors[0].message.includes('Không thể thêm lịch thi có ngày thi trong quá khứ hoặc cách ngày hiện tại dưới 3 ngày.')) {
-            return res.status(400).json({ message: error.precedingErrors[0].message }); // Gửi thông báo lỗi chi tiết từ trigger
-        }
-        // Kiểm tra lỗi cụ thể (ví dụ: khóa ngoại, ...)
-        if (error.number === 547) { // Lỗi vi phạm khóa ngoại (FOREIGN KEY constraint)
-             console.error('Lỗi khóa ngoại:', error.message);
-             // Phân tích thông báo lỗi để biết khóa ngoại nào bị vi phạm
-             let constraintDetails = 'không xác định';
-             if (error.message.includes('FK_LichThi_PhongThi')) {
-                 constraintDetails = `Mã phòng thi (${phongThi}) không tồn tại.`;
-             } else if (error.message.includes('FK_LichThi_BangGiaThi')) {
-                  constraintDetails = `Mã loại chứng chỉ (${loaiChungChi}) không tồn tại.`;
-             }
-             return res.status(400).json({ message: `Lỗi dữ liệu đầu vào: ${constraintDetails}` });
-        }
-         // Kiểm tra lỗi chuyển đổi từ SQL Server (ít khả năng xảy ra với NVarChar và regex đã kiểm tra)
-        if (error.message.toLowerCase().includes('converting data type')) {
-             console.error('Lỗi chuyển đổi kiểu dữ liệu từ SQL Server:', error);
-             return res.status(400).json({ message: `Lỗi chuyển đổi dữ liệu giờ thi từ chuỗi: ${error.message}` });
-        }
-        // Lỗi chung
         res.status(500).json({ message: 'Lỗi máy chủ khi ghi vào cơ sở dữ liệu.' });
-
     } finally {
         if (pool) {
             try {
                 await pool.close();
-                console.log('Đã đóng connection pool.');
             } catch (err) {
                 console.error('Lỗi khi đóng connection pool:', err);
             }
         }
     }
 });
+
 
 app.get('/api/nhanvien', async (req, res) => {
     const { query } = req.query;
