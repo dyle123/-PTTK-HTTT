@@ -37,6 +37,8 @@ async function KiemTraTrangThaiDangNhap() {
             } 
             else if(data.role !== "tiepnhan") {
                 KhoaDangKy();
+                KhoaGiaHan();
+            
             }
         } else {
             loginBtn.style.display = 'block';
@@ -81,32 +83,63 @@ function KhoaThanhToan() {
 }
 
 function KhoaDangKy() {
-    const inPhieuDangKyLink = document.querySelector("a[href='/InPhieuDangKy/InPhieuDangKy.html']");
-    const quanLyLichThiLink = document.querySelector("a[href='/QuanLyLichThi/QuanLyLichThi.html']");
-    const dangKyLink = document.querySelector("a[href='/dangky.html']");
-    if (dangKyLink && quanLyLichThiLink && inPhieuDangKyLink) {
-        dangKyLink.addEventListener("click", function (event) {
-            event.preventDefault(); // Ngăn truy cập
-            HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
+    // Định nghĩa mảng các trang cần chặn
+    const restrictedPages = [
+        '/DangKyDonVi/ChonLichThi.html',
+        '/DangKyDonVi/DienThongTin.html',
+        '/DangKyTuDo/DangKyTuDo.html',
+        '/InPhieuDangKy/InPhieuDangKy.html',
+        '/QuanLyLichThi/QuanLyLichThi.html',
+        '/QuanlyLichThi/TaoLichThiMoi.html',
+        // Thêm các trang khác cần chặn ở đây
+    ];
+    
+    // Chặn từng trang cụ thể
+    restrictedPages.forEach(page => {
+        const links = document.querySelectorAll(`a[href="${page}"]`);
+        
+        links.forEach(link => {
+            link.addEventListener("click", function(event) {
+                event.preventDefault();
+                HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
+            });
+            link.style.cursor = "not-allowed";
+            link.style.opacity = "0.6";
         });
-        quanLyLichThiLink.addEventListener("click", function (event) {
-            event.preventDefault(); // Ngăn truy cập
-            HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
-        });
-        inPhieuDangKyLink.addEventListener("click", function (event) {
-            event.preventDefault(); // Ngăn truy cập
-            HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
-        });
+    });
 
-        dangKyLink.style.cursor = "not-allowed";
-        dangKyLink.style.opacity = "0.6";
-        quanLyLichThiLink.style.cursor = "not-allowed";
-        quanLyLichThiLink.style.opacity = "0.6";
-        inPhieuDangKyLink.style.cursor = "not-allowed";
-        inPhieuDangKyLink.style.opacity = "0.6";
-        console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa.");
-    }
+    console.log(`🔒 Đã khóa ${restrictedPages.length} trang trong thư mục ThanhToan`);
 }
+
+
+
+// function KhoaDangKy() {
+//     const inPhieuDangKyLink = document.querySelector("a[href='/InPhieuDangKy/InPhieuDangKy.html']");
+//     const quanLyLichThiLink = document.querySelector("a[href='/QuanLyLichThi/QuanLyLichThi.html']");
+//     const dangKyLink = document.querySelector("a[href='/dangky.html']");
+//     if (dangKyLink && quanLyLichThiLink && inPhieuDangKyLink) {
+//         dangKyLink.addEventListener("click", function (event) {
+//             event.preventDefault(); // Ngăn truy cập
+//             HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
+//         });
+//         quanLyLichThiLink.addEventListener("click", function (event) {
+//             event.preventDefault(); // Ngăn truy cập
+//             HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
+//         });
+//         inPhieuDangKyLink.addEventListener("click", function (event) {
+//             event.preventDefault(); // Ngăn truy cập
+//             HienThiThongBao("Bạn không có quyền truy cập vào trang này!");
+//         });
+
+//         dangKyLink.style.cursor = "not-allowed";
+//         dangKyLink.style.opacity = "0.6";
+//         quanLyLichThiLink.style.cursor = "not-allowed";
+//         quanLyLichThiLink.style.opacity = "0.6";
+//         inPhieuDangKyLink.style.cursor = "not-allowed";
+//         inPhieuDangKyLink.style.opacity = "0.6";
+//         console.log("🔒 Nút Thanh Toán đã bị vô hiệu hóa.");
+//     }
+// }
 
 
 // ✅ Hàm hiển thị thông báo
