@@ -1,5 +1,7 @@
 ﻿USE PTTK
 GO
+
+
 insert into BangGiaThi(MaLoaiChungChi,TenChungChi,LePhiThi)
 values (1,'Toeic', 2000000),(2, 'Ielst',5000000)
 insert into NhanVien(MaNhanVien,HoTen,NgaySinh,SoDienThoai,Luong,BoPhan)
