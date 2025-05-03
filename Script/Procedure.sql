@@ -508,7 +508,7 @@ BEGIN
 		IF EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
 			BEGIN
 				UPDATE PhieuGiaHan
-				SET NgayThiCu=@NgayCu, NgayThiMoi=@NgayMoi
+				SET NgayThiCu=@NgayCu, NgayThiMoi=@NgayMoi, PhiGiaHan=@PhiGiaHan, LiDoGiaHan=@LiDoGiaHan, LoaiGiaHan=@LoaiGiaHan
 				WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
 			END
 		IF NOT EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
@@ -540,9 +540,6 @@ BEGIN
     END
 END
 go
-
-
-
 
 
 
@@ -794,6 +791,8 @@ BEGIN
 END
 go
 
+drop proc SuaPhieuGiaHan
+
 CREATE or alter PROCEDURE SuaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy INT,
@@ -837,7 +836,7 @@ BEGIN
         return;
     END
 
-    DECLARE @NgayCu int, @NgayMoi int
+    DECLARE @NgayCu int, @NgayMoi int, @NgayMoiMoi int
 
     SELECT @NgayCu=MaLichThi
     FROM LichThi
@@ -846,6 +845,25 @@ BEGIN
     SELECT @NgayMoi=MaLichThi
     FROM LichThi
     WHERE NgayThi=@NgayThiMoi
+
+	SELECT @NgayMoiMoi=NgayThiMoi
+	FROM PhieuGiaHan 
+	where MaPhieuDangKy=@MaPhieuDangKy AND CCCD= @CCCD
+
+	IF(@NgayMoiMoi!=@NgayMoi)
+		BEGIN
+			UPDATE LichThi
+			SET SoLuongDangKy = CASE 
+                       WHEN SoLuongDangKy - 1 < 0 THEN 0 
+                       ELSE SoLuongDangKy - 1 
+                   END
+			WHERE MaLichThi = @NgayMoiMoi;
+
+			UPDATE LichThi
+			SET SoLuongDangKy = SoLuongDangKy+1
+			WHERE MaLichThi = @NgayMoi;
+		END
+
 
     -- Cập nhật dữ liệu
     UPDATE PhieuGiaHan
