@@ -72,12 +72,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         data.forEach(lich => {
+            const currentRegistrations = lich.SoLuongDangKy || 0;
+            const maxCapacity = lich.SucChuaToiDa;
+            const isDisabled = currentRegistrations >= maxCapacity;
+            console.log(lich);
+    
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${lich.MaLichThi}</td>
                 <td>${lich.NgayThi}</td>
                 <td>${lich.GioThi}</td>
-                <td>${lich.SoLuongDangKy || "0"}</td>
+                <td>${currentRegistrations}/${maxCapacity}</td>
                 <td>${lich.MaPhongThi}</td>
                 <td>${lich.LoaiChungChi}</td>
             `;
