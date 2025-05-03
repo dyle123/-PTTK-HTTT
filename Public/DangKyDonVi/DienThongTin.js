@@ -51,40 +51,21 @@ function collectThiSinhData() {
     const getField = name => form.querySelector(`[name="${name}"]`)?.value?.trim() || "";
 
     return {
-      CCCD: getField("thisinh-cccd"),
       TenTS: getField("thisinh-ho-ten"),
-      NgaySinh: form.querySelector(`[name="thisinh-ngaysinh"]`)?.value || null,
-      EmailTS: getField("thisinh-email"),
+      CCCDTS: getField("thisinh-cccd"),
       SoDienThoaiTS: getField("thisinh-sdt"),
-      DiaChiTS: getField("thisinh-diachi")
+      EmailTS: getField("thisinh-email"),
+      DiaChiTS: getField("thisinh-diachi"),
+      NgaySinh: form.querySelector(`[name="thisinh-ngaysinh"]`)?.value || null
     };
   });
 }
 
-function validateThiSinhList() {
-  const thiSinhForms = document.querySelectorAll('.thisinh-form');
-  if (thiSinhForms.length === 0) {
-    alert("⚠️ Phải thêm ít nhất 1 thí sinh.");
-    return false;
-  }
-
-  for (const form of thiSinhForms) {
-    const required = ['thisinh-ho-ten', 'thisinh-cccd', 'thisinh-sdt', 'thisinh-email', 'thisinh-diachi', 'thisinh-ngaysinh'];
-    for (const name of required) {
-      const input = form.querySelector(`[name="${name}"]`);
-      if (!input || !input.value.trim()) {
-        alert(`⚠️ Vui lòng điền đầy đủ thông tin: ${name}`);
-        input.focus();
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 function submitDangKy() {
-  if (!validateInputs()) return;  // Kiểm tra dữ liệu đầu vào
-  if (!validateThiSinhList()) return;  // Kiểm tra thí sinh
+  if (!validateInputs()) return;
+
+  // Kiểm tra danh sách thí sinh
+  if (!validateThiSinhList()) return;
 
   if (!selectedMaLichThi || !selectedLoaiChungChi) {
     alert("❌ Lỗi: Thiếu thông tin lịch thi.");
@@ -96,10 +77,10 @@ function submitDangKy() {
     DiaChiKH: document.getElementById("khach-dia-chi").value.trim(),
     SoDienThoaiKH: document.getElementById("khach-sdt").value.trim(),
     EmailKH: document.getElementById("khach-email").value.trim(),
-    LoaiKhachHang: "đơn vị",  // Loại khách hàng là đơn vị
+    LoaiKhachHang: "đơn vị",
     MaLichThi: parseInt(selectedMaLichThi),
     LoaiChungChi: parseInt(selectedLoaiChungChi),
-    ThiSinhList: collectThiSinhData()  // Thu thập dữ liệu thí sinh
+    ThiSinhList: collectThiSinhData()
   };
 
   const btn = document.getElementById('save-registration-btn');
@@ -126,6 +107,27 @@ function submitDangKy() {
       btn.disabled = false;
       btn.textContent = "Lưu đăng ký";
     });
+}
+
+function validateThiSinhList() {
+  const thiSinhForms = document.querySelectorAll('.thisinh-form');
+  if (thiSinhForms.length === 0) {
+    alert("⚠️ Phải thêm ít nhất 1 thí sinh.");
+    return false;
+  }
+
+  for (const form of thiSinhForms) {
+    const required = ['thisinh-ho-ten', 'thisinh-cccd', 'thisinh-sdt', 'thisinh-email', 'thisinh-diachi', 'thisinh-ngaysinh'];
+    for (const name of required) {
+      const input = form.querySelector(`[name="${name}"]`);
+      if (!input || !input.value.trim()) {
+        alert(`⚠️ Vui lòng điền đầy đủ thông tin: ${name}`);
+        input.focus();
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 

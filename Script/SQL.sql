@@ -109,7 +109,16 @@ create table ChiTietPhieuDangKy
 	CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
 );
 
+select * from ChiTietPhieuDangKy
 
+
+create table ChiTietPhieuDangKy
+(
+  MaPhieuDangKy int , -- Không còn 'unique' ở đây
+  CCCD char(12) ,
+  SoLanGiaHan int default 0,
+  CONSTRAINT PK_ChiTietPhieuDangKy PRIMARY KEY(MaPhieuDangKy,CCCD),
+);
 
 create table ChungChi
 (

@@ -27,6 +27,7 @@ VALUES (N'Nguyễn Văn C', 'nguyenvanc@example.com', '0987654321', N'Hà Nội'
 INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
 VALUES (N'Trần Thị D', 'tranthid@example.com', '0912345678', N'TP. Hồ Chí Minh', N'đơn vị')
 
+select*from BangGiaThi
 
 INSERT INTO BangGiaThi (MaLoaiChungChi, TenChungChi, LePhiThi)
 VALUES (1, N'Chứng chỉ Tiếng Anh B1', 1500000)
@@ -154,7 +155,7 @@ VALUES
 ('777777777777', 9, N'Hợp lệ', 150000, N'Lý do 7', 7, 8),
 ('888888888888', 10, N'Hợp lệ', 200000, N'Lý do 8', 8, 9)
 
-
+delete from PhieuGiaHan
 INSERT INTO PhieuDuThi (SoBaoDanh, CCCD, TrangThai, LichThi) VALUES
 ('SBD00000001', '111111111111', 0, 1),
 ('SBD00000002', '222222222222', 1, 2),

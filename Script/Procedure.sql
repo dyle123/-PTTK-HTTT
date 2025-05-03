@@ -875,7 +875,7 @@ BEGIN
 END;
 GO
 
-CREATE OR ALTER PROCEDURE sp_DangKyDonVi
+CREATE PROCEDURE sp_DangKyDonVi
     @TenKH NVARCHAR(50),
     @EmailKH VARCHAR(60),
     @SoDienThoaiKH CHAR(10),
@@ -883,56 +883,71 @@ CREATE OR ALTER PROCEDURE sp_DangKyDonVi
     @LoaiKhachHang NVARCHAR(20),
     @LoaiChungChi INT,
     @MaLichThi INT,
-    @ThiSinhList NVARCHAR(MAX) -- JSON dạng chuỗi
+    @ThiSinhList NVARCHAR(MAX)
+-- Đúng tên biến
 AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @MaKH INT, @MaPhieu INT;
 
-    -- Kiểm tra tính hợp lệ của dữ liệu JSON
-    IF ISJSON(@ThiSinhList) = 0
-    BEGIN
-        RAISERROR('Dữ liệu JSON không hợp lệ', 16, 1);
-        RETURN;
-    END
-
     BEGIN TRANSACTION;
 
     BEGIN TRY
         -- 1. Thêm Khách Hàng
-        INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
-        VALUES (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang);
+        INSERT INTO KhachHang
+        (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
+    VALUES
+        (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang);
 
         SET @MaKH = SCOPE_IDENTITY();
 
         -- 2. Tạo Phiếu Đăng Ký
-        INSERT INTO PhieuDangKy (LoaiChungChi, MaKhachHang, NgayDangKy, LichThi)
-        VALUES (@LoaiChungChi, @MaKH, GETDATE(), @MaLichThi);
+        INSERT INTO PhieuDangKy
+        (LoaiChungChi, MaKhachHang, NgayDangKy, LichThi)
+    VALUES
+        (@LoaiChungChi, @MaKH, GETDATE(), @MaLichThi);
 
         SET @MaPhieu = SCOPE_IDENTITY();
 
-        -- 3. Duyệt và thêm thí sinh từ JSON
-        MERGE INTO ThiSinh AS target
-        USING (SELECT CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi
-               FROM OPENJSON(@ThiSinhList)
-               WITH (CCCD CHAR(12), HoVaTen NVARCHAR(50), NgaySinh DATE, 
-                     Email CHAR(60), SoDienThoai CHAR(10), DiaChi NVARCHAR(255))) AS source
-        ON target.CCCD = source.CCCD
-        WHEN NOT MATCHED BY TARGET THEN
-            INSERT (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
-            VALUES (source.CCCD, source.HoVaTen, source.NgaySinh, source.Email, 
-                    source.SoDienThoai, source.DiaChi);
+-- 3. Duyệt và thêm thí sinh từ JSON
+INSERT INTO ThiSinh
+        (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
+    SELECT
+        ts.CCCDTS,
+        ts.TenTS,
+        ts.NgaySinh,
+        ts.EmailTS,
+        ts.SoDienThoaiTS,
+        ts.DiaChiTS
+    FROM
+        OPENJSON(@ThiSinhList)
+    WITH (
+        CCCDTS VARCHAR(12),
+        TenTS NVARCHAR(50),
+        NgaySinh DATE,
+        EmailTS VARCHAR(60),
+        SoDienThoaiTS VARCHAR(11),
+        DiaChiTS NVARCHAR(255)
+    ) AS ts
+    WHERE NOT EXISTS (
+    SELECT 1
+    FROM ThiSinh
+    WHERE CCCD = ts.CCCDTS
+);
 
-        -- 4. Ghi vào ChiTietPhieuDangKy
-        INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
-        SELECT @MaPhieu, ts.CCCD
-        FROM OPENJSON(@ThiSinhList)
-        WITH (CCCD CHAR(12)) AS ts;
+-- 4. Ghi vào ChiTietPhieuDangKy
+INSERT INTO ChiTietPhieuDangKy
+        (MaPhieuDangKy, CCCD)
+    SELECT @MaPhieu, ts.CCCDTS
+    FROM
+        OPENJSON(@ThiSinhList)
+    WITH (CCCDTS VARCHAR(12)) AS ts;
 
         -- 5. Cập nhật số lượng đăng ký
         UPDATE LichThi
         SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + (
-            SELECT COUNT(*) FROM OPENJSON(@ThiSinhList)
+            SELECT COUNT(*)
+    FROM OPENJSON(@ThiSinhList)
         )
         WHERE MaLichThi = @MaLichThi;
 
@@ -940,18 +955,14 @@ BEGIN
         SELECT @MaPhieu AS MaPhieuDangKy;
     END TRY
     BEGIN CATCH
-        -- Ghi lỗi vào log hoặc ném lại thông báo lỗi
         ROLLBACK;
-        DECLARE @ErrorMessage NVARCHAR(MAX);
-        SET @ErrorMessage = ERROR_MESSAGE();
-        RAISERROR(@ErrorMessage, 16, 1); -- Truyền thông báo lỗi vào RAISERROR
-        RETURN;
+        THROW;
     END CATCH
 END
-GO
 
 
 
+drop procedure if exists sp_DangKyDonVi
 
 
 
