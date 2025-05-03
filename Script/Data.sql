@@ -18,10 +18,12 @@ INSERT INTO PhongThi VALUES
 (40, 0),
 (50, 0);
 
+select*from PhongThi
+
 INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi) VALUES
-('2025-06-01', '08:00', 0, 1, 1),
-('2025-06-02', '08:00', 0, 2, 2),
-('2025-06-03', '08:00', 0, 3, 3);
+('2025-06-01', '08:00', 0, 11, 1),
+('2025-06-02', '08:00', 0, 12, 2),
+('2025-06-03', '08:00', 0, 13, 3);
 
 INSERT INTO NhanVien VALUES
 ('NV000014', N'Trịnh Văn Long', '1985-05-05', '0988111222', '10000000', N'Kế toán'),
@@ -82,3 +84,4 @@ INSERT INTO PhieuGiaHan VALUES
 ('123456789001', 1, N'Hợp lệ', 100000, N'Lý do cá nhân', 1, 2),
 ('123456789002', 2, N'Không hợp lệ', 100000, N'Trễ giờ', 2, 3),
 ('123456789003', 3, N'Hợp lệ', 150000, N'Ốm', 3, 1);
+
