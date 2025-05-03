@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Sự kiện click nút tạo lịch thi mới
     btnTaoLichThi.addEventListener("click", () => {
-        window.location.href = "/QuanLyLichThi/TaoLichThiMoi.html";
+        window.location.href = "/XemLichThi/TaoLichThiMoi.html";
 
     });
 
