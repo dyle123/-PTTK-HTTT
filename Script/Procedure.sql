@@ -1,6 +1,8 @@
 ﻿USE PTTK
 GO
 
+
+
 CREATE PROCEDURE sp_GetPhieuDangKyById
     @maPhieu INT
 AS
@@ -27,7 +29,6 @@ BEGIN
         JOIN LichThi L ON PD.LichThi = L.MaLichThi
     WHERE PD.MaPhieuDangKy = @maPhieu
 END
-go
 
 CREATE OR ALTER PROCEDURE CapNhatPhieuDangKyQuaHan
 AS
@@ -37,6 +38,8 @@ BEGIN
     WHERE DATEDIFF(DAY, NgayDangKy, GETDATE()) >= 3 AND TrangThaiThanhToan = 0;
 END;
 GO
+
+
 
 CREATE OR ALTER PROC TaoPhieuThanhToan
     @MaPhieuDangKy int,
@@ -58,6 +61,8 @@ BEGIN
     WHERE MaPhieuDangKy = @MaPhieuDangKy
 	)
 	BEGIN
+
+
         DECLARE @SOLUONG INT
         DECLARE @GIAMGIA INT
         DECLARE @TAMTINH INT
@@ -111,6 +116,9 @@ BEGIN
 END
 GO
 
+
+
+
 CREATE OR ALTER PROC TaoHoaDon
     @MaPhieuThanhToan int,
     @HinhThucThanhToan nvarchar(20) = null,
@@ -137,6 +145,7 @@ BEGIN
         RAISERROR (N'Phiếu đã được thanh toán trước đó.', 16, 1);
         RETURN;
     END
+
 
     DECLARE @TongTien INT
     SET @TongTien = (SELECT ThanhTien
@@ -165,6 +174,7 @@ BEGIN
 
 END
 GO
+
 
 CREATE OR ALTER PROCEDURE KIEMTRAKHACHHANG
     @TenKH NVARCHAR(50),
@@ -208,6 +218,7 @@ BEGIN
 END;
 GO
 
+
 CREATE OR ALTER PROCEDURE KIEMTRATHISINH
     @TenTS NVARCHAR(50),
     @CCCDTS CHAR(12),
@@ -244,6 +255,8 @@ BEGIN
     END
 END;
 GO
+
+
 
 CREATE OR ALTER PROCEDURE TaoPhieuDangKy
     @TenKH NVARCHAR(50),
@@ -311,9 +324,6 @@ BEGIN
         RAISERROR(@Err, 16, 1);
     END CATCH
 END;
-
-EXEC PHATHANHPHIEUDUTHI 1
-go
 
 CREATE OR ALTER PROC PHATHANHPHIEUDUTHI
     @MaPhieuDangKy INT
@@ -401,6 +411,9 @@ BEGIN
 END;
 GO
 
+
+
+
 Create or alter  procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
@@ -431,6 +444,8 @@ BEGIN
         RAISERROR(N'Mã phiếu đăng ký đã bị trùng với thí sinh khác',16,1)
         return;
     END
+
+
 
     IF NOT EXISTS (SELECT 1
     FROM THISINH
@@ -528,6 +543,9 @@ BEGIN
 END
 go
 
+
+
+
 CREATE or alter  TRIGGER trg_KiemTraMaPhieuDangKy
 ON PhieuGiaHan
 AFTER INSERT
@@ -546,6 +564,8 @@ BEGIN
     END
 END;
 go
+
+
 
 CREATE or alter  PROCEDURE DocToanBoChiTietPhieuDangKy
 AS
@@ -670,6 +690,7 @@ BEGIN
 END
 go
 
+
 CREATE or alter  PROCEDURE TraCuuPhieuGiaHan
     @CCCD char(12)=NULL,
     @NgayDuThi Date =NULL
@@ -772,6 +793,7 @@ BEGIN
 END
 GO
 
+
 CREATE or alter PROCEDURE XoaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy int
@@ -852,6 +874,7 @@ BEGIN
         NgayThiMoi = @NgayMoi
     WHERE CCCD = @CCCD AND MaPhieuDangKy = @MaPhieuDangKy;
 END
+
 GO
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi
@@ -875,80 +898,6 @@ BEGIN
 END;
 GO
 
-CREATE OR ALTER PROCEDURE sp_DangKyDonVi
-    @TenKH NVARCHAR(50),
-    @EmailKH VARCHAR(60),
-    @SoDienThoaiKH CHAR(10),
-    @DiaChiKH NVARCHAR(255),
-    @LoaiKhachHang NVARCHAR(20),
-    @LoaiChungChi INT,
-    @MaLichThi INT,
-    @ThiSinhList NVARCHAR(MAX) -- JSON dạng chuỗi
-AS
-BEGIN
-    SET NOCOUNT ON;
-    DECLARE @MaKH INT, @MaPhieu INT;
-
-    -- Kiểm tra tính hợp lệ của dữ liệu JSON
-    IF ISJSON(@ThiSinhList) = 0
-    BEGIN
-        RAISERROR('Dữ liệu JSON không hợp lệ', 16, 1);
-        RETURN;
-    END
-
-    BEGIN TRANSACTION;
-
-    BEGIN TRY
-        -- 1. Thêm Khách Hàng
-        INSERT INTO KhachHang (TenKhachHang, Email, SoDienThoai, DiaChi, LoaiKhachHang)
-        VALUES (@TenKH, @EmailKH, @SoDienThoaiKH, @DiaChiKH, @LoaiKhachHang);
-
-        SET @MaKH = SCOPE_IDENTITY();
-
-        -- 2. Tạo Phiếu Đăng Ký
-        INSERT INTO PhieuDangKy (LoaiChungChi, MaKhachHang, NgayDangKy, LichThi)
-        VALUES (@LoaiChungChi, @MaKH, GETDATE(), @MaLichThi);
-
-        SET @MaPhieu = SCOPE_IDENTITY();
-
-        -- 3. Duyệt và thêm thí sinh từ JSON
-        MERGE INTO ThiSinh AS target
-        USING (SELECT CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi
-               FROM OPENJSON(@ThiSinhList)
-               WITH (CCCD CHAR(12), HoVaTen NVARCHAR(50), NgaySinh DATE, 
-                     Email CHAR(60), SoDienThoai CHAR(10), DiaChi NVARCHAR(255))) AS source
-        ON target.CCCD = source.CCCD
-        WHEN NOT MATCHED BY TARGET THEN
-            INSERT (CCCD, HoVaTen, NgaySinh, Email, SoDienThoai, DiaChi)
-            VALUES (source.CCCD, source.HoVaTen, source.NgaySinh, source.Email, 
-                    source.SoDienThoai, source.DiaChi);
-
-        -- 4. Ghi vào ChiTietPhieuDangKy
-        INSERT INTO ChiTietPhieuDangKy (MaPhieuDangKy, CCCD)
-        SELECT @MaPhieu, ts.CCCD
-        FROM OPENJSON(@ThiSinhList)
-        WITH (CCCD CHAR(12)) AS ts;
-
-        -- 5. Cập nhật số lượng đăng ký
-        UPDATE LichThi
-        SET SoLuongDangKy = ISNULL(SoLuongDangKy, 0) + (
-            SELECT COUNT(*) FROM OPENJSON(@ThiSinhList)
-        )
-        WHERE MaLichThi = @MaLichThi;
-
-        COMMIT;
-        SELECT @MaPhieu AS MaPhieuDangKy;
-    END TRY
-    BEGIN CATCH
-        -- Ghi lỗi vào log hoặc ném lại thông báo lỗi
-        ROLLBACK;
-        DECLARE @ErrorMessage NVARCHAR(MAX);
-        SET @ErrorMessage = ERROR_MESSAGE();
-        RAISERROR(@ErrorMessage, 16, 1); -- Truyền thông báo lỗi vào RAISERROR
-        RETURN;
-    END CATCH
-END
-GO
 
 
 
