@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('Tạo lịch thi thành công!');
-                window.location.href = '/QuanLyLichThi/QuanLyLichThi.html';
+                window.location.href = '/XemLichThi/XemLichThi.html';
             } else {
                 alert(`Lỗi: ${result.message}`);
             }
