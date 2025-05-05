@@ -414,7 +414,6 @@ END;
 GO
 
 
-DROP PROC LapPhieuGiaHan
 Create or alter  procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
@@ -925,7 +924,7 @@ BEGIN
     SELECT CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi
     FROM inserted;
 END
-
+go
 
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi
