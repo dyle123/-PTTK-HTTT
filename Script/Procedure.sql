@@ -2,6 +2,7 @@
 GO
 
 
+
 CREATE PROCEDURE sp_GetPhieuDangKyById
     @maPhieu INT
 AS
@@ -562,8 +563,13 @@ BEGIN
 END
 GO
 
+SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
+        FROM ChiTietPhieuDangKy as CT
+            JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
+            JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+ 
 
-
+ DROP PROC TraCuuSoLanGiaHan
 CREATE or alter  PROCEDURE TraCuuSoLanGiaHan
     @CCCD char(12)=NULL,
     @NgayThi Date=NULL
@@ -587,8 +593,8 @@ BEGIN
         END
         SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
         FROM ChiTietPhieuDangKy as CT
-            JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-            JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+            JOIN PhieuDangKy as PDK on PDK.MaPhieuDangKy=CT.MaPhieuDangKy
+            JOIN LichThi AS LT ON PDK.LichThi=LT.MaLichThi
         WHERE CT.CCCD=@CCCD
     END
 	ELSE IF((@CCCD IS NULL OR @CCCD='') AND (@NgayThi IS NOT NULL))
@@ -606,7 +612,7 @@ BEGIN
         SELECT @MLT=MaLichThi
         FROM LichThi
         WHERE NgayThi=@NgayThi
-
+        
 
         IF NOT EXISTS (SELECT 1
         FROM PhieuDangKy
@@ -617,9 +623,12 @@ BEGIN
         END
         SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
         FROM ChiTietPhieuDangKy as CT
-            JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-            JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
-        WHERE LT.MaLichThi=@MLT
+            JOIN PhieuDangKy as PDK on PDK.MaPhieuDangKy=CT.MaPhieuDangKy
+            JOIN LichThi AS LT ON PDK.LichThi=LT.MaLichThi
+        WHERE PDK.LichThi=@MLT
+
+		
+
     END
 	ELSE
 		BEGIN
@@ -661,9 +670,9 @@ BEGIN
 
         SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
         FROM ChiTietPhieuDangKy as CT
-            JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-            JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
-        WHERE CT.CCCD=@CCCD AND LT.MaLichThi=@MLTHI
+            JOIN PhieuDangKy as PDK on PDK.MaPhieuDangKy=CT.MaPhieuDangKy
+            JOIN LichThi AS LT ON PDK.LichThi=LT.MaLichThi
+        WHERE CT.CCCD=@CCCD AND PDK.LichThi=@MLTHI
     END
 END
 GO
