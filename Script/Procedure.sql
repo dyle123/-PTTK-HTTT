@@ -1,8 +1,6 @@
 ﻿USE PTTK
 GO
 
-
-
 CREATE PROCEDURE sp_GetPhieuDangKyById
     @maPhieu INT
 AS
