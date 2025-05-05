@@ -101,6 +101,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    const filterType = document.getElementById("filter-type");
+
+filterType.addEventListener("change", () => {
+    const ma = document.getElementById("filter-ma-lich-thi");
+    const ngay = document.getElementById("filter-ngay-thi");
+    const chungchi = document.getElementById("filter-loai-chung-chi");
+
+    // Ẩn hết
+    ma.style.display = "none";
+    ngay.style.display = "none";
+    chungchi.style.display = "none";
+
+    // Hiện theo lựa chọn
+    if (filterType.value === "ma") ma.style.display = "inline-block";
+    else if (filterType.value === "ngay") ngay.style.display = "inline-block";
+    else if (filterType.value === "chungchi") chungchi.style.display = "inline-block";
+});
+
+
     // Bắt sự kiện nút tìm kiếm
     searchBtn.addEventListener("click", () => {
         fetchData();
