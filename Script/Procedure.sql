@@ -783,6 +783,7 @@ END
 GO
 
 
+
 CREATE or alter PROCEDURE XoaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy int
@@ -848,9 +849,9 @@ BEGIN
         return;
     END
 
-	IF (@NgayThiCu>@NgayThiMoi)
+	IF (@NgayThiCu>@NgayThiMoi and @NgayThiMoi<GETDATE())
 		BEGIN
-			RAISERROR(N'Ngày thi cũ phải trước ngày thi mới',16,1)
+			RAISERROR(N'Ngày thi cũ phải và ngày thi mới không hợp lệ',16,1)
 			RETURN;
 		END
 
@@ -925,29 +926,7 @@ BEGIN
     FROM inserted;
 END
 
-CREATE TRIGGER trg_Insert_PhieuGiaHan
-ON PhieuGiaHan
-INSTEAD OF INSERT
-AS
-BEGIN
-    -- Kiểm tra điều kiện hợp lệ / không hợp lệ
-    IF EXISTS (
-        SELECT 1
-        FROM inserted
-        WHERE (LoaiGiaHan = N'Hợp lệ' AND (PhiGiaHan IS NULL OR PhiGiaHan > 0))
-           OR (LoaiGiaHan = N'Không hợp lệ' AND (PhiGiaHan IS NULL OR PhiGiaHan <= 0))
-    )
-    BEGIN
-        RAISERROR(N'Loại gia hạn "Hợp lệ" phải có phí = 0, "Không hợp lệ" phải có phí > 0.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END
 
-    -- Nếu dữ liệu hợp lệ, thực hiện chèn vào bảng
-    INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi)
-    SELECT CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi
-    FROM inserted;
-END
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi
 CREATE or alter TRIGGER TG_KiemTraNgayThi
