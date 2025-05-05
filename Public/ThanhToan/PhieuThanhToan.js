@@ -215,6 +215,19 @@ document.addEventListener("DOMContentLoaded", async function () {
         radioChuyenKhoan.checked = false;
         maGiaoDich.value = "";
         maGiaoDich.disabled = true;
+
+        // Kiểm tra và thiết lập theo loại khách hàng
+        if (loaiKhachHang === "đơn vị") {
+            // Khách hàng đơn vị: cho phép cả hai hình thức
+            radioTienMat.disabled = false;
+            radioChuyenKhoan.disabled = false;
+        } else {
+            // Khách hàng tự do: chỉ cho phép tiền mặt
+            radioTienMat.disabled = false;
+            radioTienMat.checked = true; // Auto check tiền mặt
+            radioChuyenKhoan.disabled = true; // Disable chuyển khoản
+            maGiaoDich.disabled = true;
+        }
     
         // Sự kiện khi thay đổi radio button
         radioTienMat.onchange = () => {
@@ -281,23 +294,41 @@ document.addEventListener("DOMContentLoaded", async function () {
         const maPhieu = document.querySelector(".thanh-toan").dataset.maPhieu;
         const selectedRadio = document.querySelector('input[name="hinh-thuc-thanh-toan"]:checked');
         const maGiaoDich = document.getElementById("ma-giao-dich");
-
+    
         if (!selectedRadio) {
             alert("Vui lòng chọn hình thức thanh toán!");
             return;
         }
-
+    
         const hinhThuc = selectedRadio.value;
-
+    
         // Kiểm tra mã giao dịch khi chọn chuyển khoản
         if (hinhThuc === "chuyển khoản" && (!maGiaoDich.value || maGiaoDich.value.trim() === "")) {
             alert("Vui lòng nhập mã giao dịch cho hình thức chuyển khoản!");
             maGiaoDich.focus();
             return;
         }
-
+    
         try {
-            // ...existing code for API call...
+            const response = await fetch("http://localhost:3000/api/postThanhToan", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    MaPhieuThanhToan: maPhieu,
+                    HinhThucThanhToan: hinhThuc,
+                    MaGiaoDich: maGiaoDich.value
+                })
+            });
+    
+            const result = await response.json();
+            if (response.ok) {
+                alert("Thanh toán thành công!");
+                document.getElementById("modal-thanh-toan").style.display = "none";
+                // Reload trang sau khi thanh toán thành công
+                window.location.href = "/ThanhToan/ThanhToan.html";
+            } else {
+                alert("Lỗi thanh toán: " + result.error);
+            }
         } catch (error) {
             console.error("Lỗi khi thanh toán:", error);
             alert("Có lỗi xảy ra, vui lòng thử lại.");

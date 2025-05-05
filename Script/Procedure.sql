@@ -1,6 +1,7 @@
 ﻿USE PTTK
 GO
 
+
 CREATE PROCEDURE sp_GetPhieuDangKyById
     @maPhieu INT
 AS
@@ -551,8 +552,6 @@ go
 
 
 
-
-
 CREATE or alter  PROCEDURE DocToanBoChiTietPhieuDangKy
 AS
 BEGIN
@@ -562,6 +561,8 @@ BEGIN
         JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
 END
 GO
+
+
 
 CREATE or alter  PROCEDURE TraCuuSoLanGiaHan
     @CCCD char(12)=NULL,
@@ -606,6 +607,7 @@ BEGIN
         FROM LichThi
         WHERE NgayThi=@NgayThi
 
+
         IF NOT EXISTS (SELECT 1
         FROM PhieuDangKy
         WHERE LichThi=@MLT)
@@ -617,7 +619,7 @@ BEGIN
         FROM ChiTietPhieuDangKy as CT
             JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
             JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
-        WHERE LT.NgayThi=@NgayThi
+        WHERE LT.MaLichThi=@MLT
     END
 	ELSE
 		BEGIN
@@ -661,7 +663,7 @@ BEGIN
         FROM ChiTietPhieuDangKy as CT
             JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
             JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
-        WHERE CT.CCCD=@CCCD AND LT.NgayThi=@NgayThi
+        WHERE CT.CCCD=@CCCD AND LT.MaLichThi=@MLTHI
     END
 END
 GO
