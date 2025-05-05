@@ -416,7 +416,7 @@ END;
 GO
 
 
-
+DROP PROC LapPhieuGiaHan
 Create or alter  procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
@@ -439,6 +439,12 @@ BEGIN
         RAISERROR(N'Không thể lập phiếu gia hạn, do thí sinh đã vượt quá số lần gia hạn',16,1)
         return;
     END
+
+	IF NOT EXISTS(SELECT 1 FROM ChiTietPhieuDangKy WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
+		BEGIN
+			RAISERROR(N'Phiếu đăng ký không tồn tại',16,1)
+			RETURN;
+		END
 
     IF NOT EXISTS (SELECT 1
     FROM THISINH
@@ -471,6 +477,22 @@ BEGIN
         RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
         return;
     END
+	IF(@NgayThiCu>@NgayThiMoi and @NgayThiMoi<GETDATE())
+			BEGIN
+				RAISERROR(N'Ngày thi cũ và ngày thi mới bạn nhập không hợp lệ',16,1)
+				RETURN;
+			END
+	IF (@NgayThiMoi<GETDATE())
+		BEGIN
+			RAISERROR(N'Ngày thi mới bạn nhập không hợp lệ',16,1)
+			RETURN
+		END
+	IF(@NgayThiCu=@NgayThiMoi)
+		BEGIN
+			RAISERROR(N'Ngày thi cũ và ngày thi mới phải khác nhau',16,1)
+			RETURN;
+		END
+
 	ELSE
 		BEGIN
         DECLARE @NgayCu int, @NgayMoi int
@@ -483,11 +505,15 @@ BEGIN
         FROM LichThi
         WHERE NgayThi=@NgayThiMoi
 
-        IF (@NgayCu=@NgayMoi)
-				BEGIN
-            RAISERROR(N'Ngày thi mới phải khác ngày thi cũ',16,1)
-            return;
-        END
+		IF NOT EXISTS (SELECT 1
+						FROM PhieuDangKy AS PDK
+						JOIN ChiTietPhieuDangKy AS CT ON CT.MaPhieuDangKy=PDK.MaPhieuDangKy
+						WHERE PDK.MaPhieuDangKy=@MaPhieuDangKy AND CCCD=@CCCD AND LichThi=@NgayCu)
+			BEGIN
+				RAISERROR(N'Ngày thi cũ bạn nhập không khớp với ngày thi trên phiếu đăng ký',16,1)
+				RETURN;
+			END
+		
 
 		IF EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
 			BEGIN
