@@ -218,6 +218,7 @@ app.post('/create-payment-link', async (req, res) => {
         await sqlQuery(`
             INSERT INTO Payments (OrderCode, MaPhieuDangKy, PaymentLink, TrangThai, QRCode) 
             VALUES (@OrderCode, @MaPhieuDangKy, @PaymentLink, 'pending', @QRCode)
+            
         `, { orderCode, MaPhieuDangKy, PaymentLink: paymentLink.checkoutUrl, QRCode: paymentLink.qrCode });
 
         res.json({

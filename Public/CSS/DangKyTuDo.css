@@ -127,10 +127,7 @@ h1 {
     transform: translateX(-50%);
     /* Dịch chuyển phần tử sang trái một nửa chiều rộng của nó để căn giữa chính xác */
     padding: 0.8vw 1.5vw;
-    /* Padding thay đổi theo tỷ lệ chiều rộng màn hình */
-    background-color: #f4f4fb;
     /* background-m */
-    border-radius: 10px;
     /* border-m */
     display: inline-block;
 }
