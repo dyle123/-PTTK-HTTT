@@ -553,13 +553,14 @@ go
 
 
 
+DROP PROC DocToanBoChiTietPhieuDangKy
 CREATE or alter  PROCEDURE DocToanBoChiTietPhieuDangKy
 AS
 BEGIN
     SELECT CT.MaPhieuDangKy, CT.CCCD, LT.NgayThi, CT.SoLanGiaHan
     FROM ChiTietPhieuDangKy as CT
-        JOIN PhieuDuThi as PDT on PDT.CCCD=CT.CCCD
-        JOIN LichThi AS LT ON PDT.LichThi=LT.MaLichThi
+        JOIN PhieuDangKy as PDK on PDK.MaPhieuDangKy=CT.MaPhieuDangKy
+        JOIN LichThi AS LT ON PDK.LichThi=LT.MaLichThi
 END
 GO
 
@@ -676,6 +677,7 @@ BEGIN
     END
 END
 GO
+
 
 
 
