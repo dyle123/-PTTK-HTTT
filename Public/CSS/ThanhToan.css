@@ -116,7 +116,7 @@ button.thanh-toan {
     left: 50%;
     top: 10%;
     transform: translate(-50%, 0);
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: white;
     color: white;
     padding: 15px;
     border-radius: 5px;
@@ -137,7 +137,7 @@ button.thanh-toan {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: white;
 }
 
 .modal-content {
@@ -164,7 +164,7 @@ button.thanh-toan {
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: white(0, 0, 0, 0.5);
     }
     
     
@@ -182,7 +182,7 @@ button.thanh-toan {
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5) !important;
+        background-color: white  !important;
         overflow: auto;
     }
     
@@ -249,3 +249,87 @@ button.thanh-toan {
         margin-left: 10px !important;
         font-size: 20px !important;
     }
+
+
+    /* Modal xác nhận thanh toán - Thiết kế mới */
+.modal-thanh-toan {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-thanh-toan-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 30px;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: center;
+}
+
+.close-thanh-toan {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+
+.close-thanh-toan:hover {
+    color: #000;
+}
+
+.form-thanh-toan {
+    margin-top: 20px;
+}
+
+.form-thanh-toan label {
+    display: block;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-thanh-toan input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-thanh-toan input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.btn-xac-nhan {
+    background-color: #00cec9;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-xac-nhan:hover {
+    background-color: #00b5b1;
+}
+
+/* Xóa các modal cũ để tránh xung đột */
+.modal, .modal-content, .close {
+    display: none;
+}

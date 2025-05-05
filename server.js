@@ -748,6 +748,27 @@ app.get('/api/capNhatPhieuQuaHan', async (req, res) => {
     }
 });
 
+app.get('/api/getMaPhieuDangKy', async (req, res) => {
+    const { maPhieuThanhToan } = req.query; // Lấy từ query string
+    try{
+        const pool = await sql.connect(config);
+        const result = await pool.request()
+            .input('MaPhieuThanhToan', sql.Int, parseInt(maPhieuThanhToan)) // Ép kiểu số nguyên
+            .query(`SELECT MaPhieuDangKy FROM PhieuThanhToan
+                where MaPhieuThanhToan = @MaPhieuThanhToan`)
+        console.log("Kết quả truy vấn:", result.recordset); // Debugging
+    
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy mã phiếuphiếu" });
+        }
+
+        res.json({ maPhieuDangKy: result.recordset[0].MaPhieuDangKy });
+    }catch(err){
+        console.error('Lỗi lấy mã phiếu đăng ký:', err.message);
+        res.status(500).json({ error: 'Lỗi lấy mã phiếu đăng ký' });
+    }
+});
+
 app.get('/api/getHoaDon', async (req, res) => {
     const { maPhieuThanhToan } = req.query;
     try {
@@ -770,6 +791,8 @@ app.get('/api/getHoaDon', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+
 
 
 //API TraCuuSoLanGiaHan

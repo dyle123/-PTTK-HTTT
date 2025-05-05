@@ -57,25 +57,35 @@
             <!-- Dữ liệu sẽ được hiển thị tại đây bằng JavaScript -->
         </tbody>
     </table>
-    <div id="modal-thanh-toan" class="modal">
-        <div class="modal-content">
+    <!-- Modal xác nhận thanh toán -->
+    <div id="modal-thanh-toan" class="modal-thanh-toan">
+        <div class="modal-thanh-toan-content">
+            <span class="close-thanh-toan" id="huy-modal">&times;</span>
             <h3>✔ Xác nhận đã thanh toán</h3>
             <p>Nhân viên kế toán thực hiện chịu trách nhiệm cho thao tác xác nhận thanh toán.</p>
-    
-            <label>Hình thức thanh toán:</label>
-            <div>
-                <input type="radio" id="radio-tien-mat" name="hinh-thuc-thanh-toan" value="tiền mặt">
-                <label for="radio-tien-mat">Tiền mặt</label>
-    
-                <input type="radio" id="radio-chuyen-khoan" name="hinh-thuc-thanh-toan" value="chuyển khoản">
-                <label for="radio-chuyen-khoan">Chuyển khoản</label>
+            
+            <form class="form-thanh-toan">
+                <label>Hình thức thanh toán:</label>
+                <div class="payment-methods">
+                    <div class="payment-option">
+                        <input type="radio" id="radio-tien-mat" name="hinh-thuc-thanh-toan" value="tiền mặt">
+                        <label for="radio-tien-mat">Tiền mặt</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="radio-chuyen-khoan" name="hinh-thuc-thanh-toan" value="chuyển khoản">
+                        <label for="radio-chuyen-khoan">Chuyển khoản</label>
+                    </div>
+                </div>
                 <input type="text" id="ma-giao-dich" placeholder="Mã giao dịch" disabled>
-            </div>
-    
-            <button id="xac-nhan-thanh-toan">Xác nhận</button>
-            <button id="huy-modal">Hủy</button>
+                
+                <button type="button" class="btn-xac-nhan" id="xac-nhan-thanh-toan">Xác nhận</button>
+                <button type="button" class="btn-huy" id="huy-modal">Hủy</button>
+            </form>
         </div>
     </div>
+
+
+    
     <div id="modal-hoa-don-moi" class="modal-moi">
         <div class="modal-content-moi">
             <span class="close-moi">&times;</span>
@@ -96,5 +106,5 @@
 <!-- <script src="/DangNhap/common.js"></script> -->
 <script src="/DangNhap/Navbar.js"></script>
 <script src="/ThanhToan/PhieuThanhToan.js"></script>
-<script src=".. /DangNhap/Transaction.js"></script>
+<script src="../DangNhap/Transaction.js"></script>
 </html>

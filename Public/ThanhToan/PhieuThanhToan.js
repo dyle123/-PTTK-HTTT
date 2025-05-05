@@ -208,6 +208,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const radioTienMat = document.getElementById("radio-tien-mat");
         const radioChuyenKhoan = document.getElementById("radio-chuyen-khoan");
         const maGiaoDich = document.getElementById("ma-giao-dich");
+        
     
         // Reset modal
         radioTienMat.checked = false;
@@ -216,10 +217,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         maGiaoDich.disabled = true;
     
         // Kiểm tra loại khách hàng
-        if (loaiKhachHang === "đơn vị") {
+        if (loaiKhachHang == "đơn vị") {
             radioTienMat.checked = true;
-            radioChuyenKhoan.disabled = true;
-            maGiaoDich.disabled = true;
+            radioTienMat.disabled = false;
+            radioChuyenKhoan.disabled = false; // Enable chuyển khoản cho khách hàng đơn vị
+            maGiaoDich.disabled = false; // Enable mã giao dịch cho khách hàng đơn vị
         } else {
             radioTienMat.disabled = false;
             radioChuyenKhoan.disabled = true;
@@ -250,6 +252,17 @@ document.addEventListener("DOMContentLoaded", async function () {
             return "KhachHangTuDo"; // Mặc định là khách hàng tự do nếu lỗi
         }
     }
+
+    async function XuatMaPhieuDangKy(maPhieuThanhToan) {
+        try {
+            const response = await fetch(`http://localhost:3000/api/getMaPhieuDangKy?maPhieuThanhToan=${maPhieuThanhToan}`);
+            const data = await response.json();
+            return data.maPhieuDangKy; // Trả về loại khách hàng
+        } catch (error) {
+            console.error("Lỗi khi lấy loại khách hàng:", error);
+            return "KhachHangTuDo"; // Mặc định là khách hàng tự do nếu lỗi
+        }
+    }
     
 
     document.addEventListener("click", async function (event) {
@@ -257,7 +270,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     
         if (event.target.classList.contains("thanh-toan")) {
             const maPhieu = event.target.dataset.maPhieu; 
-            const loaiKhachHang = await XuatLoaiKhachHang(maPhieu);
+            const MaPhieuDangKy = await XuatMaPhieuDangKy(maPhieu);
+            const loaiKhachHang = await XuatLoaiKhachHang(MaPhieuDangKy);
+            console.log("Loại khách hàng moiw:", loaiKhachHang); // Debug
+            console.log("Mã phiếu đăng ký:", MaPhieuDangKy); // Debug
             moModalThanhToan(maPhieu, loaiKhachHang);
         }
     });
