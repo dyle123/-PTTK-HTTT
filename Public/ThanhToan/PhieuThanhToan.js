@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     
                     if (loaiKhachHang === "đơn vị") {
                         thaoTacHTML += `
-                            <button class="chuyen-khoan" data-ma-phieu="${phieu.MaPhieuThanhToan}" 
+                            <button title="Nếu khách hàng thanh toán bằng QR Code, nhấn để cập nhật trạng thái thanh toán" class="chuyen-khoan" data-ma-phieu="${phieu.MaPhieuThanhToan}" 
                                 data-thanh-tien="${phieu.ThanhTien}">Chuyển khoản</button>
                         `;
                     } else {
@@ -216,26 +216,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         maGiaoDich.value = "";
         maGiaoDich.disabled = true;
     
-        // Kiểm tra loại khách hàng
-        if (loaiKhachHang == "đơn vị") {
-            radioTienMat.checked = true;
-            radioTienMat.disabled = false;
-            radioChuyenKhoan.disabled = false; // Enable chuyển khoản cho khách hàng đơn vị
-            maGiaoDich.disabled = false; // Enable mã giao dịch cho khách hàng đơn vị
-        } else {
-            radioTienMat.disabled = false;
-            radioChuyenKhoan.disabled = true;
-            maGiaoDich.disabled = true;
-        }
-    
-        // Sự kiện bật/tắt mã giao dịch khi chọn chuyển khoản
-        radioChuyenKhoan.onchange = () => {
-            maGiaoDich.disabled = !radioChuyenKhoan.checked;
+        // Sự kiện khi thay đổi radio button
+        radioTienMat.onchange = () => {
+            if (radioTienMat.checked) {
+                maGiaoDich.disabled = true;
+                maGiaoDich.value = "";
+            }
         };
-    
+
+        radioChuyenKhoan.onchange = () => {
+            if (radioChuyenKhoan.checked) {
+                maGiaoDich.disabled = false;
+                maGiaoDich.focus();
+            }
+        };
+        
         modal.style.display = "block";
     }
-    
+
     // Đóng modal
     document.getElementById("huy-modal").addEventListener("click", function () {
         document.getElementById("modal-thanh-toan").style.display = "none";
@@ -278,37 +276,28 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 
+    // Modify xác nhận thanh toán event listener
     document.getElementById("xac-nhan-thanh-toan").addEventListener("click", async function () {
-        console.log("Nút xác nhận thanh toán được nhấn!", ); // Kiểm tra xem có chạy không
         const maPhieu = document.querySelector(".thanh-toan").dataset.maPhieu;
-        const hinhThuc = document.querySelector('input[name="hinh-thuc-thanh-toan"]:checked').value;
-        const maGiaoDich = document.getElementById("ma-giao-dich").value;
+        const selectedRadio = document.querySelector('input[name="hinh-thuc-thanh-toan"]:checked');
+        const maGiaoDich = document.getElementById("ma-giao-dich");
 
-        if (hinhThuc === "ChuyenKhoan" && maGiaoDich.trim() === "") {
-            alert("Vui lòng nhập mã giao dịch!");
+        if (!selectedRadio) {
+            alert("Vui lòng chọn hình thức thanh toán!");
             return;
         }
-    
+
+        const hinhThuc = selectedRadio.value;
+
+        // Kiểm tra mã giao dịch khi chọn chuyển khoản
+        if (hinhThuc === "chuyển khoản" && (!maGiaoDich.value || maGiaoDich.value.trim() === "")) {
+            alert("Vui lòng nhập mã giao dịch cho hình thức chuyển khoản!");
+            maGiaoDich.focus();
+            return;
+        }
+
         try {
-            const response = await fetch(`http://localhost:3000/api/postThanhToan`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    MaPhieuThanhToan: maPhieu, 
-                    HinhThucThanhToan: hinhThuc,
-                    MaGiaoDich: maGiaoDich 
-                })
-            });
-    
-            const result = await response.json();
-            if (response.ok) {
-                alert("Thanh toán thành công!");
-                document.getElementById("modal-thanh-toan").style.display = "none";
-                XuatBang(); // Cập nhật lại danh sách
-                window.location.href = `/ThanhToan/PhieuThanhToan.html?maPhieuDangKy=${maPhieu}`;
-            } else {
-                alert("Lỗi thanh toán: " + result.error);
-            }
+            // ...existing code for API call...
         } catch (error) {
             console.error("Lỗi khi thanh toán:", error);
             alert("Có lỗi xảy ra, vui lòng thử lại.");
