@@ -17,26 +17,24 @@
 
     <h1>Danh Sách Lịch Thi</h1>
 
-    <!-- Bộ lọc -->
     <div class="filter-container">
-        <div>
-            <label for="filter-ma-lich-thi">Mã lịch thi:</label>
-            <input type="text" id="filter-ma-lich-thi" placeholder="Nhập mã lịch thi">
-
-        </div>
-        <div>
-            <label for="filter-ngay-thi">Ngày thi:</label>
-            <input type="date" id="filter-ngay-thi">
-        </div>
-        <div>
-            <label for="filter-loai-chung-chi">Loại chứng chỉ:</label>
-            <select id="filter-loai-chung-chi">
-                <option value="">Tất cả</option>
-            </select>
-        </div>
+        <label for="filter-type">Lọc theo:</label>
+        <select id="filter-type">
+            <option value="ma">Mã lịch thi</option>
+            <option value="ngay">Ngày thi</option>
+            <option value="chungchi">Loại chứng chỉ</option>
+        </select>
+    
+        <input type="text" id="filter-ma-lich-thi" placeholder="Nhập mã lịch thi" style="display: inline-block;">
+        <input type="date" id="filter-ngay-thi" style="display: none;">
+        <select id="filter-loai-chung-chi" style="display: none;">
+            <option value="">Tất cả</option>
+        </select>
+    
         <button id="search-btn">🔍</button>
         <button id="clear-filter-btn">🔄</button>
     </div>
+    
 
     <!-- Bảng danh sách lịch thi -->
     <table>

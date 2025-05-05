@@ -91,11 +91,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${lich.GioThi}</td>
                 <td>${currentRegistrations}/${maxCapacity}</td>
                 <td>${lich.MaPhongThi}</td>
-                <td>${lich.LoaiChungChi}</td>
+                <td>${lich.TenChungChi}</td>
             `;
             tableBody.appendChild(tr);
         });
     }
+
+    const filterType = document.getElementById("filter-type");
+
+filterType.addEventListener("change", () => {
+    const ma = document.getElementById("filter-ma-lich-thi");
+    const ngay = document.getElementById("filter-ngay-thi");
+    const chungchi = document.getElementById("filter-loai-chung-chi");
+
+    // Ẩn hết
+    ma.style.display = "none";
+    ngay.style.display = "none";
+    chungchi.style.display = "none";
+
+    // Hiện theo lựa chọn
+    if (filterType.value === "ma") ma.style.display = "inline-block";
+    else if (filterType.value === "ngay") ngay.style.display = "inline-block";
+    else if (filterType.value === "chungchi") chungchi.style.display = "inline-block";
+});
+
 
     // Sự kiện click nút tìm kiếm
     searchBtn.addEventListener("click", () => {

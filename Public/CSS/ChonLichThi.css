@@ -97,7 +97,7 @@ input[type="text"] {
 
 .create-container {
     position: absolute;
-    top: 22.7%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
+    top: 21%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
     left: 18%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
     display: flex;
@@ -123,7 +123,7 @@ input[type="text"] {
 
 .next-container {
     position: absolute;
-    top: 22.7%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
+    top: 21%; /* Đặt vị trí từ trên xuống 20% chiều cao viewport */
     left: 83%; /* Căn giữa phần tử theo chiều ngang */
     transform: translateX(-50%); /* Dịch chuyển phần tử sang trái 50% chiều rộng của nó để căn giữa chính xác */
     display: flex;
