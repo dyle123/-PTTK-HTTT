@@ -21,12 +21,11 @@ INSERT INTO PhongThi VALUES
 (50, 0);
 
 
-
+select* from ChiTietPhieuDangKy
 
 INSERT INTO LichThi (NgayThi, GioThi, SoLuongDangKy, MaPhongThi, LoaiChungChi) VALUES
 ('2025-06-01', '08:00', 0, 4, 1),
-('2025-06-02', '08:00', 0, 5, 2),
-('2025-06-03', '08:00', 0, 6, 3);
+('2025-06-02', '08:00', 0, 5, 2);
 
 INSERT INTO NhanVien VALUES
 ('NV000014', N'Trịnh Văn Long', '1985-05-05', '0988111222', '10000000', N'Kế toán'),
@@ -39,16 +38,16 @@ values ('NV000014', '123','ketoan');
 values ('NV000013', '123','tiepnhan');
 
 INSERT INTO PhieuDangKy (LoaiChungChi, NgayDangKy, TrangThaiThanhToan, LichThi, MaKhachHang, PaymentLink) VALUES
-(1, '2025-05-01', 0, 3, 4, null),
-(2, '2025-05-02', 0, 4, 5, null),
-(3, '2025-05-03', 0, 5, 6, null);
+(1, '2025-05-01', 0, 8, 4, null),
+(2, '2025-05-02', 0, 9, 5, null);
 
+select* from ChiTietPhieuDangKy
 
+select* from LichThi
 
 INSERT INTO ChiTietPhieuDangKy VALUES
-(4, '123456789001', 0),
-(5, '123456789002', 0),
-(6, '123456789003', 0);
+(8, '123456789002', 0),
+(9, '123456789003', 0);
 
 INSERT INTO PhieuThanhToan (TamTinh, PhanTramGiamGia, ThanhTien, TrangThaiThanhToan, MaPhieuDangKy, NhanVienThucHien) VALUES
 (500000, 0, 500000, 0, 4, 'NV000014'),
@@ -95,3 +94,9 @@ INSERT INTO PhieuGiaHan VALUES
 
 
 
+select*from PhieuGiaHan
+
+update ChiTietPhieuDangKy set SoLanGiaHan=0
+
+delete from PhieuGiaHan where MaPhieuDangKy=4
+select*from LichThi

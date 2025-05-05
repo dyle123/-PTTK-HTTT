@@ -1,8 +1,6 @@
 ﻿USE PTTK
 GO
 
-
-
 CREATE PROCEDURE sp_GetPhieuDangKyById
     @maPhieu INT
 AS
@@ -416,8 +414,7 @@ END;
 GO
 
 
-
-
+DROP PROC LapPhieuGiaHan
 Create or alter  procedure LapPhieuGiaHan
     @CCCD char(12),
     @MaPhieuDangKy int,
@@ -441,6 +438,11 @@ BEGIN
         return;
     END
 
+	IF NOT EXISTS(SELECT 1 FROM ChiTietPhieuDangKy WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
+		BEGIN
+			RAISERROR(N'Phiếu đăng ký không tồn tại',16,1)
+			RETURN;
+		END
 
     IF NOT EXISTS (SELECT 1
     FROM THISINH
@@ -450,27 +452,6 @@ BEGIN
         return
     END
 
-    IF(@LoaiGiaHan!=N'Hợp lệ' and @LoaiGiaHan!=N'Không hợp lệ')
-		BEGIN
-        RAISERROR(N'Loại gia hạn không hợp lệ',16,1)
-        return;
-    END
-    IF(@PhiGiaHan<0)
-		BEGIN
-        RAISERROR(N'Phí gia hạn phải >=0',16,1)
-        RETURN;
-    END
-    IF(@LoaiGiaHan=N'Hợp lệ' and @PhiGiaHan>0)
-		BEGIN
-        RAISERROR(N'Lí do gia hạn hợp lệ nên không có phí gia hạn',16,1)
-        RETURN;
-    END
-    IF(@LoaiGiaHan=N'Không hợp lệ' and @PhiGiaHan<=0)
-		BEGIN
-        RAISERROR(N'Lí do gia hạn không hợp lệ nên phải có phí gia hạn',16,1)
-        RETURN;
-    END
-
     IF NOT EXISTS (SELECT 1
     FROM LichThi
     WHERE NgayThi=@NgayThiCu)
@@ -478,6 +459,7 @@ BEGIN
         RAISERROR(N'Ngày thi cũ bạn nhập không tồn tại',16,1)
         return;
     END
+
     IF NOT EXISTS (SELECT 1
     FROM LichThi
     WHERE NgayThi=@NgayThiMoi)
@@ -485,6 +467,7 @@ BEGIN
         RAISERROR(N'Ngày thi mới bạn nhập không tồn tại',16,1)
         return;
     END
+
     IF NOT EXISTS (SELECT 1
     FROM PhieuDangKy
     WHERE MaPhieuDangKy=@MaPhieuDangKy)
@@ -492,6 +475,22 @@ BEGIN
         RAISERROR(N'Mã phiếu đăng ký không tồn tại',16,1)
         return;
     END
+	IF(@NgayThiCu>@NgayThiMoi and @NgayThiMoi<GETDATE())
+			BEGIN
+				RAISERROR(N'Ngày thi cũ và ngày thi mới bạn nhập không hợp lệ',16,1)
+				RETURN;
+			END
+	IF (@NgayThiMoi<GETDATE())
+		BEGIN
+			RAISERROR(N'Ngày thi mới bạn nhập không hợp lệ',16,1)
+			RETURN
+		END
+	IF(@NgayThiCu=@NgayThiMoi)
+		BEGIN
+			RAISERROR(N'Ngày thi cũ và ngày thi mới phải khác nhau',16,1)
+			RETURN;
+		END
+
 	ELSE
 		BEGIN
         DECLARE @NgayCu int, @NgayMoi int
@@ -504,20 +503,26 @@ BEGIN
         FROM LichThi
         WHERE NgayThi=@NgayThiMoi
 
-        IF (@NgayCu=@NgayMoi)
-				BEGIN
-            RAISERROR(N'Ngày thi mới phải khác ngày thi cũ',16,1)
-            return;
-        END
+		IF NOT EXISTS (SELECT 1
+						FROM PhieuDangKy AS PDK
+						JOIN ChiTietPhieuDangKy AS CT ON CT.MaPhieuDangKy=PDK.MaPhieuDangKy
+						WHERE PDK.MaPhieuDangKy=@MaPhieuDangKy AND CCCD=@CCCD AND LichThi=@NgayCu)
+			BEGIN
+				RAISERROR(N'Ngày thi cũ bạn nhập không khớp với ngày thi trên phiếu đăng ký',16,1)
+				RETURN;
+			END
+		
+
 		IF EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
 			BEGIN
 				UPDATE PhieuGiaHan
 				SET NgayThiCu=@NgayCu, NgayThiMoi=@NgayMoi, PhiGiaHan=@PhiGiaHan, LiDoGiaHan=@LiDoGiaHan, LoaiGiaHan=@LoaiGiaHan
 				WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
 			END
+
 		IF NOT EXISTS(SELECT 1 FROM PhieuGiaHan WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy)
 			BEGIN
-				INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy,LiDoGiaHan, LoaiGiaHan ,NgayThiCu, NgayThiMoi) VALUES(@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan, @NgayCu, @NgayMoi);
+				INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LiDoGiaHan, LoaiGiaHan, NgayThiCu, NgayThiMoi, PhiGiaHan) VALUES (@CCCD, @MaPhieuDangKy, @LiDoGiaHan, @LoaiGiaHan, @NgayCu, @NgayMoi, @PhiGiaHan);
 			END
             UPDATE PhieuDuThi
 					SET LichThi=@NgayMoi
@@ -778,6 +783,7 @@ END
 GO
 
 
+
 CREATE or alter PROCEDURE XoaPhieuGiaHan
     @CCCD CHAR(12),
     @MaPhieuDangKy int
@@ -792,6 +798,10 @@ BEGIN
     END
     DELETE FROM PhieuGiaHan
 	WHERE CCCD=@CCCD AND MaPhieuDangKy=@MaPhieuDangKy
+
+	UPDATE ChiTietPhieuDangKy
+	set SoLanGiaHan=0
+	where CCCD=@CCCD and MaPhieuDangKy=@MaPhieuDangKy
 END
 go
 
@@ -839,9 +849,9 @@ BEGIN
         return;
     END
 
-	IF (@NgayThiCu>@NgayThiMoi)
+	IF (@NgayThiCu>@NgayThiMoi and @NgayThiMoi<GETDATE())
 		BEGIN
-			RAISERROR(N'Ngày thi cũ phải trước ngày thi mới',16,1)
+			RAISERROR(N'Ngày thi cũ phải và ngày thi mới không hợp lệ',16,1)
 			RETURN;
 		END
 
@@ -891,6 +901,32 @@ BEGIN
     WHERE CCCD = @CCCD AND MaPhieuDangKy = @MaPhieuDangKy;
 END
 GO
+
+CREATE TRIGGER trg_Insert_PhieuGiaHan
+ON PhieuGiaHan
+INSTEAD OF INSERT
+AS
+BEGIN
+    -- Kiểm tra điều kiện hợp lệ / không hợp lệ
+    IF EXISTS (
+        SELECT 1
+        FROM inserted
+        WHERE (LoaiGiaHan = N'Hợp lệ' AND (PhiGiaHan IS NULL OR PhiGiaHan > 0))
+           OR (LoaiGiaHan = N'Không hợp lệ' AND (PhiGiaHan IS NULL OR PhiGiaHan <= 0))
+    )
+    BEGIN
+        RAISERROR(N'Loại gia hạn "Hợp lệ" phải có phí = 0, "Không hợp lệ" phải có phí > 0.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+    -- Nếu dữ liệu hợp lệ, thực hiện chèn vào bảng
+    INSERT INTO PhieuGiaHan (CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi)
+    SELECT CCCD, MaPhieuDangKy, LoaiGiaHan, PhiGiaHan, LiDoGiaHan, NgayThiCu, NgayThiMoi
+    FROM inserted;
+END
+
+
 
 -- Tạo Trigger tên là TG_KiemTraNgayThi
 CREATE or alter TRIGGER TG_KiemTraNgayThi
