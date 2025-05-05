@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${lich.GioThi}</td>
                 <td>${currentRegistrations}/${maxCapacity}</td>
                 <td>${lich.MaPhongThi}</td>
-                <td>${lich.LoaiChungChi}</td>
+                <td>${lich.TenChungChi}</td>
             `;
             tableBody.appendChild(tr);
         });
